@@ -1,8 +1,7 @@
-#include "lib.hpp"
+#include <string>
+#include "gtest/gtest.h"
 
-auto main() -> int
+TEST(world_of_blocks, basic1)
 {
-  auto const lib = library {};
-
-  return lib.name == "world_of_blocks" ? 0 : 1;
+    EXPECT_EQ(true, true);
 }

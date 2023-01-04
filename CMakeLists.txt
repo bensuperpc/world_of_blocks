@@ -15,18 +15,17 @@ include(cmake/variables.cmake)
 
 # ---- Declare library ----
 
-add_library(
-    world_of_blocks_lib OBJECT
-    source/lib.cpp
-)
 
-target_include_directories(
-    world_of_blocks_lib ${warning_guard}
-    PUBLIC
-    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>"
-)
+# ---- Dependencies ----
 
-target_compile_features(world_of_blocks_lib PUBLIC cxx_std_20)
+add_subdirectory(source/lib)
+
+#include(cmake/lib/json.cmake)
+#include(cmake/lib/opencv.cmake)
+include(cmake/lib/openmp.cmake)
+include(cmake/lib/raylib.cmake)
+include(cmake/lib/raylib-cpp.cmake)
+#include(cmake/lib/perlin_noise.cmake)
 
 # ---- Declare executable ----
 
@@ -37,7 +36,7 @@ set_property(TARGET world_of_blocks_exe PROPERTY OUTPUT_NAME world_of_blocks)
 
 target_compile_features(world_of_blocks_exe PRIVATE cxx_std_20)
 
-target_link_libraries(world_of_blocks_exe PRIVATE world_of_blocks_lib)
+target_link_libraries(world_of_blocks_exe PRIVATE world_of_blocks_lib raylib raylib_cpp OpenMP::OpenMP_CXX)
 
 # ---- Install rules ----
 

@@ -1,16 +1,58 @@
-# Parent project does not export its library target, so this CML implicitly
-# depends on being added from it, i.e. the testing is done only from the build
-# tree and is not feasible from an install location
+cmake_minimum_required(VERSION 3.14)
 
-project(world_of_blocksTests LANGUAGES CXX)
+project(experimentationTests LANGUAGES C CXX)
 
-# ---- Tests ----
+include(../cmake/project-is-top-level.cmake)
+include(../cmake/folders.cmake)
+include(../cmake/windows-set-path.cmake)
 
-add_executable(world_of_blocks_test source/world_of_blocks_test.cpp)
-target_link_libraries(world_of_blocks_test PRIVATE world_of_blocks_lib)
-target_compile_features(world_of_blocks_test PRIVATE cxx_std_20)
+function(add_test_fn TEST_NAME)
+  add_executable("${TEST_NAME}" "source/${TEST_NAME}.cpp")
+  target_link_libraries("${TEST_NAME}" PRIVATE world_of_blocks_lib gtest_main)
 
-add_test(NAME world_of_blocks_test COMMAND world_of_blocks_test)
+  if (OpenMP_FOUND OR OpenMP_CXX_FOUND)
+    target_link_libraries("${TEST_NAME}" PRIVATE OpenMP::OpenMP_CXX)
+  endif()
+
+  if (CUDAToolkit_FOUND)
+    target_include_directories("${TEST_NAME}" PRIVATE ${CUDAToolkit_INCLUDE_DIRS})
+    target_link_libraries("${TEST_NAME}" PRIVATE CUDA::cudart)
+  endif()
+
+
+  add_test(NAME "${TEST_NAME}" COMMAND $<TARGET_FILE:${TEST_NAME}>)
+  #target_compile_features("${TEST_NAME}" PRIVATE cxx_std_20)
+endfunction()
+
+function(add_bench_fn BENCH_NAME)
+  add_executable("${BENCH_NAME}" "source/${BENCH_NAME}.cpp")
+  target_link_libraries("${BENCH_NAME}" PRIVATE world_of_blocks_lib benchmark::benchmark_main)
+
+  if (OpenMP_FOUND OR OpenMP_CXX_FOUND)
+    target_link_libraries("${BENCH_NAME}" PRIVATE OpenMP::OpenMP_CXX)
+  endif()
+
+  if (CUDAToolkit_FOUND)
+    target_include_directories("${BENCH_NAME}" PRIVATE ${CUDAToolkit_INCLUDE_DIRS})
+    target_link_libraries("${BENCH_NAME}" PRIVATE CUDA::cudart)
+  endif()
+
+  if(NOT CMAKE_BUILD_TYPE MATCHES Debug AND NOT CMAKE_BUILD_TYPE MATCHES Coverage)
+    add_test(NAME "${BENCH_NAME}" COMMAND $<TARGET_FILE:${BENCH_NAME}>)
+  elseif()
+    message(STATUS "Disable ${BENCH_NAME}, Performance benchmark test only run on Release/RelWithDebInfo/MinSizeRel")
+  endif()
+  #target_compile_features("${TEST_NAME}" PRIVATE cxx_std_20)
+endfunction()
+
+if(NOT WIN32)
+  include(../cmake/lib/gtest.cmake)
+  include(../cmake/lib/benchmark.cmake)
+  # Add tests
+    add_test_fn(world_of_blocks_test)
+  # Add bench
+    add_bench_fn(world_of_blocks_bench)
+endif()
 
 # ---- End-of-file commands ----
 
