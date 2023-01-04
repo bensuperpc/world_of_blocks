@@ -8,7 +8,7 @@ project(world_of_blocksTests LANGUAGES CXX)
 
 add_executable(world_of_blocks_test source/world_of_blocks_test.cpp)
 target_link_libraries(world_of_blocks_test PRIVATE world_of_blocks_lib)
-target_compile_features(world_of_blocks_test PRIVATE cxx_std_17)
+target_compile_features(world_of_blocks_test PRIVATE cxx_std_20)
 
 add_test(NAME world_of_blocks_test COMMAND world_of_blocks_test)
 

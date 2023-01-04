@@ -26,7 +26,7 @@ target_include_directories(
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>"
 )
 
-target_compile_features(world_of_blocks_lib PUBLIC cxx_std_17)
+target_compile_features(world_of_blocks_lib PUBLIC cxx_std_20)
 
 # ---- Declare executable ----
 
@@ -35,7 +35,7 @@ add_executable(world_of_blocks::exe ALIAS world_of_blocks_exe)
 
 set_property(TARGET world_of_blocks_exe PROPERTY OUTPUT_NAME world_of_blocks)
 
-target_compile_features(world_of_blocks_exe PRIVATE cxx_std_17)
+target_compile_features(world_of_blocks_exe PRIVATE cxx_std_20)
 
 target_link_libraries(world_of_blocks_exe PRIVATE world_of_blocks_lib)
 

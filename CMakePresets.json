@@ -17,8 +17,8 @@
         "systemVars": false
       },
       "errors": {
-        "dev": true,
-        "deprecated": true
+        "dev": false,
+        "deprecated": false
       }
     },
     {
@@ -33,14 +33,16 @@
       "name": "cppcheck",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_CPPCHECK": "cppcheck;--inline-suppr"
+        "CMAKE_CXX_CPPCHECK": "cppcheck;--inline-suppr",
+        "CMAKE_C_CPPCHECK": "cppcheck;--inline-suppr"
       }
     },
     {
       "name": "clang-tidy",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--header-filter=^${sourceDir}/"
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--header-filter=^${sourceDir}/",
+        "CMAKE_C_CLANG_TIDY": "clang-tidy;--header-filter=^${sourceDir}/"
       }
     },
     {
@@ -48,16 +50,47 @@
       "description": "This preset makes sure the project actually builds with at least the specified standard",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_EXTENSIONS": "OFF",
-        "CMAKE_CXX_STANDARD": "17",
-        "CMAKE_CXX_STANDARD_REQUIRED": "ON"
+        "CMAKE_CXX_EXTENSIONS": "ON",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_C_EXTENSIONS": "ON",
+        "CMAKE_C_STANDARD": "11",
+        "CMAKE_C_STANDARD_REQUIRED": "ON"
+      }
+    },
+    {
+      "name": "ci-cuda",
+      "description": "This preset makes sure the project actually builds with at least the specified standard",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CUDA_STANDARD": "17",
+        "CMAKE_CUDA_STANDARD_REQUIRED": "ON",
+        "CMAKE_CUDA_EXTENSIONS": "OFF"
       }
     },
     {
       "name": "flags-unix",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wcast-qual -Wformat=2 -Wundef -Werror=float-equal -Wshadow -Wcast-align -Wunused -Wnull-dereference -Wdouble-promotion -Wimplicit-fallthrough -Wextra-semi -Woverloaded-virtual -Wnon-virtual-dtor -Wold-style-cast"
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic -Wconversion -Wcast-qual -Wshadow -Wformat=2 -Wundef -Wfloat-equal -Wstrict-overflow=5 -Wswitch-default -Wunreachable-code -Wcast-align -Wmissing-include-dirs -fstack-protector-all",
+        "CMAKE_C_FLAGS": "-Wall -Wextra -Wpedantic -Wconversion -Wcast-qual -Wshadow -Wformat=2 -Wundef -Wfloat-equal -Wstrict-overflow=5 -Wswitch-default -Wunreachable-code -Wcast-align -Wmissing-include-dirs -fstack-protector-all"
+      }
+    },
+    {
+      "name": "flags-cuda",
+      "hidden": true,
+      "cacheVariables": {
+        "CUDA_NVCC_FLAGS": "--default-stream per-thread -arch=all-major",
+        "CUDA_PROPAGATE_HOST_FLAGS": "ON",
+        "CUDA_SEPARABLE_COMPILATION": "ON"
+      }
+    },
+    {
+      "name": "flags-gprof",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-Og -g -Wall -Wextra -Wpedantic -pg",
+        "CMAKE_C_FLAGS": "-Og -g -Wall -Wextra -Wpedantic -pg"
       }
     },
     {
@@ -72,10 +105,16 @@
       "name": "ci-unix",
       "generator": "Unix Makefiles",
       "hidden": true,
-      "inherits": ["flags-unix", "ci-std"],
+      "inherits": ["flags-unix", "ci-std", "flags-cuda", "ci-cuda"],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
+    },
+    {
+      "name": "ci-base",
+      "generator": "Unix Makefiles",
+      "hidden": true,
+      "inherits": ["ci-std", "flags-unix", "dev-mode", "flags-cuda", "ci-cuda"]
     },
     {
       "name": "ci-win64",
@@ -110,13 +149,47 @@
       "inherits": ["ci-unix", "dev-mode"],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Sanitize",
-        "CMAKE_CXX_FLAGS_SANITIZE": "-O2 -g -fsanitize=address,undefined -fno-omit-frame-pointer -fno-common"
+        "CMAKE_CXX_FLAGS_SANITIZE": "-O2 -g -fsanitize=address,undefined,leak -fno-omit-frame-pointer -fno-common"
+      },
+      "environment": {
+        "ASAN_OPTIONS": "strict_string_checks=1 detect_stack_use_after_return=1 check_initialization_order=1 strict_init_order=1 detect_leaks=1",
+        "UBSAN_OPTIONS": "print_stacktrace=1"
       }
     },
     {
       "name": "ci-build",
       "binaryDir": "${sourceDir}/build",
       "hidden": true
+    },
+    {
+      "name": "base",
+      "binaryDir": "${sourceDir}/build/base",
+      "inherits": ["ci-base"],
+      "hidden": false,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "base-clang",
+      "binaryDir": "${sourceDir}/build/base-clang",
+      "inherits": ["ci-base"],
+      "hidden": false,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "gprof",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/gprof",
+      "inherits": ["ci-std", "flags-gprof", "dev-mode", "ci-cuda"],
+      "hidden": false,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
     },
     {
       "name": "ci-macos",

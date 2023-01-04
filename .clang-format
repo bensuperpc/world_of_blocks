@@ -1,7 +1,8 @@
 ---
 Language: Cpp
 # BasedOnStyle: Chromium
-AccessModifierOffset: -2
+AccessModifierOffset: -4
+IndentAccessModifiers: true
 AlignAfterOpenBracket: Align
 AlignConsecutiveMacros: false
 AlignConsecutiveAssignments: false
@@ -54,7 +55,7 @@ BreakConstructorInitializersBeforeComma: true
 BreakConstructorInitializers: BeforeComma
 BreakAfterJavaFieldAnnotations: true
 BreakStringLiterals: true
-ColumnLimit: 80
+ColumnLimit: 120
 CommentPragmas: '^ IWYU pragma:'
 CompactNamespaces: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
@@ -88,7 +89,7 @@ IndentCaseBlocks: false
 IndentGotoLabels: true
 IndentPPDirectives: AfterHash
 IndentExternBlock: NoIndent
-IndentWidth: 2
+IndentWidth: 4
 IndentWrappedFunctionNames: false
 InsertTrailingCommas: Wrapped
 JavaScriptQuotes: Double
@@ -168,7 +169,7 @@ Standard: Auto
 StatementMacros:
   - Q_UNUSED
   - QT_REQUIRE_VERSION
-TabWidth: 8
+TabWidth: 4
 UseCRLF: false
 UseTab: Never
 WhitespaceSensitiveMacros:
