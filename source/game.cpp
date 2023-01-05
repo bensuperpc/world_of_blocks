@@ -43,13 +43,12 @@ std::ios_base::sync_with_stdio(false);
     generator new_generator(seed);
 
     uint32_t chunk_x = 4;
-    uint32_t chunk_y = 1;
+    uint32_t chunk_y = 2;
     uint32_t chunk_z = 4;
 
     uint32_t chunk_size = chunk_x * chunk_y * chunk_z;
     std::vector<chunk> chunks = std::vector<chunk>(chunk_size);
-    new_generator.generate_word(chunks, -2, 0, -2, chunk_x, chunk_y, chunk_z);
-
+    new_generator.generate_word(chunks, -0, 0, -0, chunk_x, chunk_y, chunk_z);
     player player1 = player();
 
     // Ray and closest_collision
@@ -91,7 +90,7 @@ std::ios_base::sync_with_stdio(false);
             decltype(seed) seed = std::random_device()();
             std::cout << "seed: " << seed << std::endl;
             new_generator.reseed(seed);
-            new_generator.generate_word(chunks, -2, 0, -2, chunk_x, chunk_y, chunk_z);
+            new_generator.generate_word(chunks, -1, 0, -1, chunk_x, chunk_y, chunk_z);
         }
 
         if (IsKeyPressed(KEY_G)) {
@@ -109,6 +108,11 @@ std::ios_base::sync_with_stdio(false);
         if (IsKeyPressed(KEY_F5)) {
             // Take screenshot
             TakeScreenshot("screenshot.png");
+        }
+
+        // Player movement
+        if (IsKeyDown(KEY_W)) {
+            // player1.position.x += 2.0f * std::sin(player1.camera.rotation.y * DEG2RAD);
         }
 
         // TODO: optimize to check only the blocks around the player
@@ -136,7 +140,7 @@ std::ios_base::sync_with_stdio(false);
                       [](const auto& a, const auto& b) { return a.second.distance < b.second.distance; });
             closest_collision = collisions[0].second;
             closest_block = collisions[0].first;
-            
+
             closest_block->color = raylib::Color::Red();
             block_info_pos = closest_block->get_position();
             //block_info_index = closest_block->x + closest_block->z * 16 + closest_block->y * 16 * 16;
@@ -188,8 +192,8 @@ std::ios_base::sync_with_stdio(false);
                     }
 
                     if (show_plain_block) {
-                        // DrawCubeV(real_block_pos, block_size_vec, current_block.color);
-                        DrawCubeTexture(textureGrid, real_block_pos, block_size_vec.x, block_size_vec.y, block_size_vec.z, current_block.color);
+                        DrawCubeV(real_block_pos, block_size_vec, current_block.color);
+                        //DrawCubeTexture(textureGrid, real_block_pos, block_size_vec.x, block_size_vec.y, block_size_vec.z, current_block.color);
                         display_block_count++;
                     }
                     if (show_block_grid) {
@@ -199,7 +203,7 @@ std::ios_base::sync_with_stdio(false);
                 if (show_chunk_grid) {
                     // FIx bug: draw chunk grid
                     // current_chunk.draw_box();
-                    // DrawCubeWiresV(current_chunk.get_real_position(), current_chunk.get_size(), BLACK);
+                    //DrawCubeWiresV(current_chunk.get_real_position(), current_chunk.get_size(), BLACK);
                 }
             }
             if (show_block_grid) {

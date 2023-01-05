@@ -32,7 +32,7 @@ class chunk
 
         ~chunk() {}
 
-        [[nodiscard]] raylib::Vector3 get_position() const { return {chunk_x, chunk_y, chunk_z}; }
+        [[nodiscard]] Vector3i get_position() const { return {chunk_x, chunk_y, chunk_z}; }
         [[nodiscard]] std::vector<block>& get_blocks() { return blocks; }
         void set_blocks(std::vector<block>& blocks) { this->blocks = std::move(blocks); }
 

@@ -19,14 +19,15 @@ class player
         {
             raylib::Camera _camera(
                 raylib::Vector3(
-                    static_cast<float>(64 * 2.0f / 4), (64 / 2) * 2.0f + 24.0f, static_cast<float>(64 * 2.0f / 4)),
-                raylib::Vector3(static_cast<float>(64 * 2.0f / 2), 0.0f, static_cast<float>(64 * 2.0f / 2)),
-                raylib::Vector3(1.0f, 1.0f, 1.0f),
+                    64.0f, 64.0f, -64.0f),
+                raylib::Vector3(32.0f, 32.0f, 32.0f),
+                raylib::Vector3(0.0f, 1.0f, 0.0f),
                 80.0f,
                 CAMERA_PERSPECTIVE);
 
             _camera.SetMode(CAMERA_FIRST_PERSON);
-            _camera.SetMoveControls(KEY_W, KEY_S, KEY_A, KEY_D, KEY_LEFT_SHIFT, KEY_SPACE);
+            // To disable free camera movement, just set movement controls to KEY_NULL
+            // _camera.SetMoveControls(KEY_NULL, KEY_NULL, KEY_NULL, KEY_NULL, KEY_NULL, KEY_NULL);
             this->camera = _camera;
         }
 
