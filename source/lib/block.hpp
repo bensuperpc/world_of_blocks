@@ -1,5 +1,5 @@
-#ifndef CUBE_BLOCK_HPP
-#define CUBE_BLOCK_HPP
+#ifndef WORLD_OF_CUBE_BLOCK_HPP
+#define WORLD_OF_CUBE_BLOCK_HPP
 
 #include <algorithm>
 #include <filesystem>
@@ -12,7 +12,6 @@
 
 #include <omp.h>
 
-#include "PerlinNoise.hpp"
 #include "raylib-cpp.hpp"
 #include "raylib.h"
 #include "raymath.h"
@@ -29,8 +28,9 @@ size_t constexpr sand = 4;
 size_t constexpr water = 5;
 size_t constexpr wood = 6;
 size_t constexpr leaves = 7;
+size_t constexpr unknown = std::numeric_limits<size_t>::max();
 
-inline std::string get_name(size_t block_type)
+[[nodiscard]] inline std::string get_name(size_t block_type)
 {
     switch (block_type) {
         case air:
@@ -87,22 +87,23 @@ class block
         ~block() {}
 
         [[nodiscard]] Vector3i get_position() const { return {x, y, z}; }
+        [[nodiscard]] size_t get_block_type() const { return block_type; }
 
         // Block coordinates
         int x = 0;
         int y = 0;
         int z = 0;
 
+        size_t block_type = 0;
+
+        // For rendering
+        // raylib::Texture2D* texture = nullptr;
         Color color = raylib::Color::Gray();
         bool is_visible = true;
 
-        size_t block_type = 0;
-
-        // raylib::Texture2D* texture = nullptr;
-
-        // debug
+        // For debug
         size_t neighbors = 0;
         size_t edges = 0;
 };
 
-#endif  // CUBE_BLOCK_HPP
+#endif  // WORLD_OF_CUBE_BLOCK_HPP

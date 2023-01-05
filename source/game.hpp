@@ -28,6 +28,8 @@
 #include "optimizer.hpp"
 #include "world.hpp"
 
+#include "player.hpp"
+
 class game {
 public:
     game();

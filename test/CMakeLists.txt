@@ -9,6 +9,7 @@ include(../cmake/windows-set-path.cmake)
 function(add_test_fn TEST_NAME)
   add_executable("${TEST_NAME}" "source/${TEST_NAME}.cpp")
   target_link_libraries("${TEST_NAME}" PRIVATE world_of_blocks_lib gtest_main)
+  target_link_libraries("${TEST_NAME}" PRIVATE raylib raylib_cpp)
 
   if (OpenMP_FOUND OR OpenMP_CXX_FOUND)
     target_link_libraries("${TEST_NAME}" PRIVATE OpenMP::OpenMP_CXX)
@@ -27,6 +28,7 @@ endfunction()
 function(add_bench_fn BENCH_NAME)
   add_executable("${BENCH_NAME}" "source/${BENCH_NAME}.cpp")
   target_link_libraries("${BENCH_NAME}" PRIVATE world_of_blocks_lib benchmark::benchmark_main)
+  target_link_libraries("${BENCH_NAME}" PRIVATE raylib raylib_cpp)
 
   if (OpenMP_FOUND OR OpenMP_CXX_FOUND)
     target_link_libraries("${BENCH_NAME}" PRIVATE OpenMP::OpenMP_CXX)
@@ -48,10 +50,15 @@ endfunction()
 if(NOT WIN32)
   include(../cmake/lib/gtest.cmake)
   include(../cmake/lib/benchmark.cmake)
+  include(../cmake/lib/openmp.cmake)
+  include(../cmake/lib/raylib.cmake)
+  include(../cmake/lib/raylib-cpp.cmake)
+
   # Add tests
-    add_test_fn(world_of_blocks_test)
+    #add_test_fn(world_of_blocks_test)
+    add_test_fn(generator_test)
   # Add bench
-    add_bench_fn(world_of_blocks_bench)
+    # add_bench_fn(world_of_blocks_bench)
 endif()
 
 # ---- End-of-file commands ----

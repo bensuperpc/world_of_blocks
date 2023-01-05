@@ -50,14 +50,7 @@ std::ios_base::sync_with_stdio(false);
     std::vector<chunk> chunks = std::vector<chunk>(chunk_size);
     new_generator.generate_word(chunks, -2, 0, -2, chunk_x, chunk_y, chunk_z);
 
-    raylib::Camera camera(
-        raylib::Vector3(static_cast<float>(64 * 2.0f / 4), (64 / 2) * 2.0f + 24.0f, static_cast<float>(64 * 2.0f / 4)),
-        raylib::Vector3(static_cast<float>(64 * 2.0f / 2), 0.0f, static_cast<float>(64 * 2.0f / 2)),
-        raylib::Vector3(0.0f, 1.0f, 0.0f),
-        60.0f,
-        CAMERA_PERSPECTIVE);
-
-    camera.SetMode(CAMERA_FIRST_PERSON);
+    player player1 = player();
 
     // Ray and closest_collision
     raylib::Ray ray;
@@ -79,7 +72,7 @@ std::ios_base::sync_with_stdio(false);
             continue;
         }
 
-        camera.Update();
+        player1.update();
 
         closest_collision = {0};
         closest_collision.hit = false;
@@ -92,7 +85,7 @@ std::ios_base::sync_with_stdio(false);
         raylib::Vector2 mouse_pos = GetMousePosition();
         raylib::Vector2 screen_middle = {static_cast<float>(screen_width / 2), static_cast<float>(screen_height / 2)};
 
-        ray = ray.GetMouse(screen_middle, camera);
+        ray = ray.GetMouse(screen_middle, player1.camera);
 
         if (IsKeyPressed(KEY_R)) {
             decltype(seed) seed = std::random_device()();
@@ -137,14 +130,17 @@ std::ios_base::sync_with_stdio(false);
             }
         }
         if (!collisions.empty()) {
+            // sort by distance and get the closest collision
             std::sort(collisions.begin(),
                       collisions.end(),
                       [](const auto& a, const auto& b) { return a.second.distance < b.second.distance; });
             closest_collision = collisions[0].second;
             closest_block = collisions[0].first;
+            
             closest_block->color = raylib::Color::Red();
             block_info_pos = closest_block->get_position();
-            block_info_index = closest_block->x + closest_block->z * 16 + closest_block->y * 16 * 16;
+            //block_info_index = closest_block->x + closest_block->z * 16 + closest_block->y * 16 * 16;
+            block_info_index = 0;
             block_info_neighbour = closest_block->neighbors;
             block_info_edges = closest_block->edges;
         } else {
@@ -166,7 +162,7 @@ std::ios_base::sync_with_stdio(false);
         {
             window.ClearBackground(RAYWHITE);
 
-            camera.BeginMode();
+            player1.camera.BeginMode();
             for (size_t ci = 0; ci < chunks.size(); ci++) {
                 chunk& current_chunk = chunks[ci];
                 std::vector<block>& blocks = current_chunk.get_blocks();
@@ -183,7 +179,7 @@ std::ios_base::sync_with_stdio(false);
 
                     // If block is not visible on screen, skip it
                     const raylib::Vector2&& block_screen_pos =
-                        camera.GetWorldToScreen(block_utils::get_center(current_block, block_size));
+                        player1.camera.GetWorldToScreen(block_utils::get_center(current_block, block_size));
                     if (block_screen_pos.x < 0.0 || block_screen_pos.x > static_cast<float>(GetScreenWidth())
                         || block_screen_pos.y < 0.0 || block_screen_pos.y > static_cast<float>(GetScreenHeight()))
                     {
@@ -222,7 +218,7 @@ std::ios_base::sync_with_stdio(false);
                 DrawLine3D(closest_collision.point, normalEnd, raylib::Color::Blue());
             }
 
-            camera.EndMode();
+            player1.camera.EndMode();
 
             // Draw FPS
             DrawFPS(10, 10);
@@ -239,9 +235,17 @@ std::ios_base::sync_with_stdio(false);
             // Draw statistics
             DrawText(("Blocks on screen: " + std::to_string(display_block_count)).c_str(),
                      10,
-                     150,
+                     130,
                      20,
                      raylib::Color::Black());
+
+            // Draw player position
+            DrawText(("Player position: " + std::to_string(player1.position.x) + ", "
+                + std::to_string(player1.position.y) + ", " + std::to_string(player1.position.z)).c_str(),
+                10,
+                150,
+                20,
+                raylib::Color::Black());
 
             // Draw crosshair in the middle of the screen
             DrawLine(

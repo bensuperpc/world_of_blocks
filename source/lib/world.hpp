@@ -1,5 +1,5 @@
-#ifndef CUBE_WORLD_HPP
-#define CUBE_WORLD_HPP
+#ifndef WORLD_OF_CUBE_WORLD_HPP
+#define WORLD_OF_CUBE_WORLD_HPP
 
 #include <algorithm>
 #include <chrono>
@@ -14,10 +14,6 @@
 #include <omp.h>
 
 #include "PerlinNoise.hpp"
-// Raylib
-#include "raylib-cpp.hpp"
-#include "raylib.h"
-#include "raymath.h"
 
 // Cube lib
 #include "block.hpp"
@@ -38,4 +34,4 @@ class world
         std::vector<chunk> chunks;
 };
 
-#endif  // CUBE_WORLD_HPP
+#endif  // WORLD_OF_CUBE_WORLD_HPP

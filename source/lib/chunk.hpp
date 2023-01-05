@@ -1,5 +1,5 @@
-#ifndef CUBE_CHUNK_HPP
-#define CUBE_CHUNK_HPP
+#ifndef WORLD_OF_CUBE_CHUNK_HPP
+#define WORLD_OF_CUBE_CHUNK_HPP
 
 #include <algorithm>
 #include <chrono>
@@ -14,10 +14,6 @@
 #include <omp.h>
 
 #include "PerlinNoise.hpp"
-// Raylib
-#include "raylib-cpp.hpp"
-#include "raylib.h"
-#include "raymath.h"
 
 // Cube lib
 #include "block.hpp"
@@ -70,20 +66,14 @@ class chunk
         //[[nodiscard]] block& get_block(int x, int y, int z) { return blocks[z * chunk_x + y * chunk_x * chunk_z + x];
         //}
 
-        [[nodiscard]] raylib::Vector3 get_size() const
-        {
-            return {chunk_size_x * block::size_x, chunk_size_y * block::size_y, chunk_size_z * block::size_z};
-        }
         */
 
         [[nodiscard]] std::vector<block>::size_type size() const { return blocks.size(); }
+        [[nodiscard]] Vector3i chunk_size() const { return {chunk_size_x, chunk_size_y, chunk_size_z}; }
 
         static constexpr int chunk_size_x = 16;
         static constexpr int chunk_size_y = 64;
         static constexpr int chunk_size_z = 16;
-
-        // TODO: Remove this
-        static constexpr std::vector<block>::size_type chunk_size = chunk_size_x * chunk_size_y * chunk_size_z;
 
         void set_chuck_pos(const int x, const int y, const int z)
         {
@@ -93,7 +83,7 @@ class chunk
         }
 
     private:
-        std::vector<block> blocks = std::vector<block>(chunk_size, block());
+        std::vector<block> blocks = std::vector<block>(chunk_size_x * chunk_size_y * chunk_size_z, block());
 
         // Chunk coordinates
         int chunk_x = 0;
@@ -101,4 +91,4 @@ class chunk
         int chunk_z = 0;
 };
 
-#endif  // CUBE_CHUNK_HPP
+#endif  // WORLD_OF_CUBE_CHUNK_HPP

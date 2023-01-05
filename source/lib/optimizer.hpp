@@ -1,5 +1,5 @@
-#ifndef CUBE_OPTIMIZER_HPP
-#define CUBE_OPTIMIZER_HPP
+#ifndef WORLD_OF_CUBE_OPTIMIZER_HPP
+#define WORLD_OF_CUBE_OPTIMIZER_HPP
 
 #include <algorithm>
 #include <chrono>
@@ -12,11 +12,6 @@
 #include <vector>
 
 #include <omp.h>
-
-// Raylib
-#include "raylib-cpp.hpp"
-#include "raylib.h"
-#include "raymath.h"
 
 // Cube lib
 #include "block.hpp"
@@ -280,4 +275,4 @@ class optimizer
         }
 };
 
-#endif  // CUBE_OPTIMIZER_HPP
+#endif  // WORLD_OF_CUBE_OPTIMIZER_HPP

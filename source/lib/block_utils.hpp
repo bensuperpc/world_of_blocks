@@ -1,5 +1,5 @@
-#ifndef CUBE_BLOCK_UTILS_HPP
-#define CUBE_BLOCK_UTILS_HPP
+#ifndef WORLD_OF_CUBE_BLOCK_UTILS_HPP
+#define WORLD_OF_CUBE_BLOCK_UTILS_HPP
 
 #include <algorithm>
 #include <filesystem>
@@ -11,12 +11,6 @@
 #include <vector>
 
 #include <omp.h>
-
-#include "PerlinNoise.hpp"
-#include "block.hpp"
-#include "raylib-cpp.hpp"
-#include "raylib.h"
-#include "raymath.h"
 
 namespace block_utils
 {
@@ -78,4 +72,4 @@ namespace block_utils
 
 }  // namespace block_utils
 
-#endif  // CUBE_BLOCK_HPP
+#endif  // WORLD_OF_CUBE_BLOCK_HPP

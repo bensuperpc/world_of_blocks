@@ -1,5 +1,5 @@
-#ifndef CUBE_GENERATOR_HPP
-#define CUBE_GENERATOR_HPP
+#ifndef WORLD_OF_CUBE_GENERATOR_HPP
+#define WORLD_OF_CUBE_GENERATOR_HPP
 
 #include <algorithm>
 #include <chrono>
@@ -14,15 +14,12 @@
 #include <omp.h>
 
 #include "PerlinNoise.hpp"
-// Raylib
-#include "raylib-cpp.hpp"
-#include "raylib.h"
-#include "raymath.h"
 
 // Cube lib
 #include "block.hpp"
 #include "chunk.hpp"
 #include "optimizer.hpp"
+#include "math.hpp"
 
 class generator
 {
@@ -157,17 +154,34 @@ class generator
                                       << " index: " << z * size_x + y * size_x * size_z + x
                                       << ", value: " << static_cast<int32_t>(value_int) << std::endl;
                         }
-                        heightmap[z * size_x + y * size_x * size_z + x] = value_int;
+                        heightmap[math::convert_to_1d(x, y, z, size_x, size_y, size_z)] = value_int;
                     }
                 }
             }
         }
 
         template<typename T = int32_t>
+        std::vector<chunk> generate_word(const T begin_chunk_x,
+                                          const T begin_chunk_y,
+                                          const T begin_chunk_z,
+                                          const uint32_t chunk_x,
+                                          const uint32_t chunk_y,
+                                          const uint32_t chunk_z)
+        {
+            constexpr bool debug = false;
+
+            std::vector<chunk> chunks(chunk_x * chunk_y * chunk_z);
+
+            generate_word(chunks, begin_chunk_x, begin_chunk_y, begin_chunk_z, chunk_x, chunk_y, chunk_z);
+
+            return chunks;
+        }
+
+        template<typename T = int32_t>
         void generate_word(std::vector<chunk>& chunks,
-                            const T begin_chunk_x,
-                            const T begin_chunk_y,
-                            const T begin_chunk_z,
+                           const T begin_chunk_x,
+                           const T begin_chunk_y,
+                           const T begin_chunk_z,
                            const uint32_t chunk_x,
                            const uint32_t chunk_y,
                            const uint32_t chunk_z)
@@ -179,13 +193,13 @@ class generator
                 exit(1);
             }
 
-            // Generate each 16x64x16 chunk
-            #pragma omp parallel for collapse(3) schedule(auto)
+// Generate each 16x64x16 chunk
+#pragma omp parallel for collapse(3) schedule(auto)
             for (uint32_t x = 0; x < chunk_x; x++) {
                 for (uint32_t z = 0; z < chunk_z; z++) {
                     for (uint32_t y = 0; y < chunk_y; y++) {
                         std::vector<uint32_t> heightmap(chunk::chunk_size_x * chunk::chunk_size_z);
-                        
+
                         const T real_x = static_cast<T>(x) + begin_chunk_x;
                         const T real_y = static_cast<T>(y) + begin_chunk_y;
                         const T real_z = static_cast<T>(z) + begin_chunk_z;
@@ -208,7 +222,7 @@ class generator
                                  chunk::chunk_size_x,
                                  chunk::chunk_size_y,
                                  chunk::chunk_size_z);
-                        chunk& current_chunk = chunks[z * chunk_x + y * chunk_x * chunk_z + x];
+                        chunk& current_chunk = chunks[math::convert_to_1d(x, y, z, chunk_x, chunk_y, chunk_z)];
                         current_chunk.set_blocks(blocks);
                         current_chunk.set_chuck_pos(real_x, real_y, real_z);
                     }
@@ -265,10 +279,6 @@ class generator
                     for (uint32_t y = 0; y < size_y; y++) {
                         // Calculate real y from begin_y
                         const int32_t real_y = y + begin_y;
-
-                        // vec_index = z * size_x * size_z + z * size_z + x;
-                        // vec_index = y * size_x * size_z + z * size_x + x;
-                        // vec_index = x * size_z * size_z + z * size_z + y;
                         vec_index = z * size_x + y * size_x * size_z + x;
 
                         if constexpr (debug) {
@@ -311,4 +321,4 @@ class generator
         optimizer opt;
 };
 
-#endif  // CUBE_GENERATOR_HPP
+#endif  // WORLD_OF_CUBE_GENERATOR_HPP
