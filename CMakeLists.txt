@@ -13,7 +13,7 @@ project(
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
-# ---- Declare library ----
+# ---- Declare variables ----
 
 
 # ---- Dependencies ----
@@ -25,7 +25,7 @@ add_subdirectory(source/lib)
 include(cmake/lib/openmp.cmake)
 include(cmake/lib/raylib.cmake)
 include(cmake/lib/raylib-cpp.cmake)
-#include(cmake/lib/perlin_noise.cmake)
+include(cmake/lib/perlin_noise.cmake)
 
 # ---- Declare executable ----
 
@@ -37,6 +37,15 @@ set_property(TARGET world_of_blocks_exe PROPERTY OUTPUT_NAME world_of_blocks)
 target_compile_features(world_of_blocks_exe PRIVATE cxx_std_20)
 
 target_link_libraries(world_of_blocks_exe PRIVATE world_of_blocks_lib raylib raylib_cpp OpenMP::OpenMP_CXX)
+
+
+set_target_properties(world_of_blocks_exe
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
 
 # ---- Install rules ----
 

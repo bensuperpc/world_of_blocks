@@ -27,30 +27,17 @@ project(
     LANGUAGES C CXX
 )
 
-set(SRCS
-    block.cpp
-	)
-	
-set(HEADERS
-    block.hpp
-    )
+add_library(${PROJECT_NAME} INTERFACE)
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
-add_library(world_of_blocks_lib OBJECT ${SRCS})
-
-include(../../cmake/lib/openmp.cmake)
-
-#target_include_directories(world_of_blocks_lib PRIVATE lib)
-target_link_libraries(world_of_blocks_lib PRIVATE OpenMP::OpenMP_CXX)
-target_compile_features(world_of_blocks_lib PUBLIC cxx_std_20)
-
-#set_target_properties(world_of_blocks_lib
-#    PROPERTIES
-#    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-#    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-#    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-#    PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-#)
+set_target_properties(world_of_blocks_lib
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
 
 target_include_directories(
-    world_of_blocks_lib PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+    world_of_blocks_lib INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 )

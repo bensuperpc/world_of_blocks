@@ -10,8 +10,8 @@
 
 #include <omp.h>
 
-//#include "PerlinNoise.hpp"
-// Raylib
+// #include "PerlinNoise.hpp"
+//  Raylib
 #include "raylib-cpp.hpp"
 #include "raylib.h"
 #include "raymath.h"
@@ -19,20 +19,15 @@
 // Cube lib
 
 #include "block.hpp"
-/*
 #include "block_utils.hpp"
 #include "chunk.hpp"
 #include "generator.hpp"
 #include "optimizer.hpp"
 #include "world.hpp"
-*/
 
 int main()
 {
-    /*
     std::ios_base::sync_with_stdio(false);
-
-    world current_world;
 
     const int screen_width = 1920;
     const int screen_height = 1080;
@@ -64,9 +59,10 @@ int main()
     uint32_t chunk_x = 4;
     uint32_t chunk_y = 1;
     uint32_t chunk_z = 4;
+
     uint32_t chunk_size = chunk_x * chunk_y * chunk_z;
     std::vector<chunk> chunks = std::vector<chunk>(chunk_size);
-    new_generator.generate_word(chunks, chunk_x, chunk_y, chunk_z);
+    new_generator.generate_word(chunks, -(chunk_x/2), 0, -(chunk_z/2), chunk_x, chunk_y, chunk_z);
 
     raylib::Camera camera(
         raylib::Vector3(static_cast<float>(64 * 2.0f / 4), (64 / 2) * 2.0f + 24.0f, static_cast<float>(64 * 2.0f / 4)),
@@ -116,7 +112,7 @@ int main()
             decltype(seed) seed = std::random_device()();
             std::cout << "seed: " << seed << std::endl;
             new_generator.reseed(seed);
-            new_generator.generate_word(chunks, chunk_x, chunk_y, chunk_z);
+            new_generator.generate_word(chunks, -(chunk_x/2), 0, -(chunk_z/2), chunk_x, chunk_y, chunk_z);
         }
 
         if (IsKeyPressed(KEY_G)) {
@@ -208,8 +204,6 @@ int main()
                         skip_by_out_of_screen++;
                         continue;
                     }
-                    std::cout << "block_screen_pos: x: " << block_screen_pos.x << ", y: " << block_screen_pos.y
-                              << std::endl;
 
                     if (show_plain_block) {
                         DrawCubeV(real_block_pos, block_size_vec, current_block.color);
@@ -269,19 +263,19 @@ int main()
                 screen_middle.x, screen_middle.y - 10, screen_middle.x, screen_middle.y + 10, raylib::Color::SkyBlue());
         }
         EndDrawing();
-        
-        //std::cout << "skip_by_display: " << skip_by_display << std::endl;
-        //std::cout << "skip_by_all_neighbors: " << skip_by_all_neighbors << std::endl;
-        //std::cout << "skip_by_out_of_screen: " << skip_by_out_of_screen << std::endl;
-        //std::cout << "skip_by_surface_only: " << skip_by_surface_only << std::endl;
-        //size_t total_skipped = skip_by_display + skip_by_all_neighbors + skip_by_out_of_screen +
-        //skip_by_surface_only; std::cout << "total skipped: " << total_skipped << std::endl; std::cout << "total
-        //blocks: " << blocks.size() << std::endl; std::cout << "total blocks displayed: " << blocks.size() -
-        //total_skipped; std::cout << " ("
-        //          << static_cast<float>(blocks.size() - total_skipped) / static_cast<float>(blocks.size()) *
-        //100.0f
-        //          << "%)" << std::endl;
-        //std::cout << std::endl;
+
+        // std::cout << "skip_by_display: " << skip_by_display << std::endl;
+        // std::cout << "skip_by_all_neighbors: " << skip_by_all_neighbors << std::endl;
+        // std::cout << "skip_by_out_of_screen: " << skip_by_out_of_screen << std::endl;
+        // std::cout << "skip_by_surface_only: " << skip_by_surface_only << std::endl;
+        // size_t total_skipped = skip_by_display + skip_by_all_neighbors + skip_by_out_of_screen +
+        // skip_by_surface_only; std::cout << "total skipped: " << total_skipped << std::endl; std::cout << "total
+        // blocks: " << blocks.size() << std::endl; std::cout << "total blocks displayed: " << blocks.size() -
+        // total_skipped; std::cout << " ("
+        //           << static_cast<float>(blocks.size() - total_skipped) / static_cast<float>(blocks.size()) *
+        // 100.0f
+        //           << "%)" << std::endl;
+        // std::cout << std::endl;
 
         skip_by_display = 0;
         skip_by_all_neighbors = 0;
@@ -289,6 +283,5 @@ int main()
 
         display_block_count = 0;
     }
-    */
     return 0;
 }

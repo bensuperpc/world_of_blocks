@@ -12,9 +12,13 @@
 
 #include <omp.h>
 
+#include "PerlinNoise.hpp"
+#include "raylib-cpp.hpp"
+#include "raylib.h"
+#include "raymath.h"
+
 // Block type enum
 
-/*
 namespace block_type
 {
 size_t constexpr air = 0;
@@ -64,24 +68,32 @@ struct Vector2i
         int x;
         int y;
 };
-*/
 
 class block
 {
     public:
-        //explicit block(int x, int y, int z, size_t block_type, bool is_visible);
+        explicit block(int x, int y, int z, Color color, size_t block_type, bool is_visible)
+            : x(x)
+            , y(y)
+            , z(z)
+            , color(color)
+            , block_type(block_type)
+            , is_visible(is_visible)
+        {
+        }
 
-        block();
+        block() {}
 
-        ~block();
+        ~block() {}
 
-        //[[nodiscard]] Vector3i get_position() const;
+        [[nodiscard]] Vector3i get_position() const { return {x, y, z}; }
 
         // Block coordinates
         int x = 0;
         int y = 0;
         int z = 0;
-        
+
+        Color color = raylib::Color::Gray();
         bool is_visible = true;
 
         size_t block_type = 0;

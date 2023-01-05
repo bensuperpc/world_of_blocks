@@ -163,6 +163,9 @@ class generator
             }
         }
         void generate_word(std::vector<chunk>& chunks,
+                            const int32_t begin_x,
+                            const int32_t begin_y,
+                            const int32_t begin_z,
                            const uint32_t chunk_x,
                            const uint32_t chunk_y,
                            const uint32_t chunk_z)
@@ -177,27 +180,32 @@ class generator
                 for (uint32_t z = 0; z < chunk_z; z++) {
                     for (uint32_t y = 0; y < chunk_y; y++) {
                         std::vector<uint32_t> heightmap(chunk::chunk_size_x * chunk::chunk_size_z);
+                        
+                        int real_x = x + begin_x;
+                        int real_z = z + begin_z;
+                        int real_y = y + begin_y;
+
+                        std::cout << "Generating chunk: " << real_x << ", " << real_y << ", " << real_z << std::endl;
+
                         generate_2d_heightmap(heightmap,
-                                              x * chunk::chunk_size_x,
-                                              y * chunk::chunk_size_y,
-                                              z * chunk::chunk_size_z,
+                                              real_x * chunk::chunk_size_x,
+                                              real_z * chunk::chunk_size_y,
+                                              real_y * chunk::chunk_size_z,
                                               chunk::chunk_size_x,
                                               chunk::chunk_size_y,
                                               chunk::chunk_size_z);
                         std::vector<block> blocks = std::vector<block>(
                             chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z, block());
-                        // TODO: Add for negative values
                         generate(blocks,
-                                 x * chunk::chunk_size_x,
-                                 y * chunk::chunk_size_y,
-                                 z * chunk::chunk_size_z,
+                                 real_x * chunk::chunk_size_x,
+                                 real_y * chunk::chunk_size_y,
+                                 real_z * chunk::chunk_size_z,
                                  chunk::chunk_size_x,
                                  chunk::chunk_size_y,
                                  chunk::chunk_size_z);
                         chunk& current_chunk = chunks[z * chunk_x + y * chunk_x * chunk_z + x];
                         current_chunk.set_blocks(blocks);
-                        // TODO: Add for negative values
-                        current_chunk.set_chuck_pos(x, y, z);
+                        current_chunk.set_chuck_pos(real_x, real_y, real_z);
                     }
                 }
             }
