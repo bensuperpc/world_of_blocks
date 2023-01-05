@@ -30,7 +30,7 @@ size_t constexpr water = 5;
 size_t constexpr wood = 6;
 size_t constexpr leaves = 7;
 
-std::string get_name(size_t block_type)
+inline std::string get_name(size_t block_type)
 {
     switch (block_type) {
         case air:

@@ -55,7 +55,7 @@ class generator
 
         [[nodiscard]] uint32_t get_seed() const { return seed; }
 
-        template<typename T = int>
+        template<typename T = int32_t>
         void generate_2d_heightmap(std::vector<uint32_t>& heightmap,
                                    const T begin_x,
                                    const T begin_y,
@@ -88,15 +88,15 @@ class generator
             for (uint32_t x = 0; x < size_x; x++) {
                 for (uint32_t z = 0; z < size_z; z++) {
                     // Calculate real x and z from begin_x and begin_z
-                    const int real_x = x + begin_x;
-                    const int real_z = z + begin_z;
+                    const int32_t real_x = x + begin_x;
+                    const int32_t real_z = z + begin_z;
 
                     const uint32_t value_int = static_cast<uint32_t>(
                         perlin.octave2D_01(real_x / 256.0, real_z / 256.0, octaves, persistence) * lacunarity);
 
                     if (debug) {
                         std::cout << "x: " << x << ", z: " << z << " index: " << z * size_z + x
-                                  << ", value: " << static_cast<int>(value_int) << std::endl;
+                                  << ", value: " << static_cast<int32_t>(value_int) << std::endl;
                     }
                     heightmap[z * size_x + x] = value_int;
                 }
@@ -105,12 +105,12 @@ class generator
             if constexpr (debug) {
                 // cout max and min
                 auto minmax = std::minmax_element(heightmap.begin(), heightmap.end());
-                std::cout << "min: " << static_cast<int>(*minmax.first) << std::endl;
-                std::cout << "max: " << static_cast<int>(*minmax.second) << std::endl;
+                std::cout << "min: " << static_cast<int32_t>(*minmax.first) << std::endl;
+                std::cout << "max: " << static_cast<int32_t>(*minmax.second) << std::endl;
             }
         }
 
-        template<typename T = int>
+        template<typename T = int32_t>
         void generate_3d_heightmap(std::vector<uint32_t>& heightmap,
                                    const T begin_x,
                                    const T begin_y,
@@ -144,9 +144,9 @@ class generator
                 for (uint32_t z = 0; z < size_z; z++) {
                     for (uint32_t y = 0; y < size_z; y++) {
                         // Calculate real x and z from begin_x and begin_z
-                        const int real_x = x + begin_x;
-                        const int real_z = z + begin_z;
-                        const int real_y = y + begin_y;
+                        const int32_t real_x = x + begin_x;
+                        const int32_t real_z = z + begin_z;
+                        const int32_t real_y = y + begin_y;
 
                         const uint32_t value_int = static_cast<uint32_t>(
                             perlin.octave3D_01(real_x / 256.0, real_z / 256.0, real_y / 256.0, octaves, persistence)
@@ -155,37 +155,42 @@ class generator
                         if (debug) {
                             std::cout << "x: " << x << ", y: " << y << ", z: " << z
                                       << " index: " << z * size_x + y * size_x * size_z + x
-                                      << ", value: " << static_cast<int>(value_int) << std::endl;
+                                      << ", value: " << static_cast<int32_t>(value_int) << std::endl;
                         }
                         heightmap[z * size_x + y * size_x * size_z + x] = value_int;
                     }
                 }
             }
         }
+
+        template<typename T = int32_t>
         void generate_word(std::vector<chunk>& chunks,
-                            const int32_t begin_x,
-                            const int32_t begin_y,
-                            const int32_t begin_z,
+                            const T begin_chunk_x,
+                            const T begin_chunk_y,
+                            const T begin_chunk_z,
                            const uint32_t chunk_x,
                            const uint32_t chunk_y,
                            const uint32_t chunk_z)
         {
+            constexpr bool debug = false;
+
             if (chunks.size() < chunk_x * chunk_y * chunk_z) {
                 std::cout << "Chunks size is not equal or bigger than chunk_x * chunk_y * chunk_z!" << std::endl;
                 exit(1);
             }
 
             // Generate each 16x64x16 chunk
+            #pragma omp parallel for collapse(3) schedule(auto)
             for (uint32_t x = 0; x < chunk_x; x++) {
                 for (uint32_t z = 0; z < chunk_z; z++) {
                     for (uint32_t y = 0; y < chunk_y; y++) {
                         std::vector<uint32_t> heightmap(chunk::chunk_size_x * chunk::chunk_size_z);
                         
-                        int real_x = x + begin_x;
-                        int real_z = z + begin_z;
-                        int real_y = y + begin_y;
+                        const T real_x = static_cast<T>(x) + begin_chunk_x;
+                        const T real_y = static_cast<T>(y) + begin_chunk_y;
+                        const T real_z = static_cast<T>(z) + begin_chunk_z;
 
-                        std::cout << "Generating chunk: " << real_x << ", " << real_y << ", " << real_z << std::endl;
+                        // std::cout << "Generating chunk: " << real_x << ", " << real_y << ", " << real_z << std::endl;
 
                         generate_2d_heightmap(heightmap,
                                               real_x * chunk::chunk_size_x,
@@ -211,7 +216,7 @@ class generator
             }
         }
 
-        template<typename T = int>
+        template<typename T = int32_t>
         void generate(std::vector<block>& blocks,
                       const T begin_x,
                       const T begin_y,
@@ -243,8 +248,8 @@ class generator
             for (uint32_t x = 0; x < size_x; x++) {
                 for (uint32_t z = 0; z < size_z; z++) {
                     // Calculate real x and z from begin_x and begin_z
-                    const int real_x = x + begin_x;
-                    const int real_z = z + begin_z;
+                    const int32_t real_x = x + begin_x;
+                    const int32_t real_z = z + begin_z;
 
                     // Noise value is divided by 4 to make it smaller and it is used as the height of the block (z)
                     std::vector<block>::size_type vec_index = z * size_x + x;
@@ -259,7 +264,7 @@ class generator
 
                     for (uint32_t y = 0; y < size_y; y++) {
                         // Calculate real y from begin_y
-                        const int real_y = y + begin_y;
+                        const int32_t real_y = y + begin_y;
 
                         // vec_index = z * size_x * size_z + z * size_z + x;
                         // vec_index = y * size_x * size_z + z * size_x + x;
@@ -268,7 +273,7 @@ class generator
 
                         if constexpr (debug) {
                             std::cout << "x: " << x << ", z: " << z << ", y: " << y << " index: " << vec_index
-                                      << ", noise: " << static_cast<int>(noise_value) << std::endl;
+                                      << ", noise: " << static_cast<int32_t>(noise_value) << std::endl;
                         }
 
                         block& current_block = blocks[vec_index];
