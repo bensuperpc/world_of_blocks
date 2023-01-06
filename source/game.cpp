@@ -1,16 +1,14 @@
 #include "game.hpp"
 
-game::game()
-{
-}
+Mesh game::cube_mesh(chunk& _chunk) {}
 
-game::~game()
-{
-}
+game::game() {}
+
+game::~game() {}
 
 void game::run()
 {
-std::ios_base::sync_with_stdio(false);
+    std::ios_base::sync_with_stdio(false);
 
     const int screen_width = 1920;
     const int screen_height = 1080;
@@ -27,12 +25,14 @@ std::ios_base::sync_with_stdio(false);
     SetTargetFPS(target_fps);
 
     // raylib::Image img = GenImageChecked(256, 256, 32, 32, GREEN, RED);
-    raylib::Image img = GenImageColor(256, 256, raylib::Color::White());
+    raylib::Image img = GenImageColor(16, 16, raylib::Color::White());
     raylib::Texture2D textureGrid = LoadTextureFromImage(img);
     // SetTextureFilter(textureGrid, TEXTURE_FILTER_ANISOTROPIC_16X);
     // SetTextureWrap(textureGrid, TEXTURE_WRAP_CLAMP);
 
-    const float block_size = 2.0f;
+    world_model world = world_model();
+
+    const float block_size = 1.0f;
 
     const Vector3 block_size_vec = {block_size, block_size, block_size};
 
@@ -42,13 +42,26 @@ std::ios_base::sync_with_stdio(false);
     generator current_generator(seed);
     generator new_generator(seed);
 
-    uint32_t chunk_x = 4;
+    uint32_t chunk_x = 8;
     uint32_t chunk_y = 2;
-    uint32_t chunk_z = 4;
+    uint32_t chunk_z = 8;
 
     uint32_t chunk_size = chunk_x * chunk_y * chunk_z;
     std::vector<chunk> chunks = std::vector<chunk>(chunk_size);
+    std::vector<Model*> chunks_model = std::vector<Model*>(chunk_size, nullptr);
     new_generator.generate_word(chunks, -0, 0, -0, chunk_x, chunk_y, chunk_z);
+
+    for (size_t ci = 0; ci < chunks.size(); ci++) {
+        chunk& current_chunk = chunks[ci];
+
+        if (chunks_model[ci] != nullptr) {
+            UnloadModel(*chunks_model[ci]);
+        }
+        chunks_model[ci] = world.chunk_model(current_chunk);
+        //chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
+        chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
+    }
+
     player player1 = player();
 
     // Ray and closest_collision
@@ -91,6 +104,15 @@ std::ios_base::sync_with_stdio(false);
             std::cout << "seed: " << seed << std::endl;
             new_generator.reseed(seed);
             new_generator.generate_word(chunks, -1, 0, -1, chunk_x, chunk_y, chunk_z);
+            for (size_t ci = 0; ci < chunks.size(); ci++) {
+                chunk& current_chunk = chunks[ci];
+
+                if (chunks_model[ci] != nullptr) {
+                    UnloadModel(*chunks_model[ci]);
+                }
+                chunks_model[ci] = world.chunk_model(current_chunk);
+                chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
+            }
         }
 
         if (IsKeyPressed(KEY_G)) {
@@ -143,7 +165,7 @@ std::ios_base::sync_with_stdio(false);
 
             closest_block->color = raylib::Color::Red();
             block_info_pos = closest_block->get_position();
-            //block_info_index = closest_block->x + closest_block->z * 16 + closest_block->y * 16 * 16;
+            // block_info_index = closest_block->x + closest_block->z * 16 + closest_block->y * 16 * 16;
             block_info_index = 0;
             block_info_neighbour = closest_block->neighbors;
             block_info_edges = closest_block->edges;
@@ -169,6 +191,14 @@ std::ios_base::sync_with_stdio(false);
             player1.camera.BeginMode();
             for (size_t ci = 0; ci < chunks.size(); ci++) {
                 chunk& current_chunk = chunks[ci];
+                auto&& chunk_coor = current_chunk.get_position();
+
+                Vector3 chunk_pos = {static_cast<float>(chunk_coor.x * chunk::chunk_size_x * block_size),
+                                     static_cast<float>(chunk_coor.y * chunk::chunk_size_y * block_size),
+                                     static_cast<float>(chunk_coor.z * chunk::chunk_size_z * block_size)};
+
+                DrawModel(*chunks_model[ci], chunk_pos, 1.0f, WHITE);
+                continue;
                 std::vector<block>& blocks = current_chunk.get_blocks();
 
                 for (size_t bi = 0; bi < current_chunk.size(); bi++) {
@@ -193,7 +223,8 @@ std::ios_base::sync_with_stdio(false);
 
                     if (show_plain_block) {
                         DrawCubeV(real_block_pos, block_size_vec, current_block.color);
-                        //DrawCubeTexture(textureGrid, real_block_pos, block_size_vec.x, block_size_vec.y, block_size_vec.z, current_block.color);
+                        // DrawCubeTexture(textureGrid, real_block_pos, block_size_vec.x, block_size_vec.y,
+                        // block_size_vec.z, current_block.color);
                         display_block_count++;
                     }
                     if (show_block_grid) {
@@ -203,7 +234,7 @@ std::ios_base::sync_with_stdio(false);
                 if (show_chunk_grid) {
                     // FIx bug: draw chunk grid
                     // current_chunk.draw_box();
-                    //DrawCubeWiresV(current_chunk.get_real_position(), current_chunk.get_size(), BLACK);
+                    // DrawCubeWiresV(current_chunk.get_real_position(), current_chunk.get_size(), BLACK);
                 }
             }
             if (show_block_grid) {
@@ -245,11 +276,12 @@ std::ios_base::sync_with_stdio(false);
 
             // Draw player position
             DrawText(("Player position: " + std::to_string(player1.position.x) + ", "
-                + std::to_string(player1.position.y) + ", " + std::to_string(player1.position.z)).c_str(),
-                10,
-                150,
-                20,
-                raylib::Color::Black());
+                      + std::to_string(player1.position.y) + ", " + std::to_string(player1.position.z))
+                         .c_str(),
+                     10,
+                     150,
+                     20,
+                     raylib::Color::Black());
 
             // Draw crosshair in the middle of the screen
             DrawLine(

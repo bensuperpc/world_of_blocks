@@ -30,11 +30,14 @@
 
 #include "player.hpp"
 
+#include "world_model.hpp"
+
 class game {
 public:
     game();
     ~game();
     void run();
+    Mesh cube_mesh(chunk& _chunk);
 
     private:
     
