@@ -48,9 +48,17 @@ void game::run()
 
     uint32_t chunk_size = chunk_x * chunk_y * chunk_z;
     std::vector<chunk> chunks = std::vector<chunk>(chunk_size);
-    std::vector<Model*> chunks_model = std::vector<Model*>(chunk_size, nullptr);
+    // std::vector<Model*> chunks_model = std::vector<Model*>(chunk_size, nullptr);
     new_generator.generate_word(chunks, -0, 0, -0, chunk_x, chunk_y, chunk_z);
 
+    std::vector<Model>&& chunks_model = world.generate_world_models(chunks);
+
+    for (size_t ci = 0; ci < chunks.size(); ci++) {
+        //chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
+        chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
+    }
+
+    /*
     for (size_t ci = 0; ci < chunks.size(); ci++) {
         chunk& current_chunk = chunks[ci];
 
@@ -58,9 +66,10 @@ void game::run()
             UnloadModel(*chunks_model[ci]);
         }
         chunks_model[ci] = world.chunk_model(current_chunk);
-        //chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
-        chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
+        chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
+        //chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
     }
+    */
 
     player player1 = player();
 
@@ -104,14 +113,15 @@ void game::run()
             std::cout << "seed: " << seed << std::endl;
             new_generator.reseed(seed);
             new_generator.generate_word(chunks, -1, 0, -1, chunk_x, chunk_y, chunk_z);
-            for (size_t ci = 0; ci < chunks.size(); ci++) {
-                chunk& current_chunk = chunks[ci];
 
-                if (chunks_model[ci] != nullptr) {
-                    UnloadModel(*chunks_model[ci]);
-                }
-                chunks_model[ci] = world.chunk_model(current_chunk);
-                chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
+            for (size_t ci = 0; ci < chunks.size(); ci++) {
+                UnloadModel(chunks_model[ci]);
+            }
+            chunks_model = world.generate_world_models(chunks);
+
+            for (size_t ci = 0; ci < chunks.size(); ci++) {
+                //chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
+                chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
             }
         }
 
@@ -141,7 +151,7 @@ void game::run()
         for (size_t ci = 0; ci < chunks.size(); ci++) {
             auto& current_chunk = chunks[ci];
             auto& blocks = current_chunk.get_blocks();
-#pragma omp parallel for schedule(auto)
+#pragma omp parallel for schedule(auto) 
             for (size_t bi = 0; bi < current_chunk.size(); bi++) {
                 block& current_block = blocks[bi];
                 if (current_block.is_visible && current_block.block_type != block_type::air) {
@@ -197,7 +207,7 @@ void game::run()
                                      static_cast<float>(chunk_coor.y * chunk::chunk_size_y * block_size),
                                      static_cast<float>(chunk_coor.z * chunk::chunk_size_z * block_size)};
 
-                DrawModel(*chunks_model[ci], chunk_pos, 1.0f, WHITE);
+                DrawModel(chunks_model[ci], chunk_pos, 1.0f, WHITE);
                 continue;
                 std::vector<block>& blocks = current_chunk.get_blocks();
 

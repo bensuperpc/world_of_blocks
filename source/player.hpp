@@ -19,7 +19,7 @@ class player
         {
             raylib::Camera _camera(
                 raylib::Vector3(
-                    32.0f, 32.0f, -32.0f),
+                    48.0f, 48.0f, -48.0f),
                 raylib::Vector3(16.0f, 16.0f, 16.0f),
                 raylib::Vector3(0.0f, 1.0f, 0.0f),
                 80.0f,
