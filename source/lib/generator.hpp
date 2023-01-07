@@ -95,7 +95,8 @@ class generator
                         std::cout << "x: " << x << ", z: " << z << " index: " << z * size_z + x
                                   << ", value: " << static_cast<int32_t>(value_int) << std::endl;
                     }
-                    heightmap[z * size_x + x] = value_int;
+                    //heightmap[z * size_x + x] = value_int;
+                    heightmap[math::convert_to_1d(x, z, size_x, size_z)] = value_int;
                 }
             }
 
@@ -293,7 +294,7 @@ class generator
                     for (uint32_t y = 0; y < size_y; y++) {
                         // Calculate real y from begin_y
                         const int32_t real_y = y + begin_y;
-                        vec_index = z * size_x + y * size_x * size_z + x;
+                        vec_index = math::convert_to_1d(x, y, z, size_x, size_y, size_z);
 
                         if constexpr (debug) {
                             std::cout << "x: " << x << ", z: " << z << ", y: " << y << " index: " << vec_index
@@ -360,7 +361,7 @@ class generator
                         const int32_t real_y = y + begin_y;
                         const int32_t real_x = x + begin_x;
                         const int32_t real_z = z + begin_z;
-                        size_t vec_index = z * size_x + y * size_x * size_z + x;
+                        size_t vec_index = math::convert_to_1d(x, y, z, size_x, size_y, size_z);
                         auto noise_value = heightmap[vec_index];
                         auto& current_block = blocks[vec_index];
 

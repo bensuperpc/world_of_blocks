@@ -16,6 +16,8 @@
 #include "raylib.h"
 #include "raymath.h"
 
+#include "math.hpp"
+
 // Block type enum
 
 namespace block_type
@@ -55,19 +57,6 @@ size_t constexpr unknown = std::numeric_limits<size_t>::max();
 }
 
 }  // namespace block_type
-
-struct Vector3i
-{
-        int x;
-        int y;
-        int z;
-};
-
-struct Vector2i
-{
-        int x;
-        int y;
-};
 
 class block
 {

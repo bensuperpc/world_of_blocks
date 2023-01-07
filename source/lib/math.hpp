@@ -12,6 +12,19 @@
 
 #include <omp.h>
 
+struct Vector3i
+{
+        int x;
+        int y;
+        int z;
+};
+
+struct Vector2i
+{
+        int x;
+        int y;
+};
+
 namespace math
 {
 
@@ -19,8 +32,7 @@ template<typename T = size_t>
 [[nodiscard]] inline constexpr T convert_to_1d(
     const T x, const T y, const T z, const T max_x, const T max_y, const T max_z)
 {
-    // return x + y * max_x + z * max_x * max_y; // Another way to do it
-    return z * max_x + y * max_x * max_z + x;
+    return (z * max_x * max_y) + (y * max_x) + x;
 }
 
 template<typename T = size_t>

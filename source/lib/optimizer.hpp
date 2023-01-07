@@ -131,7 +131,7 @@ class optimizer
                 if (current_cube.y == begin_y) {
                     edges++;
                 }
-                size_t i3 = i - size_x * size_z;
+                size_t i3 = i - size_x * size_y;
                 if (i3 < blocks.size()) {
                     if constexpr (debug) {
                         if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
@@ -152,7 +152,7 @@ class optimizer
                 }
 
                 // y+1
-                size_t i4 = i + size_x * size_z;
+                size_t i4 = i + size_x * size_y;
                 if (i4 < blocks.size()) {
                     if constexpr (debug) {
                         if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {

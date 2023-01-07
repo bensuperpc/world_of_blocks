@@ -292,8 +292,6 @@ class world_model
 
         auto& blocks = _chunk.get_blocks();
 
-        /*
-
         for (size_t i = 0; i < blocks.size(); i++) {
             block& current_block = blocks[i];
 
@@ -302,9 +300,11 @@ class world_model
                 continue;
             }
 
-            int x = i % chunk::chunk_size_x;
-            int z = (i / chunk::chunk_size_x) % chunk::chunk_size_y;
-            int y = (i / (chunk::chunk_size_x * chunk::chunk_size_y)) % chunk::chunk_size_z;
+            
+            int z = i / (chunk::chunk_size_x * chunk::chunk_size_y);
+            int tmp = i - (z * chunk::chunk_size_x * chunk::chunk_size_y);
+            int y = tmp / chunk::chunk_size_x;
+            int x = tmp % chunk::chunk_size_x;
 
             // Vertices
             const auto && block_vertices_front = get_cube_vertices_front(x, y, z);
@@ -413,7 +413,8 @@ class world_model
                 normalsCount += 18;
             }
         }
-        */
+        
+        /*
         //#pragma omp parallel for collapse(3) schedule(auto)
         for (int x = 0; x < chunk::chunk_size_x; x++)
         {
@@ -537,6 +538,7 @@ class world_model
                 }
             }
         }
+        */
         
         mesh.vertices = (float *)RL_MALLOC(verticesCount * sizeof(float));
         memcpy(mesh.vertices, vertices.data(), verticesCount * sizeof(float));
