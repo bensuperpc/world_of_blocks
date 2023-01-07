@@ -54,8 +54,8 @@ void game::run()
     std::vector<Model>&& chunks_model = world.generate_world_models(chunks);
 
     for (size_t ci = 0; ci < chunks.size(); ci++) {
-        //chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
-        chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
+        chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
+        // chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
     }
 
     /*
@@ -120,8 +120,8 @@ void game::run()
             chunks_model = world.generate_world_models(chunks);
 
             for (size_t ci = 0; ci < chunks.size(); ci++) {
-                //chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
-                chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
+                chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
+                // chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
             }
         }
 
@@ -151,7 +151,7 @@ void game::run()
         for (size_t ci = 0; ci < chunks.size(); ci++) {
             auto& current_chunk = chunks[ci];
             auto& blocks = current_chunk.get_blocks();
-#pragma omp parallel for schedule(auto) 
+#pragma omp parallel for schedule(auto)
             for (size_t bi = 0; bi < current_chunk.size(); bi++) {
                 block& current_block = blocks[bi];
                 if (current_block.is_visible && current_block.block_type != block_type::air) {
@@ -192,7 +192,11 @@ void game::run()
         size_t skip_by_out_of_screen = 0;
         size_t skip_by_surface_only = 0;
 
+        size_t display_vectices_count = 0;
+        size_t display_triangles_count = 0;
         size_t display_block_count = 0;
+
+        size_t display_chunk_count = 0;
 
         BeginDrawing();
         {
@@ -202,14 +206,26 @@ void game::run()
             for (size_t ci = 0; ci < chunks.size(); ci++) {
                 chunk& current_chunk = chunks[ci];
                 auto&& chunk_coor = current_chunk.get_position();
+                auto blocks = current_chunk.get_blocks();
 
                 Vector3 chunk_pos = {static_cast<float>(chunk_coor.x * chunk::chunk_size_x * block_size),
                                      static_cast<float>(chunk_coor.y * chunk::chunk_size_y * block_size),
                                      static_cast<float>(chunk_coor.z * chunk::chunk_size_z * block_size)};
 
                 DrawModel(chunks_model[ci], chunk_pos, 1.0f, WHITE);
+
+                for (size_t i = 0; i < chunks_model[ci].meshCount; i++) {
+                    display_vectices_count += chunks_model[ci].meshes->vertexCount;
+                    display_triangles_count += chunks_model[ci].meshes->triangleCount;
+                }
+                display_chunk_count++;
+
+                display_block_count +=
+                    std::count_if(blocks.begin(),
+                                  blocks.end(),
+                                  [](const auto& b) { return b.is_visible && b.block_type != block_type::air; });
+
                 continue;
-                std::vector<block>& blocks = current_chunk.get_blocks();
 
                 for (size_t bi = 0; bi < current_chunk.size(); bi++) {
                     block& current_block = blocks[bi];
@@ -278,9 +294,26 @@ void game::run()
             DrawText(("Edges: " + std::to_string(block_info_edges)).c_str(), 10, 90, 20, raylib::Color::Black());
 
             // Draw statistics
-            DrawText(("Blocks on screen: " + std::to_string(display_block_count)).c_str(),
+            DrawText(("Blocks on world: " + std::to_string(display_block_count)).c_str(),
                      10,
                      130,
+                     20,
+                     raylib::Color::Black());
+
+            DrawText(("Chunks on world: " + std::to_string(display_chunk_count)).c_str(),
+                     10,
+                     150,
+                     20,
+                     raylib::Color::Black());
+            DrawText(("Vertices on world: " + std::to_string(display_vectices_count)).c_str(),
+                     10,
+                     170,
+                     20,
+                     raylib::Color::Black());
+
+            DrawText(("Triangles on world: " + std::to_string(display_triangles_count)).c_str(),
+                     10,
+                     190,
                      20,
                      raylib::Color::Black());
 
@@ -289,10 +322,9 @@ void game::run()
                       + std::to_string(player1.position.y) + ", " + std::to_string(player1.position.z))
                          .c_str(),
                      10,
-                     150,
+                     210,
                      20,
                      raylib::Color::Black());
-
             // Draw crosshair in the middle of the screen
             DrawLine(
                 screen_middle.x - 10, screen_middle.y, screen_middle.x + 10, screen_middle.y, raylib::Color::SkyBlue());
@@ -319,5 +351,9 @@ void game::run()
         skip_by_out_of_screen = 0;
 
         display_block_count = 0;
+        display_chunk_count = 0;
+
+        display_triangles_count = 0;
+        display_triangles_count = 0;
     }
 }
