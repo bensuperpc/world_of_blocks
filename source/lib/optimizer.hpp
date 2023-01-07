@@ -69,7 +69,7 @@ class optimizer
                 }
 
                 /*
-                int x = i % vecX;z
+                int x = i % vecX;
                 int y = (i / vecX) % vecY;
                 int z = (i / (vecX * vecY)) % vecZ;
                 */

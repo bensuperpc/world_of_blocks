@@ -273,11 +273,17 @@ class world_model
         std::vector<float> texcoords = std::vector<float>(36 * 2 *chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z);
         std::vector<float> normals = std::vector<float>(36 * 3 *chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z);
 
+        // +z
         bool front = true;
+        // -z
         bool back = true;
+        // +y
         bool top = true;
+        // -y
         bool bottom = true;
+        // +x
         bool right = true;
+        // -x
         bool left = true;
 
         int verticesCount = 0;
