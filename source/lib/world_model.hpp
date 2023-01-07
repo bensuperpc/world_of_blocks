@@ -291,6 +291,129 @@ class world_model
         int normalsCount = 0;
 
         auto& blocks = _chunk.get_blocks();
+
+        /*
+
+        for (size_t i = 0; i < blocks.size(); i++) {
+            block& current_block = blocks[i];
+
+            if (current_block.block_type == block_type::air || current_block.is_visible == false)
+            {
+                continue;
+            }
+
+            int x = i % chunk::chunk_size_x;
+            int z = (i / chunk::chunk_size_x) % chunk::chunk_size_y;
+            int y = (i / (chunk::chunk_size_x * chunk::chunk_size_y)) % chunk::chunk_size_z;
+
+            // Vertices
+            const auto && block_vertices_front = get_cube_vertices_front(x, y, z);
+            const auto && block_vertices_back = get_cube_vertices_back(x, y, z);
+            const auto && block_vertices_top = get_cube_vertices_top(x, y, z);
+            const auto && block_vertices_bottom = get_cube_vertices_bottom(x, y, z);
+            const auto && block_vertices_right = get_cube_vertices_right(x, y, z);
+            const auto && block_vertices_left = get_cube_vertices_left(x, y, z);
+
+            for (int v = 0; v < 18; v++)
+            {
+                if(front) {
+                    vertices[verticesCount + v + 0] = block_vertices_front[v];
+                }
+                if(back) {
+                    vertices[verticesCount + v + 18] = block_vertices_back[v];
+                }
+                if(top) {
+                    vertices[verticesCount + v + 36] = block_vertices_top[v];
+                }
+                if(bottom) {
+                    vertices[verticesCount + v + 54] = block_vertices_bottom[v];
+                }
+                if(right) {
+                    vertices[verticesCount + v + 72] = block_vertices_right[v];
+                }
+                if(left) {
+                    vertices[verticesCount + v + 90] = block_vertices_left[v];
+                }
+            }
+            
+            // Texture coordinates
+            for (int t = 0; t < 12; t++)
+            {
+                if(front) {
+                    texcoords[texcoordsCount + t + 0] = texcoords_ref_front[t];
+                }
+                if(back) {
+                    texcoords[texcoordsCount + t + 12] = texcoords_ref_back[t];
+                }
+                if(top) {
+                    texcoords[texcoordsCount + t + 24] = texcoords_ref_top[t];
+                }
+                if(bottom) {
+                    texcoords[texcoordsCount + t + 36] = texcoords_ref_bottom[t];
+                }
+                if(right) {
+                    texcoords[texcoordsCount + t + 48] = texcoords_ref_right[t];
+                }
+                if(left) {
+                    texcoords[texcoordsCount + t + 60] = texcoords_ref_left[t];
+                }
+            }
+
+            // Normals
+            for (int n = 0; n < 18; n++)
+            {
+                if (front) {
+                    normals[normalsCount + n + 0] = normals_ref_front[n];
+                }
+                if (back) {
+                    normals[normalsCount + n + 18] = normals_ref_back[n];
+                }
+                if (top) {
+                    normals[normalsCount + n + 36] = normals_ref_top[n];
+                }
+                if (bottom) {
+                    normals[normalsCount + n + 54] = normals_ref_bottom[n];
+                }
+                if (right) {
+                    normals[normalsCount + n + 72] = normals_ref_right[n];
+                }
+                if (left) {
+                    normals[normalsCount + n + 90] = normals_ref_left[n];
+                }
+            }
+
+            if (front) {
+                verticesCount += 18;
+                texcoordsCount += 12;
+                normalsCount += 18;
+            }
+            if (back) {
+                verticesCount += 18;
+                texcoordsCount += 12;
+                normalsCount += 18;
+            }
+            if (top) {
+                verticesCount += 18;
+                texcoordsCount += 12;
+                normalsCount += 18;
+            }
+            if (bottom) {
+                verticesCount += 18;
+                texcoordsCount += 12;
+                normalsCount += 18;
+            }
+            if (right) {
+                verticesCount += 18;
+                texcoordsCount += 12;
+                normalsCount += 18;
+            }
+            if (left) {
+                verticesCount += 18;
+                texcoordsCount += 12;
+                normalsCount += 18;
+            }
+        }
+        */
         //#pragma omp parallel for collapse(3) schedule(auto)
         for (int x = 0; x < chunk::chunk_size_x; x++)
         {
@@ -414,6 +537,7 @@ class world_model
                 }
             }
         }
+        
         mesh.vertices = (float *)RL_MALLOC(verticesCount * sizeof(float));
         memcpy(mesh.vertices, vertices.data(), verticesCount * sizeof(float));
         //std::copy_n(vertices.data(), verticesCount, mesh.vertices);

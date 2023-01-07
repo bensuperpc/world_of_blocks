@@ -68,12 +68,6 @@ class optimizer
                     }
                 }
 
-                /*
-                int x = i % vecX;
-                int y = (i / vecX) % vecY;
-                int z = (i / (vecX * vecY)) % vecZ;
-                */
-
                 // Count neighbors
                 size_t neighbors = 0;
                 // Count edges
