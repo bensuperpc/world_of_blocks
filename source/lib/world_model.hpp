@@ -300,11 +300,9 @@ class world_model
                 continue;
             }
 
-            
-            int z = i / (chunk::chunk_size_x * chunk::chunk_size_y);
-            int tmp = i - (z * chunk::chunk_size_x * chunk::chunk_size_y);
-            int y = tmp / chunk::chunk_size_x;
-            int x = tmp % chunk::chunk_size_x;
+            const int z = i / (chunk::chunk_size_x * chunk::chunk_size_y);
+            const int y = (i - (z * chunk::chunk_size_x * chunk::chunk_size_y)) / chunk::chunk_size_x;
+            const int x = i - (z * chunk::chunk_size_x * chunk::chunk_size_y) - (y * chunk::chunk_size_x);
 
             // Vertices
             const auto && block_vertices_front = get_cube_vertices_front(x, y, z);

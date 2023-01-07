@@ -15,6 +15,7 @@
 
 // Cube lib
 #include "block.hpp"
+#include "chunk.hpp"
 
 class optimizer
 {

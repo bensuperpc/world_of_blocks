@@ -88,14 +88,18 @@ class generator
                     const int32_t real_x = x + begin_x;
                     const int32_t real_z = z + begin_z;
 
-                    const uint32_t value_int = static_cast<uint32_t>(
-                        perlin.octave2D_01( static_cast<double>(real_x) / 256.0, static_cast<double>(real_z) / 256.0, octaves, persistence) * lacunarity);
+                    const uint32_t value_int =
+                        static_cast<uint32_t>(perlin.octave2D_01(static_cast<double>(real_x) / 256.0,
+                                                                 static_cast<double>(real_z) / 256.0,
+                                                                 octaves,
+                                                                 persistence)
+                                              * lacunarity);
 
                     if (debug) {
                         std::cout << "x: " << x << ", z: " << z << " index: " << z * size_z + x
                                   << ", value: " << static_cast<int32_t>(value_int) << std::endl;
                     }
-                    //heightmap[z * size_x + x] = value_int;
+                    // heightmap[z * size_x + x] = value_int;
                     heightmap[math::convert_to_1d(x, z, size_x, size_z)] = value_int;
                 }
             }
@@ -146,12 +150,16 @@ class generator
                         const int32_t real_z = z + begin_z;
                         const int32_t real_y = y + begin_y;
 
-                        const uint32_t value_int = static_cast<uint32_t>(
-                            perlin.octave3D_01(static_cast<double>(real_x) / 256.0, static_cast<double>(real_z) / 256.0, static_cast<double>(real_y) / 256.0, octaves, persistence)
-                            * lacunarity);
-                        
+                        const uint32_t value_int =
+                            static_cast<uint32_t>(perlin.octave3D_01(static_cast<double>(real_x) / 256.0,
+                                                                     static_cast<double>(real_z) / 256.0,
+                                                                     static_cast<double>(real_y) / 256.0,
+                                                                     octaves,
+                                                                     persistence)
+                                                  * lacunarity);
+
                         if constexpr (debug) {
-                            #pragma omp critical
+#pragma omp critical
                             std::cout << "x: " << x << ", y: " << y << ", z: " << z
                                       << " index: " << math::convert_to_1d(x, y, z, size_x, size_y, size_z)
                                       << ", value: " << static_cast<int32_t>(value_int) << std::endl;
@@ -211,7 +219,7 @@ class generator
                         const T real_z = static_cast<T>(z) + begin_chunk_z;
 
                         if constexpr (debug) {
-                            #pragma omp critical
+#pragma omp critical
                             std::cout << "Generating chunk: " << real_x << ", " << real_y << ", " << real_z
                                       << std::endl;
                         }
@@ -238,6 +246,16 @@ class generator
                                     chunk::chunk_size_z);
 
                         chunk& current_chunk = chunks[math::convert_to_1d(x, y, z, chunk_x, chunk_y, chunk_z)];
+
+                        // Optimize chunk
+                        opt.optimize(blocks,
+                                     real_x * chunk::chunk_size_x,
+                                     real_y * chunk::chunk_size_y,
+                                     real_z * chunk::chunk_size_z,
+                                     chunk::chunk_size_x,
+                                     chunk::chunk_size_y,
+                                     chunk::chunk_size_z);
+
                         current_chunk.set_blocks(blocks);
                         current_chunk.set_chuck_pos(real_x, real_y, real_z);
                     }
@@ -321,8 +339,6 @@ class generator
                     }
                 }
             }
-            // Optimize blocks
-            opt.optimize(blocks, begin_x, begin_y, begin_z, size_x, size_y, size_z);
         }
 
         template<typename T = int32_t>
@@ -387,8 +403,6 @@ class generator
                     }
                 }
             }
-            // Optimize blocks
-            opt.optimize(blocks, begin_x, begin_y, begin_z, size_x, size_y, size_z);
         }
 
     private:
