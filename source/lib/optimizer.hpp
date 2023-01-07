@@ -34,9 +34,9 @@ class optimizer
                       const uint32_t size_z)
         {
             constexpr bool debug = false;
-            constexpr int debug_x = 20;
-            constexpr int debug_y = 31;
-            constexpr int debug_z = 25;
+            constexpr int debug_x = 44;
+            constexpr int debug_y = 44;
+            constexpr int debug_z = 0;
 
             constexpr bool optimize_edges = false;
 
@@ -44,14 +44,16 @@ class optimizer
             const T end_y = static_cast<T>(begin_y + size_y);
             const T end_z = static_cast<T>(begin_z + size_z);
 
+            /*
             if constexpr (debug) {
                 std::cout << "optimizing..." << std::endl;
                 std::cout << "From (xyz): " << begin_x << ", " << begin_y << ", " << begin_z << std::endl;
                 std::cout << "To (xyz): " << end_x << ", " << end_y << ", " << end_z << std::endl;
                 std::cout << "Size (xyz): " << size_x << ", " << size_y << ", " << size_z << std::endl;
             }
+            */
 
-#pragma omp parallel for schedule(auto)
+//#pragma omp parallel for schedule(auto)
             for (size_t i = 0; i < blocks.size(); i++) {
                 block& current_cube = blocks[i];
 
@@ -132,7 +134,7 @@ class optimizer
                 if (current_cube.y == begin_y) {
                     edges++;
                 }
-                size_t i3 = i - size_x * size_y;
+                size_t i3 = i - size_x;
                 if (i3 < blocks.size()) {
                     if constexpr (debug) {
                         if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
@@ -153,7 +155,7 @@ class optimizer
                 }
 
                 // y+1
-                size_t i4 = i + size_x * size_y;
+                size_t i4 = i + size_x;
                 if (i4 < blocks.size()) {
                     if constexpr (debug) {
                         if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
@@ -180,7 +182,7 @@ class optimizer
                 }
 
                 // z-1
-                size_t i5 = i - size_x;
+                size_t i5 = i - size_x * size_y;
                 if (i5 < blocks.size()) {
                     if constexpr (debug) {
                         if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
@@ -207,7 +209,7 @@ class optimizer
                 }
 
                 // z+1
-                size_t i6 = i + size_x;
+                size_t i6 = i + size_x * size_y;
                 if (i6 < blocks.size()) {
                     if constexpr (debug) {
                         if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
