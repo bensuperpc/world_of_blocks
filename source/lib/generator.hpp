@@ -88,16 +88,13 @@ class generator
                     const int32_t real_x = x + begin_x;
                     const int32_t real_z = z + begin_z;
 
-                    const uint32_t value_int =
-                        static_cast<uint32_t>(perlin.octave2D_01(static_cast<double>(real_x) / 256.0,
-                                                                 static_cast<double>(real_z) / 256.0,
-                                                                 octaves,
-                                                                 persistence)
-                                              * lacunarity);
+                    const uint32_t value_int = static_cast<uint32_t>(
+                        perlin.octave2D_01(static_cast<double>(real_x) / 256.0, static_cast<double>(real_z) / 256.0, octaves, persistence)
+                        * lacunarity);
 
                     if (debug) {
-                        std::cout << "x: " << x << ", z: " << z << " index: " << z * size_z + x
-                                  << ", value: " << static_cast<int32_t>(value_int) << std::endl;
+                        std::cout << "x: " << x << ", z: " << z << " index: " << z * size_z + x << ", value: " << static_cast<int32_t>(value_int)
+                                  << std::endl;
                     }
                     // heightmap[z * size_x + x] = value_int;
                     heightmap[math::convert_to_1d(x, z, size_x, size_z)] = value_int;
@@ -150,13 +147,12 @@ class generator
                         const int32_t real_z = z + begin_z;
                         const int32_t real_y = y + begin_y;
 
-                        const uint32_t value_int =
-                            static_cast<uint32_t>(perlin.octave3D_01(static_cast<double>(real_x) / 256.0,
-                                                                     static_cast<double>(real_z) / 256.0,
-                                                                     static_cast<double>(real_y) / 256.0,
-                                                                     octaves,
-                                                                     persistence)
-                                                  * lacunarity);
+                        const uint32_t value_int = static_cast<uint32_t>(perlin.octave3D_01(static_cast<double>(real_x) / 256.0,
+                                                                                            static_cast<double>(real_z) / 256.0,
+                                                                                            static_cast<double>(real_y) / 256.0,
+                                                                                            octaves,
+                                                                                            persistence)
+                                                                         * lacunarity);
 
                         if constexpr (debug) {
 #pragma omp critical
@@ -220,13 +216,10 @@ class generator
 
                         if constexpr (debug) {
 #pragma omp critical
-                            std::cout << "Generating chunk: " << real_x << ", " << real_y << ", " << real_z
-                                      << std::endl;
+                            std::cout << "Generating chunk: " << real_x << ", " << real_y << ", " << real_z << std::endl;
                         }
-                        std::vector<block> blocks = std::vector<block>(
-                            chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z, block());
+                        std::vector<block> blocks = std::vector<block>(chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z, block());
 
-                        
                         generate_2d(blocks,
                                     real_x * chunk::chunk_size_x,
                                     real_y * chunk::chunk_size_y,
@@ -235,7 +228,6 @@ class generator
                                     chunk::chunk_size_y,
                                     chunk::chunk_size_z);
 
-                        
                         /*
                         generate_3d(blocks,
                                     real_x * chunk::chunk_size_x,
@@ -248,6 +240,7 @@ class generator
                         chunk& current_chunk = chunks[math::convert_to_1d(x, y, z, chunk_x, chunk_y, chunk_z)];
 
                         // Optimize chunk
+                        /*
                         opt.optimize(blocks,
                                      real_x * chunk::chunk_size_x,
                                      real_y * chunk::chunk_size_y,
@@ -255,6 +248,7 @@ class generator
                                      chunk::chunk_size_x,
                                      chunk::chunk_size_y,
                                      chunk::chunk_size_z);
+                                     */
 
                         current_chunk.set_blocks(blocks);
                         current_chunk.set_chuck_pos(real_x, real_y, real_z);

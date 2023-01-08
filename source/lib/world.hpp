@@ -46,13 +46,8 @@ class world
             uint32_t chunk_size = world_chunk_size_x * world_chunk_size_y * world_chunk_size_z;
             chunks = std::vector<chunk>(chunk_size, chunk());
 
-            gen.generate_word(chunks,
-                              world_chunk_start_x,
-                              world_chunk_start_y,
-                              world_chunk_start_z,
-                              world_chunk_size_x,
-                              world_chunk_size_y,
-                              world_chunk_size_z);
+            gen.generate_word(
+                chunks, world_chunk_start_x, world_chunk_start_y, world_chunk_start_z, world_chunk_size_x, world_chunk_size_y, world_chunk_size_z);
 
             chunks_model = std::move(world_md.generate_world_models(chunks));
         }
@@ -74,7 +69,7 @@ class world
         int world_chunk_start_y = 0;
         int world_chunk_start_z = 0;
 
-        siv::PerlinNoise::seed_type seed = 2510586073u;
+        siv::PerlinNoise::seed_type seed = 1953302783u;
 
         generator gen = generator(this->seed);
         world_model world_md = world_model();

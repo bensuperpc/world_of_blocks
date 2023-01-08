@@ -30,10 +30,7 @@ namespace block_utils
     return get_real_position(block, block_size, block_size, block_size);
 }
 
-[[nodiscard]] inline BoundingBox get_bounding_box(const block& block,
-                                                  const float block_size_x,
-                                                  const float block_size_y,
-                                                  const float block_size_z)
+[[nodiscard]] inline BoundingBox get_bounding_box(const block& block, const float block_size_x, const float block_size_y, const float block_size_z)
 {
     raylib::Vector3&& cube_begin = get_real_position(block, block_size_x, block_size_y, block_size_z);
     cube_begin.x -= block_size_x / 2.0;
@@ -55,10 +52,7 @@ namespace block_utils
     return get_bounding_box(block, block_size, block_size, block_size);
 }
 
-[[nodiscard]] inline raylib::Vector3 get_center(const block& block,
-                                                const float block_size_x,
-                                                const float block_size_y,
-                                                const float block_size_z)
+[[nodiscard]] inline raylib::Vector3 get_center(const block& block, const float block_size_x, const float block_size_y, const float block_size_z)
 {
     Vector3&& center = get_real_position(block, block_size_x, block_size_y, block_size_z);
     center.x += block_size_x / 2.0;

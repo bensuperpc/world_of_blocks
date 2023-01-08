@@ -25,7 +25,7 @@ void game::run()
     // SetTextureFilter(textureGrid, TEXTURE_FILTER_ANISOTROPIC_16X);
     // SetTextureWrap(textureGrid, TEXTURE_WRAP_CLAMP);
 
-    raylib::Texture2D texture =LoadTexture("cubicmap_atlas.png");
+    raylib::Texture2D texture = LoadTexture("cubicmap_atlas.png");
 
     player player1 = player();
     world_new.generate_world();
@@ -74,10 +74,10 @@ void game::run()
         if (IsKeyPressed(KEY_R)) {
             siv::PerlinNoise::seed_type seed = std::random_device()();
             world_new.seed = seed;
+            std::cout << "seed: " << seed << std::endl;
             world_new.generate_world();
             for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
                 world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
-                std::cout << "seed: " << seed << std::endl;
             }
         }
 
@@ -90,7 +90,6 @@ void game::run()
             TakeScreenshot("screenshot.png");
         }
 
-        /*
         // TODO: optimize to check only the blocks around the player
         for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
             auto& current_chunk = world_new.chunks[ci];
@@ -109,13 +108,10 @@ void game::run()
                 }
             }
         }
-        */
 
         if (!collisions.empty()) {
             // sort by distance and get the closest collision
-            std::sort(collisions.begin(),
-                      collisions.end(),
-                      [](const auto& a, const auto& b) { return a.second.distance < b.second.distance; });
+            std::sort(collisions.begin(), collisions.end(), [](const auto& a, const auto& b) { return a.second.distance < b.second.distance; });
             closest_collision = collisions[0].second;
             closest_block = collisions[0].first;
 
@@ -167,9 +163,7 @@ void game::run()
                 display_chunk_count++;
 
                 display_block_count +=
-                    std::count_if(blocks.begin(),
-                                  blocks.end(),
-                                  [](const auto& b) { return b.is_visible && b.block_type != block_type::air; });
+                    std::count_if(blocks.begin(), blocks.end(), [](const auto& b) { return b.is_visible && b.block_type != block_type::air; });
 
                 continue;
 
@@ -184,10 +178,9 @@ void game::run()
                     }
 
                     // If block is not visible on screen, skip it
-                    const raylib::Vector2&& block_screen_pos =
-                        player1.camera.GetWorldToScreen(block_utils::get_center(current_block, block_size));
-                    if (block_screen_pos.x < 0.0 || block_screen_pos.x > static_cast<float>(GetScreenWidth())
-                        || block_screen_pos.y < 0.0 || block_screen_pos.y > static_cast<float>(GetScreenHeight()))
+                    const raylib::Vector2&& block_screen_pos = player1.camera.GetWorldToScreen(block_utils::get_center(current_block, block_size));
+                    if (block_screen_pos.x < 0.0 || block_screen_pos.x > static_cast<float>(GetScreenWidth()) || block_screen_pos.y < 0.0
+                        || block_screen_pos.y > static_cast<float>(GetScreenHeight()))
                     {
                         skip_by_out_of_screen++;
                         continue;
@@ -216,51 +209,32 @@ void game::run()
             DrawFPS(10, 10);
 
             // Draw block info
-            std::string block_info = "XYZ: " + std::to_string(block_info_pos.x) + ", "
-                + std::to_string(block_info_pos.y) + ", " + std::to_string(block_info_pos.z);
+            std::string block_info =
+                "XYZ: " + std::to_string(block_info_pos.x) + ", " + std::to_string(block_info_pos.y) + ", " + std::to_string(block_info_pos.z);
             DrawText(block_info.c_str(), 10, 30, 20, raylib::Color::Black());
             DrawText(("Index: " + std::to_string(block_info_index)).c_str(), 10, 50, 20, raylib::Color::Black());
-            DrawText(
-                ("Neighbours: " + std::to_string(block_info_neighbour)).c_str(), 10, 70, 20, raylib::Color::Black());
+            DrawText(("Neighbours: " + std::to_string(block_info_neighbour)).c_str(), 10, 70, 20, raylib::Color::Black());
             DrawText(("Edges: " + std::to_string(block_info_edges)).c_str(), 10, 90, 20, raylib::Color::Black());
 
             // Draw statistics
-            DrawText(("Blocks on world_md: " + std::to_string(display_block_count)).c_str(),
-                     10,
-                     130,
-                     20,
-                     raylib::Color::Black());
+            DrawText(("Blocks on world_md: " + std::to_string(display_block_count)).c_str(), 10, 130, 20, raylib::Color::Black());
 
-            DrawText(("Chunks on world_md: " + std::to_string(display_chunk_count)).c_str(),
-                     10,
-                     150,
-                     20,
-                     raylib::Color::Black());
-            DrawText(("Vertices on world_md: " + std::to_string(display_vectices_count)).c_str(),
-                     10,
-                     170,
-                     20,
-                     raylib::Color::Black());
+            DrawText(("Chunks on world_md: " + std::to_string(display_chunk_count)).c_str(), 10, 150, 20, raylib::Color::Black());
+            DrawText(("Vertices on world_md: " + std::to_string(display_vectices_count)).c_str(), 10, 170, 20, raylib::Color::Black());
 
-            DrawText(("Triangles on world_md: " + std::to_string(display_triangles_count)).c_str(),
-                     10,
-                     190,
-                     20,
-                     raylib::Color::Black());
+            DrawText(("Triangles on world_md: " + std::to_string(display_triangles_count)).c_str(), 10, 190, 20, raylib::Color::Black());
 
             // Draw player position
-            DrawText(("Player position: " + std::to_string(player1.position.x) + ", "
-                      + std::to_string(player1.position.y) + ", " + std::to_string(player1.position.z))
+            DrawText(("Player position: " + std::to_string(player1.position.x) + ", " + std::to_string(player1.position.y) + ", "
+                      + std::to_string(player1.position.z))
                          .c_str(),
                      10,
                      210,
                      20,
                      raylib::Color::Black());
             // Draw crosshair in the middle of the screen
-            DrawLine(
-                screen_middle.x - 10, screen_middle.y, screen_middle.x + 10, screen_middle.y, raylib::Color::SkyBlue());
-            DrawLine(
-                screen_middle.x, screen_middle.y - 10, screen_middle.x, screen_middle.y + 10, raylib::Color::SkyBlue());
+            DrawLine(screen_middle.x - 10, screen_middle.y, screen_middle.x + 10, screen_middle.y, raylib::Color::SkyBlue());
+            DrawLine(screen_middle.x, screen_middle.y - 10, screen_middle.x, screen_middle.y + 10, raylib::Color::SkyBlue());
         }
         EndDrawing();
 

@@ -27,8 +27,7 @@ namespace math
 {
 
 template<typename T = size_t>
-[[nodiscard]] inline constexpr T convert_to_1d(
-    const T x, const T y, const T z, const T max_x, const T max_y, const T max_z)
+[[nodiscard]] inline constexpr T convert_to_1d(const T x, const T y, const T z, const T max_x, const T max_y, const T max_z)
 {
     return (z * max_x * max_y) + (y * max_x) + x;
 }
