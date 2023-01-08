@@ -26,22 +26,20 @@
 #include "chunk.hpp"
 #include "generator.hpp"
 #include "optimizer.hpp"
-#include "world.hpp"
-
 #include "player.hpp"
-
+#include "world.hpp"
 #include "world_model.hpp"
 
-class game {
-public:
-    game();
-    ~game();
-    void run();
-    Mesh cube_mesh(chunk& _chunk);
+class game
+{
+    public:
+        game();
+        ~game();
+        void run();
+        Mesh cube_mesh(chunk& _chunk);
 
     private:
-    
-    raylib::Window window;
+        raylib::Window window;
 };
 
-#endif // GAME_HPP
+#endif  // GAME_HPP

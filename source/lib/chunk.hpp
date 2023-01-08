@@ -17,6 +17,7 @@
 
 // Cube lib
 #include "block.hpp"
+#include "math.hpp"
 
 class chunk
 {
@@ -33,47 +34,19 @@ class chunk
         ~chunk() {}
 
         [[nodiscard]] Vector3i get_position() const { return {chunk_x, chunk_y, chunk_z}; }
+
         [[nodiscard]] std::vector<block>& get_blocks() { return blocks; }
+
+        [[nodiscard]] block& get_block(const int x, const int y, const int z)
+        {
+            return blocks[math::convert_to_1d(x, y, z, chunk_size_x, chunk_size_y, chunk_size_z)];
+        }
+
         void set_blocks(std::vector<block>& blocks) { this->blocks = std::move(blocks); }
 
-
-        /*
-        [[nodiscard]] raylib::Vector3 get_real_position() const
-        {
-            return {chunk_x * chunk_size_x * block::size_x,
-                    chunk_y * chunk_size_y * block::size_y,
-                    chunk_z * chunk_size_z * block::size_z};
-        }
-
-
-        void draw_box() const
-        {
-            raylib::Vector3 pos = get_real_position();
-            pos.x += chunk_size_x - block::size_x / 2;
-            pos.y += chunk_size_y - block::size_y / 2;
-            pos.z += chunk_size_z - block::size_z / 2;
-            raylib::Vector3 size = {
-                chunk_size_x * block::size_x, chunk_size_y * block::size_y, chunk_size_z * block::size_z};
-            raylib::Color color = raylib::Color::Green();
-            DrawCubeWiresV(pos, size, color);
-        }
-        
-        //[[nodiscard]] block& get_block(int index) { return blocks[index]; }
-        // void set_block(int chuck_index, block &b) { blocks[chuck_index] = b; }
-
-        //[[nodiscard]] block& get_block(int x, int y, int z) { return blocks[z * chunk_size_x + y * chunk_size_x *
-        // chunk_size_z + x]; }
-        //[[nodiscard]] block& get_block(int x, int y, int z) { return blocks[z * chunk_x + y * chunk_x * chunk_z + x];
-        //}
-
-        */
-
         [[nodiscard]] std::vector<block>::size_type size() const { return blocks.size(); }
-        [[nodiscard]] Vector3i chunk_size() const { return {chunk_size_x, chunk_size_y, chunk_size_z}; }
 
-        static constexpr int chunk_size_x = 16;
-        static constexpr int chunk_size_y = 64;
-        static constexpr int chunk_size_z = 16;
+        [[nodiscard]] Vector3i chunk_size() const { return {chunk_size_x, chunk_size_y, chunk_size_z}; }
 
         void set_chuck_pos(const int x, const int y, const int z)
         {
@@ -82,7 +55,11 @@ class chunk
             chunk_z = z;
         }
 
-    private:
+        static constexpr int chunk_size_x = 16;
+        static constexpr int chunk_size_y = 64;
+        static constexpr int chunk_size_z = 16;
+
+    protected:
         std::vector<block> blocks = std::vector<block>(chunk_size_x * chunk_size_y * chunk_size_z, block());
 
         // Chunk coordinates

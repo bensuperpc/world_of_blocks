@@ -10,7 +10,6 @@ static void int_radius(benchmark::State& state)
         benchmark::ClobberMemory();
     }
     state.SetItemsProcessed(state.iterations());
-    state.SetBytesProcessed(state.iterations() * state.range(0)
-                            * sizeof(uint64_t));
+    state.SetBytesProcessed(state.iterations() * state.range(0) * sizeof(uint64_t));
 }
 BENCHMARK(int_radius)->Name("int_radius")->RangeMultiplier(16)->Range(1, 1048576);

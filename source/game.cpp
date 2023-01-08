@@ -12,11 +12,9 @@ void game::run()
 
     const int screen_width = 1920;
     const int screen_height = 1080;
-    const int target_fps = 30;
+    const int target_fps = 60;
 
     bool show_block_grid = true;
-    bool show_chunk_grid = true;
-    bool show_plain_block = true;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     raylib::Window _window(screen_width, screen_height, "Minecube");
@@ -30,46 +28,17 @@ void game::run()
     // SetTextureFilter(textureGrid, TEXTURE_FILTER_ANISOTROPIC_16X);
     // SetTextureWrap(textureGrid, TEXTURE_WRAP_CLAMP);
 
-    world_model world = world_model();
+    world_model world_md = world_model();
 
-    const float block_size = 1.0f;
+    world world_new = world();
+    world_new.generate_world();
 
-    const Vector3 block_size_vec = {block_size, block_size, block_size};
-
-    siv::PerlinNoise::seed_type seed = 2510586073u;
-    std::cout << "seed: " << seed << std::endl;
-
-    generator current_generator(seed);
-    generator new_generator(seed);
-
-    uint32_t chunk_x = 8;
-    uint32_t chunk_y = 2;
-    uint32_t chunk_z = 8;
-
-    uint32_t chunk_size = chunk_x * chunk_y * chunk_z;
-    std::vector<chunk> chunks = std::vector<chunk>(chunk_size);
-    // std::vector<Model*> chunks_model = std::vector<Model*>(chunk_size, nullptr);
-    new_generator.generate_word(chunks, -0, 0, -0, chunk_x, chunk_y, chunk_z);
-
-    std::vector<Model>&& chunks_model = world.generate_world_models(chunks);
-
-    for (size_t ci = 0; ci < chunks.size(); ci++) {
-        chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
+    for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
+        world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("cubicmap_atlas.png");
         // chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
     }
 
-    /*
-    for (size_t ci = 0; ci < chunks.size(); ci++) {
-        chunk& current_chunk = chunks[ci];
-
-        if (chunks_model[ci] != nullptr) {
-            UnloadModel(*chunks_model[ci]);
-        }
-        chunks_model[ci] = world.chunk_model(current_chunk);
-        chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
-        //chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
-    }
-    */
+    const float block_size = 1.0f;
 
     player player1 = player();
 
@@ -109,19 +78,15 @@ void game::run()
         ray = ray.GetMouse(screen_middle, player1.camera);
 
         if (IsKeyPressed(KEY_R)) {
-            decltype(seed) seed = std::random_device()();
-            std::cout << "seed: " << seed << std::endl;
-            new_generator.reseed(seed);
-            new_generator.generate_word(chunks, -1, 0, -1, chunk_x, chunk_y, chunk_z);
-
-            for (size_t ci = 0; ci < chunks.size(); ci++) {
-                UnloadModel(chunks_model[ci]);
-            }
-            chunks_model = world.generate_world_models(chunks);
-
-            for (size_t ci = 0; ci < chunks.size(); ci++) {
-                chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("grass.png");
+            siv::PerlinNoise::seed_type seed = std::random_device()();
+            world_new.seed = seed;
+            world_new.generate_world();
+            for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
+                world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture =
+                    LoadTexture("cubicmap_atlas.png");
                 // chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
+
+                std::cout << "seed: " << seed << std::endl;
             }
         }
 
@@ -129,27 +94,20 @@ void game::run()
             show_block_grid = !show_block_grid;
         }
 
-        if (IsKeyPressed(KEY_P)) {
-            show_plain_block = !show_plain_block;
-        }
-
-        if (IsKeyPressed(KEY_C)) {
-            show_chunk_grid = !show_chunk_grid;
-        }
-
         if (IsKeyPressed(KEY_F5)) {
             // Take screenshot
             TakeScreenshot("screenshot.png");
         }
 
-        // Player movement
-        if (IsKeyDown(KEY_W)) {
+        // Player movement up
+        if (IsKeyDown(KEY_SPACE)) {
             // player1.position.x += 2.0f * std::sin(player1.camera.rotation.y * DEG2RAD);
+            player1.position.y += 0.5f;
         }
 
         // TODO: optimize to check only the blocks around the player
-        for (size_t ci = 0; ci < chunks.size(); ci++) {
-            auto& current_chunk = chunks[ci];
+        for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
+            auto& current_chunk = world_new.chunks[ci];
             auto& blocks = current_chunk.get_blocks();
 #pragma omp parallel for schedule(auto)
             for (size_t bi = 0; bi < current_chunk.size(); bi++) {
@@ -165,6 +123,7 @@ void game::run()
                 }
             }
         }
+
         if (!collisions.empty()) {
             // sort by distance and get the closest collision
             std::sort(collisions.begin(),
@@ -203,8 +162,9 @@ void game::run()
             window.ClearBackground(RAYWHITE);
 
             player1.camera.BeginMode();
-            for (size_t ci = 0; ci < chunks.size(); ci++) {
-                chunk& current_chunk = chunks[ci];
+
+            for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
+                chunk& current_chunk = world_new.chunks[ci];
                 auto&& chunk_coor = current_chunk.get_position();
                 auto blocks = current_chunk.get_blocks();
 
@@ -212,11 +172,10 @@ void game::run()
                                      static_cast<float>(chunk_coor.y * chunk::chunk_size_y * block_size),
                                      static_cast<float>(chunk_coor.z * chunk::chunk_size_z * block_size)};
 
-                DrawModel(chunks_model[ci], chunk_pos, 1.0f, WHITE);
-
-                for (size_t i = 0; i < chunks_model[ci].meshCount; i++) {
-                    display_vectices_count += chunks_model[ci].meshes->vertexCount;
-                    display_triangles_count += chunks_model[ci].meshes->triangleCount;
+                DrawModelEx(world_new.chunks_model[ci], chunk_pos, {0, 0, 0}, 1.0f, {1, 1, 1}, WHITE);
+                for (size_t i = 0; i < world_new.chunks_model[ci].meshCount; i++) {
+                    display_vectices_count += world_new.chunks_model[ci].meshes->vertexCount;
+                    display_triangles_count += world_new.chunks_model[ci].meshes->triangleCount;
                 }
                 display_chunk_count++;
 
@@ -246,21 +205,6 @@ void game::run()
                         skip_by_out_of_screen++;
                         continue;
                     }
-
-                    if (show_plain_block) {
-                        DrawCubeV(real_block_pos, block_size_vec, current_block.color);
-                        // DrawCubeTexture(textureGrid, real_block_pos, block_size_vec.x, block_size_vec.y,
-                        // block_size_vec.z, current_block.color);
-                        display_block_count++;
-                    }
-                    if (show_block_grid) {
-                        DrawCubeWiresV(real_block_pos, block_size_vec, BLACK);
-                    }
-                }
-                if (show_chunk_grid) {
-                    // FIx bug: draw chunk grid
-                    // current_chunk.draw_box();
-                    // DrawCubeWiresV(current_chunk.get_real_position(), current_chunk.get_size(), BLACK);
                 }
             }
             if (show_block_grid) {
@@ -294,24 +238,24 @@ void game::run()
             DrawText(("Edges: " + std::to_string(block_info_edges)).c_str(), 10, 90, 20, raylib::Color::Black());
 
             // Draw statistics
-            DrawText(("Blocks on world: " + std::to_string(display_block_count)).c_str(),
+            DrawText(("Blocks on world_md: " + std::to_string(display_block_count)).c_str(),
                      10,
                      130,
                      20,
                      raylib::Color::Black());
 
-            DrawText(("Chunks on world: " + std::to_string(display_chunk_count)).c_str(),
+            DrawText(("Chunks on world_md: " + std::to_string(display_chunk_count)).c_str(),
                      10,
                      150,
                      20,
                      raylib::Color::Black());
-            DrawText(("Vertices on world: " + std::to_string(display_vectices_count)).c_str(),
+            DrawText(("Vertices on world_md: " + std::to_string(display_vectices_count)).c_str(),
                      10,
                      170,
                      20,
                      raylib::Color::Black());
 
-            DrawText(("Triangles on world: " + std::to_string(display_triangles_count)).c_str(),
+            DrawText(("Triangles on world_md: " + std::to_string(display_triangles_count)).c_str(),
                      10,
                      190,
                      20,

@@ -226,7 +226,6 @@ class generator
                         std::vector<block> blocks = std::vector<block>(
                             chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z, block());
 
-                        /*
                         generate_2d(blocks,
                                     real_x * chunk::chunk_size_x,
                                     real_y * chunk::chunk_size_y,
@@ -235,8 +234,7 @@ class generator
                                     chunk::chunk_size_y,
                                     chunk::chunk_size_z);
 
-                        */
-
+                        /*
                         generate_3d(blocks,
                                     real_x * chunk::chunk_size_x,
                                     real_y * chunk::chunk_size_y,
@@ -244,7 +242,7 @@ class generator
                                     chunk::chunk_size_x,
                                     chunk::chunk_size_y,
                                     chunk::chunk_size_z);
-
+                        */
                         chunk& current_chunk = chunks[math::convert_to_1d(x, y, z, chunk_x, chunk_y, chunk_z)];
 
                         // Optimize chunk
@@ -307,7 +305,7 @@ class generator
                     }
                     */
 
-                    uint32_t noise_value = heightmap[vec_index] / 8;
+                    uint32_t noise_value = heightmap[vec_index] / 4;
 
                     for (uint32_t y = 0; y < size_y; y++) {
                         // Calculate real y from begin_y

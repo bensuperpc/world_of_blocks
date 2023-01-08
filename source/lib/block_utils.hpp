@@ -21,7 +21,9 @@ namespace block_utils
                                                        const float block_size_z)
 {
     auto&& block_pos = block.get_position();
-    return {block_pos.x * block_size_x, block_pos.y * block_size_y, block_pos.z * block_size_y};
+    return {block_pos.x * block_size_x + block_size_x / 2.0,
+            block_pos.y * block_size_y + block_size_y / 2.0,
+            block_pos.z * block_size_y + block_size_y / 2.0};
 }
 [[nodiscard]] inline raylib::Vector3 get_real_position(const block& block, const float block_size)
 {

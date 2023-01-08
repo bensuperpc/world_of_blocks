@@ -53,7 +53,7 @@ class optimizer
             }
             */
 
-//#pragma omp parallel for schedule(auto)
+            //#pragma omp parallel for schedule(auto)
             for (size_t i = 0; i < blocks.size(); i++) {
                 block& current_cube = blocks[i];
 
@@ -80,7 +80,8 @@ class optimizer
                 size_t i1 = i - 1;
                 if (i1 < blocks.size()) {
                     if constexpr (debug) {
-                        if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
+                        if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z
+                            && debug) {
                             std::cout << "Block (xyz): " << blocks[i1].x << ", " << blocks[i1].y << ", " << blocks[i1].z
                                       << " index: " << i1
                                       << " block_type: " << block_type::get_name(blocks[i1].block_type) << " x-1"
@@ -90,7 +91,8 @@ class optimizer
                     if (current_cube.x > begin_x) {
                         if (blocks[i1].block_type != block_type::air) {
                             neighbors++;
-                            if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
+                            if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z
+                                && debug) {
                                 std::cout << "Adding neighbor" << std::endl;
                             }
                         }
@@ -107,7 +109,8 @@ class optimizer
                 size_t i2 = i + 1;
                 if (i2 < blocks.size()) {
                     if constexpr (debug) {
-                        if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
+                        if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z
+                            && debug) {
                             std::cout << "Block (xyz): " << blocks[i2].x << ", " << blocks[i2].y << ", " << blocks[i2].z
                                       << " index: " << i2
                                       << " block_type: " << block_type::get_name(blocks[i2].block_type) << " x+1"
@@ -117,7 +120,8 @@ class optimizer
                     if (current_cube.x < end_x - 1) {
                         if (blocks[i2].block_type != block_type::air) {
                             neighbors++;
-                            if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
+                            if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z
+                                && debug) {
                                 std::cout << "Adding neighbor" << std::endl;
                             }
                         }
@@ -137,7 +141,8 @@ class optimizer
                 size_t i3 = i - size_x;
                 if (i3 < blocks.size()) {
                     if constexpr (debug) {
-                        if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
+                        if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z
+                            && debug) {
                             std::cout << "Block (xyz): " << blocks[i3].x << ", " << blocks[i3].y << ", " << blocks[i3].z
                                       << " index: " << i3
                                       << " block_type: " << block_type::get_name(blocks[i3].block_type) << " y-1"
@@ -147,7 +152,8 @@ class optimizer
                     if (current_cube.y > begin_y) {
                         if (blocks[i3].block_type != block_type::air) {
                             neighbors++;
-                            if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
+                            if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z
+                                && debug) {
                                 std::cout << "Adding neighbor" << std::endl;
                             }
                         }
@@ -158,7 +164,8 @@ class optimizer
                 size_t i4 = i + size_x;
                 if (i4 < blocks.size()) {
                     if constexpr (debug) {
-                        if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
+                        if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z
+                            && debug) {
                             std::cout << "Block (xyz): " << blocks[i4].x << ", " << blocks[i4].y << ", " << blocks[i4].z
                                       << " index: " << i4
                                       << " block_type: " << block_type::get_name(blocks[i4].block_type) << " y+1"
@@ -168,7 +175,8 @@ class optimizer
                     if (current_cube.y < end_y - 1) {
                         if (blocks[i4].block_type != block_type::air) {
                             neighbors++;
-                            if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
+                            if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z
+                                && debug) {
                                 std::cout << "Adding neighbor" << std::endl;
                             }
                         }
@@ -185,7 +193,8 @@ class optimizer
                 size_t i5 = i - size_x * size_y;
                 if (i5 < blocks.size()) {
                     if constexpr (debug) {
-                        if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
+                        if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z
+                            && debug) {
                             std::cout << "Block (xyz): " << blocks[i5].x << ", " << blocks[i5].y << ", " << blocks[i5].z
                                       << " index: " << i5
                                       << " block_type: " << block_type::get_name(blocks[i5].block_type) << " z-1"
@@ -195,7 +204,8 @@ class optimizer
                     if (current_cube.z > begin_z) {
                         if (blocks[i5].block_type != block_type::air) {
                             neighbors++;
-                            if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
+                            if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z
+                                && debug) {
                                 std::cout << "Adding neighbor" << std::endl;
                             }
                         }
@@ -212,7 +222,8 @@ class optimizer
                 size_t i6 = i + size_x * size_y;
                 if (i6 < blocks.size()) {
                     if constexpr (debug) {
-                        if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
+                        if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z
+                            && debug) {
                             std::cout << "Block (xyz): " << blocks[i6].x << ", " << blocks[i6].y << ", " << blocks[i6].z
                                       << " index: " << i6
                                       << " block_type: " << block_type::get_name(blocks[i6].block_type) << " z+1"
@@ -222,7 +233,8 @@ class optimizer
                     if (current_cube.z < end_z - 1) {
                         if (blocks[i6].block_type != block_type::air) {
                             neighbors++;
-                            if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z && debug) {
+                            if (current_cube.x == debug_x && current_cube.y == debug_y && current_cube.z == debug_z
+                                && debug) {
                                 std::cout << "Adding neighbor" << std::endl;
                             }
                         }

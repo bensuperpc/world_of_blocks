@@ -12,11 +12,10 @@
 
 #include <omp.h>
 
+#include "math.hpp"
 #include "raylib-cpp.hpp"
 #include "raylib.h"
 #include "raymath.h"
-
-#include "math.hpp"
 
 // Block type enum
 

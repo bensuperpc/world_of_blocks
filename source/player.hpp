@@ -18,8 +18,8 @@ class player
         player()
         {
             raylib::Camera _camera(
-                raylib::Vector3(
-                    48.0f, 48.0f, -48.0f),
+                // raylib::Vector3(48.0f, 48.0f, -48.0f),
+                raylib::Vector3(16.0f, 48.0f, 16.0f),
                 raylib::Vector3(16.0f, 16.0f, 16.0f),
                 raylib::Vector3(0.0f, 1.0f, 0.0f),
                 80.0f,
@@ -33,15 +33,11 @@ class player
 
         ~player() {}
 
-        void update()
-        {
-            this->camera.Update();
-        }
+        void update() { this->camera.Update(); }
 
         raylib::Camera camera;
 
-        Vector3 &position = this->camera.position;
-
+        Vector3& position = this->camera.position;
 };
 
 #endif  // WORLD_OF_CUBE_WORLD_HPP
