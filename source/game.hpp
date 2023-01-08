@@ -40,6 +40,7 @@ class game
 
     private:
         raylib::Window window;
+        player player1 = player();
 };
 
 #endif  // GAME_HPP

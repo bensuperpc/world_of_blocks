@@ -40,8 +40,6 @@ void game::run()
 
     const float block_size = 1.0f;
 
-    player player1 = player();
-
     // Ray and closest_collision
     raylib::Ray ray;
     std::vector<std::pair<block*, RayCollision>> collisions;

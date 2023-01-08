@@ -28,26 +28,19 @@ class world
     public:
         explicit world() {}
 
-        ~world() {
-            for (size_t ci = 0; ci < chunks.size(); ci++) {
-                UnloadModel(chunks_model[ci]);
-            }
-        }
+        ~world() { unload_models(); }
 
         void generate_world()
         {
             std::cout << "Generating world" << std::endl;
             // Free the models
-            for (size_t ci = 0; ci < chunks.size(); ci++) {
-                UnloadModel(chunks_model[ci]);
-            }
+            unload_models();
 
             // Clear the chunks
             chunks.clear();
             chunks.shrink_to_fit();
-            chunks_model.clear();
-            chunks_model.shrink_to_fit();
 
+            // Generate new perlin noise
             gen.reseed(this->seed);
 
             uint32_t chunk_size = world_chunk_size_x * world_chunk_size_y * world_chunk_size_z;
@@ -60,9 +53,17 @@ class world
                               world_chunk_size_x,
                               world_chunk_size_y,
                               world_chunk_size_z);
-            
+
             chunks_model = std::move(world_md.generate_world_models(chunks));
-            
+        }
+
+        void unload_models()
+        {
+            for (size_t ci = 0; ci < chunks.size(); ci++) {
+                UnloadModel(chunks_model[ci]);
+            }
+            chunks_model.clear();
+            chunks_model.shrink_to_fit();
         }
 
         int world_chunk_size_x = 4;

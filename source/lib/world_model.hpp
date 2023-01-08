@@ -201,7 +201,7 @@ class world_model
             return models;
         }
 
-        int triangle_count(chunk& _chunk)
+        inline int triangle_count(chunk& _chunk)
         {
             int count = 0;
             auto& blocks = _chunk.get_blocks();
