@@ -36,11 +36,18 @@ class game
         game();
         ~game();
         void run();
+        void init();
         Mesh cube_mesh(chunk& _chunk);
 
     private:
+        // Game settings and window
         raylib::Window window;
-        player player1 = player();
+        int screen_width = 1920;
+        int screen_height = 1080;
+        int target_fps = 60;
+
+        world world_new = world();
+        world_model world_md = world_model();
 };
 
 #endif  // GAME_HPP

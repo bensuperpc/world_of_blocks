@@ -226,6 +226,7 @@ class generator
                         std::vector<block> blocks = std::vector<block>(
                             chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z, block());
 
+                        
                         generate_2d(blocks,
                                     real_x * chunk::chunk_size_x,
                                     real_y * chunk::chunk_size_y,
@@ -234,6 +235,7 @@ class generator
                                     chunk::chunk_size_y,
                                     chunk::chunk_size_z);
 
+                        
                         /*
                         generate_3d(blocks,
                                     real_x * chunk::chunk_size_x,

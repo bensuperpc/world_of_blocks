@@ -1,22 +1,19 @@
 #include "game.hpp"
 
-Mesh game::cube_mesh(chunk& _chunk) {}
-
 game::game() {}
 
 game::~game() {}
 
-void game::run()
+void game::init()
 {
     std::ios_base::sync_with_stdio(false);
+    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
+}
 
-    const int screen_width = 1920;
-    const int screen_height = 1080;
-    const int target_fps = 60;
-
+void game::run()
+{
     bool show_block_grid = true;
 
-    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     raylib::Window _window(screen_width, screen_height, "Minecube");
     this->window = std::move(_window);
 
@@ -28,14 +25,13 @@ void game::run()
     // SetTextureFilter(textureGrid, TEXTURE_FILTER_ANISOTROPIC_16X);
     // SetTextureWrap(textureGrid, TEXTURE_WRAP_CLAMP);
 
-    world_model world_md = world_model();
+    raylib::Texture2D texture =LoadTexture("cubicmap_atlas.png");
 
-    world world_new = world();
+    player player1 = player();
     world_new.generate_world();
 
     for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
-        world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("cubicmap_atlas.png");
-        // chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
+        world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     }
 
     const float block_size = 1.0f;
@@ -80,10 +76,7 @@ void game::run()
             world_new.seed = seed;
             world_new.generate_world();
             for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
-                world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture =
-                    LoadTexture("cubicmap_atlas.png");
-                // chunks_model[ci]->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = textureGrid;
-
+                world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
                 std::cout << "seed: " << seed << std::endl;
             }
         }
@@ -97,12 +90,7 @@ void game::run()
             TakeScreenshot("screenshot.png");
         }
 
-        // Player movement up
-        if (IsKeyDown(KEY_SPACE)) {
-            // player1.position.x += 2.0f * std::sin(player1.camera.rotation.y * DEG2RAD);
-            player1.position.y += 0.5f;
-        }
-
+        /*
         // TODO: optimize to check only the blocks around the player
         for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
             auto& current_chunk = world_new.chunks[ci];
@@ -121,6 +109,7 @@ void game::run()
                 }
             }
         }
+        */
 
         if (!collisions.empty()) {
             // sort by distance and get the closest collision
