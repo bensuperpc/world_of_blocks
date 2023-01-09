@@ -19,7 +19,6 @@
 #include "block.hpp"
 #include "chunk.hpp"
 #include "math.hpp"
-#include "optimizer.hpp"
 
 class generator
 {
@@ -196,7 +195,8 @@ class generator
                            const T begin_chunk_z,
                            const uint32_t chunk_x,
                            const uint32_t chunk_y,
-                           const uint32_t chunk_z)
+                           const uint32_t chunk_z,
+                           const bool generate_3d_terrian = true)
         {
             constexpr bool debug = false;
 
@@ -220,35 +220,25 @@ class generator
                         }
                         std::vector<block> blocks = std::vector<block>(chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z, block());
 
-                        generate_2d(blocks,
-                                    real_x * chunk::chunk_size_x,
-                                    real_y * chunk::chunk_size_y,
-                                    real_z * chunk::chunk_size_z,
-                                    chunk::chunk_size_x,
-                                    chunk::chunk_size_y,
-                                    chunk::chunk_size_z);
+                        if (generate_3d_terrian) {
+                            generate_3d(blocks,
+                                        real_x * chunk::chunk_size_x,
+                                        real_y * chunk::chunk_size_y,
+                                        real_z * chunk::chunk_size_z,
+                                        chunk::chunk_size_x,
+                                        chunk::chunk_size_y,
+                                        chunk::chunk_size_z);
+                        } else {
+                            generate_2d(blocks,
+                                        real_x * chunk::chunk_size_x,
+                                        real_y * chunk::chunk_size_y,
+                                        real_z * chunk::chunk_size_z,
+                                        chunk::chunk_size_x,
+                                        chunk::chunk_size_y,
+                                        chunk::chunk_size_z);
+                        }
 
-                        /*
-                        generate_3d(blocks,
-                                    real_x * chunk::chunk_size_x,
-                                    real_y * chunk::chunk_size_y,
-                                    real_z * chunk::chunk_size_z,
-                                    chunk::chunk_size_x,
-                                    chunk::chunk_size_y,
-                                    chunk::chunk_size_z);
-                        */
                         chunk& current_chunk = chunks[math::convert_to_1d(x, y, z, chunk_x, chunk_y, chunk_z)];
-
-                        // Optimize chunk
-                        /*
-                        opt.optimize(blocks,
-                                     real_x * chunk::chunk_size_x,
-                                     real_y * chunk::chunk_size_y,
-                                     real_z * chunk::chunk_size_z,
-                                     chunk::chunk_size_x,
-                                     chunk::chunk_size_y,
-                                     chunk::chunk_size_z);
-                                     */
 
                         current_chunk.set_blocks(blocks);
                         current_chunk.set_chuck_pos(real_x, real_y, real_z);
@@ -406,8 +396,6 @@ class generator
         int32_t octaves = 4;
         double persistence = 0.8f;
         double lacunarity = 255.0f;
-
-        optimizer opt;
 };
 
 #endif  // WORLD_OF_CUBE_GENERATOR_HPP

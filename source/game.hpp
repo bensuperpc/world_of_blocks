@@ -25,7 +25,6 @@
 #include "block_utils.hpp"
 #include "chunk.hpp"
 #include "generator.hpp"
-#include "optimizer.hpp"
 #include "player.hpp"
 #include "world.hpp"
 #include "world_model.hpp"
@@ -44,7 +43,7 @@ class game
         raylib::Window window;
         int screen_width = 1920;
         int screen_height = 1080;
-        int target_fps = 60;
+        int target_fps = 480;
 
         world world_new = world();
         world_model world_md = world_model();

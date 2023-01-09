@@ -25,7 +25,7 @@ void game::run()
     // SetTextureFilter(textureGrid, TEXTURE_FILTER_ANISOTROPIC_16X);
     // SetTextureWrap(textureGrid, TEXTURE_WRAP_CLAMP);
 
-    raylib::Texture2D texture = LoadTexture("cubicmap_atlas.png");
+    raylib::Texture2D texture = LoadTexture("grass.png");
 
     player player1 = player();
     world_new.generate_world();
@@ -90,6 +90,7 @@ void game::run()
             TakeScreenshot("screenshot.png");
         }
 
+        /*
         // TODO: optimize to check only the blocks around the player
         for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
             auto& current_chunk = world_new.chunks[ci];
@@ -108,6 +109,7 @@ void game::run()
                 }
             }
         }
+        */
 
         if (!collisions.empty()) {
             // sort by distance and get the closest collision
@@ -149,43 +151,18 @@ void game::run()
             for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
                 chunk& current_chunk = world_new.chunks[ci];
                 auto&& chunk_coor = current_chunk.get_position();
-                auto blocks = current_chunk.get_blocks();
+                auto& blocks = current_chunk.get_blocks();
+                Model& current_model = world_new.chunks_model[ci];
 
                 Vector3 chunk_pos = {static_cast<float>(chunk_coor.x * chunk::chunk_size_x * block_size),
                                      static_cast<float>(chunk_coor.y * chunk::chunk_size_y * block_size),
                                      static_cast<float>(chunk_coor.z * chunk::chunk_size_z * block_size)};
 
-                DrawModelEx(world_new.chunks_model[ci], chunk_pos, {0, 0, 0}, 1.0f, {1, 1, 1}, WHITE);
-                for (size_t i = 0; i < world_new.chunks_model[ci].meshCount; i++) {
-                    display_vectices_count += world_new.chunks_model[ci].meshes->vertexCount;
-                    display_triangles_count += world_new.chunks_model[ci].meshes->triangleCount;
-                }
-                display_chunk_count++;
+                DrawModelEx(current_model, chunk_pos, {0, 0, 0}, 1.0f, {1, 1, 1}, WHITE);
 
-                display_block_count +=
-                    std::count_if(blocks.begin(), blocks.end(), [](const auto& b) { return b.is_visible && b.block_type != block_type::air; });
-
-                continue;
-
-                for (size_t bi = 0; bi < current_chunk.size(); bi++) {
-                    block& current_block = blocks[bi];
-                    Vector3&& real_block_pos = block_utils::get_real_position(current_block, block_size);
-
-                    // Draw only blocks if is_visible is true
-                    if ((current_block.is_visible == false) || (current_block.block_type == block_type::air)) {
-                        skip_by_display++;
-                        continue;
-                    }
-
-                    // If block is not visible on screen, skip it
-                    const raylib::Vector2&& block_screen_pos = player1.camera.GetWorldToScreen(block_utils::get_center(current_block, block_size));
-                    if (block_screen_pos.x < 0.0 || block_screen_pos.x > static_cast<float>(GetScreenWidth()) || block_screen_pos.y < 0.0
-                        || block_screen_pos.y > static_cast<float>(GetScreenHeight()))
-                    {
-                        skip_by_out_of_screen++;
-                        continue;
-                    }
-                }
+                display_vectices_count += current_model.meshes->vertexCount;
+                display_triangles_count += current_model.meshes->triangleCount;
+                display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
             }
             if (show_block_grid) {
                 DrawGrid(256, 1.0f);
