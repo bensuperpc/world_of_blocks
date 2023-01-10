@@ -25,7 +25,6 @@ void game::run()
 
     raylib::Texture2D texture = LoadTexture("grass.png");
     world_new.generate_world();
-    exit(0);
 
     for (size_t ci = 0; ci < world_new.chunks_model.size(); ci++) {
         world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
