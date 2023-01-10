@@ -60,7 +60,7 @@ class chunk
         static constexpr int chunk_size_z = 16;
 
     protected:
-        std::vector<block> blocks = std::vector<block>(chunk_size_x * chunk_size_y * chunk_size_z, block());
+        std::vector<block> blocks;
 
         // Chunk coordinates
         int chunk_x = 0;

@@ -28,7 +28,9 @@ class world
     public:
         explicit world() {}
 
-        ~world() { unload_models(); }
+        ~world() {
+
+        }
 
         void generate_world()
         {
@@ -38,14 +40,15 @@ class world
             chunks.shrink_to_fit();
 
             // Free the models
-            unload_models();
+            chunks_model.clear();
+            chunks_model.shrink_to_fit();
 
             // Generate new perlin noise
             gen.reseed(this->seed);
 
             uint32_t chunk_size = world_chunk_size_x * world_chunk_size_y * world_chunk_size_z;
             chunks = std::vector<chunk>(chunk_size, chunk());
-
+            
             gen.generate_word(chunks,
                               world_chunk_start_x,
                               world_chunk_start_y,
@@ -55,23 +58,11 @@ class world
                               world_chunk_size_z,
                               true);
 
-            generate_world_models();
-        }
-
-        void generate_world_models()
-        {
             std::cout << "Generating world models" << std::endl;
             chunks_model = std::move(world_md.generate_world_models(chunks));
         }
 
-        void unload_models()
-        {
-            for (size_t ci = 0; ci < chunks.size(); ci++) {
-                UnloadModel(chunks_model[ci]);
-            }
-            chunks_model.clear();
-            chunks_model.shrink_to_fit();
-        }
+        void generate_world_models() {}
 
         int world_chunk_size_x = 24;
         int world_chunk_size_y = 4;
@@ -87,7 +78,7 @@ class world
         world_model world_md = world_model();
 
         std::vector<chunk> chunks;
-        std::vector<Model> chunks_model;
+        std::vector<raylib::Model> chunks_model;
 };
 
 #endif  // WORLD_OF_CUBE_WORLD_HPP

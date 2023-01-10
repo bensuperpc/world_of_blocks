@@ -219,7 +219,7 @@ class generator
                             std::cout << "Generating chunk: " << real_x << ", " << real_y << ", " << real_z << std::endl;
                         }
                         std::vector<block> blocks = std::vector<block>(chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z, block());
-
+                        
                         if (generate_3d_terrian) {
                             generate_3d(blocks,
                                         real_x * chunk::chunk_size_x,
@@ -258,9 +258,9 @@ class generator
         {
             constexpr bool debug = false;
 
-            const T end_x = static_cast<T>(begin_x + size_x);
-            const T end_y = static_cast<T>(begin_y + size_y);
-            const T end_z = static_cast<T>(begin_z + size_z);
+            // const T end_x = static_cast<T>(begin_x + size_x);
+            // const T end_y = static_cast<T>(begin_y + size_y);
+            // const T end_z = static_cast<T>(begin_z + size_z);
 
             std::vector<uint32_t> heightmap(size_x * size_z);
 
@@ -309,8 +309,6 @@ class generator
                         current_block.y = real_y;
                         current_block.z = real_z;
 
-                        current_block.color = raylib::Color::Gray();
-
                         // If the noise value is greater than the current block, make it air
                         if (y > noise_value) {
                             current_block.is_visible = false;
@@ -344,11 +342,6 @@ class generator
 
             generate_3d_heightmap(heightmap, begin_x, begin_y, begin_z, size_x, size_y, size_z);
 
-            // Insert blocks if needed to make sure the vector is the correct size
-            if (blocks.size() < size_x * size_y * size_z) {
-                blocks.insert(blocks.end(), size_x * size_y * size_z - blocks.size(), block());
-            }
-
             if constexpr (debug) {
                 std::cout << "Generating blocks..." << std::endl;
             }
@@ -373,8 +366,6 @@ class generator
                         current_block.x = real_x;
                         current_block.y = real_y;
                         current_block.z = real_z;
-
-                        current_block.color = raylib::Color::Gray();
 
                         if (noise_value < 120) {
                             current_block.is_visible = false;

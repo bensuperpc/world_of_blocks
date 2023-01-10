@@ -89,8 +89,8 @@
       "name": "flags-gprof",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "-Og -g -Wall -Wextra -Wpedantic -pg",
-        "CMAKE_C_FLAGS": "-Og -g -Wall -Wextra -Wpedantic -pg"
+        "CMAKE_CXX_FLAGS": "-Og -g3 -Wall -Wextra -Wpedantic -pg",
+        "CMAKE_C_FLAGS": "-Og -g3 -Wall -Wextra -Wpedantic -pg"
       }
     },
     {
@@ -149,7 +149,7 @@
       "inherits": ["ci-unix", "dev-mode"],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Sanitize",
-        "CMAKE_CXX_FLAGS_SANITIZE": "-O2 -g -fsanitize=address,undefined,leak -fno-omit-frame-pointer -fno-common"
+        "CMAKE_CXX_FLAGS_SANITIZE": "-Og -g3 -fsanitize=address,undefined,leak -fno-omit-frame-pointer -fno-common"
       },
       "environment": {
         "ASAN_OPTIONS": "strict_string_checks=1 detect_stack_use_after_return=1 check_initialization_order=1 strict_init_order=1 detect_leaks=1",

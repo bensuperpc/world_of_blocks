@@ -37,16 +37,34 @@ class game
         void run();
         void init();
         Mesh cube_mesh(chunk& _chunk);
+        
+        void display_debug_menu();
 
     private:
         // Game settings and window
         raylib::Window window;
         int screen_width = 1920;
         int screen_height = 1080;
-        int target_fps = 480;
+        int target_fps = 240;
 
+        // Generator
         world world_new = world();
-        world_model world_md = world_model();
+
+        // Menu
+        bool debug_menu = true;
+
+        // Debug menu
+        size_t display_vectices_count = 0;
+        size_t display_triangles_count = 0;
+        size_t display_block_count = 0;
+        size_t display_chunk_count = 0;
+
+        Vector3i block_info_pos = {0, 0, 0};
+        size_t block_info_index = 0;
+
+        // Game variables
+        raylib::Vector2 mouse_position = {0,0};
+        raylib::Vector2 screen_middle = {0,0};
 };
 
 #endif  // GAME_HPP

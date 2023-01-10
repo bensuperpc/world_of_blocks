@@ -1,25 +1,12 @@
 #ifndef WORLD_OF_CUBE_WORLD_MODEL_HPP
 #define WORLD_OF_CUBE_WORLD_MODEL_HPP
-
-#include <algorithm>
-#include <chrono>
-#include <filesystem>
-#include <iostream>
-#include <numeric>
-#include <random>
-#include <string>
-#include <string_view>
 #include <vector>
 
 #include <omp.h>
-#include <rlgl.h>
 
 #include "raylib-cpp.hpp"
 #include "raylib.h"
 #include "raymath.h"
-// memcpy
-#include <stdio.h>
-#include <string.h>
 
 // Cube lib
 #include "block.hpp"
@@ -33,12 +20,12 @@ class world_model
 
         ~world_model() {}
 
-        static constexpr int south_face = 0;
-        static constexpr int north_face = 1;
-        static constexpr int west_face = 2;
-        static constexpr int east_face = 3;
-        static constexpr int up_face = 4;
-        static constexpr int down_face = 5;
+        static constexpr size_t south_face = 0;
+        static constexpr size_t north_face = 1;
+        static constexpr size_t west_face = 2;
+        static constexpr size_t east_face = 3;
+        static constexpr size_t up_face = 4;
+        static constexpr size_t down_face = 5;
 
         inline void add_vertex(
             Mesh& mesh, size_t& triangle_index, size_t& vert_index, Vector3& vertex, Vector3 offset, Vector3 normal, Vector2 texcoords)
@@ -174,23 +161,23 @@ class world_model
             }
         }
 
-        std::vector<Model> generate_world_models(std::vector<chunk>& chunks)
+        std::vector<raylib::Model> generate_world_models(std::vector<chunk>& chunks)
         {
-            std::vector<Model> models;
+            std::vector<raylib::Model> models;
             std::vector<Mesh> meshes;
+            meshes.reserve(chunks.size());
+            models.reserve(chunks.size());
 // Generate meshes on multiple threads
 #pragma omp for ordered schedule(static, 1)
             for (size_t i = 0; i < chunks.size(); i++) {
-                auto&& mesh = chunk_mesh(chunks, i);
+                Mesh mesh = chunk_mesh(chunks, i);
 #pragma omp ordered
-                meshes.push_back(mesh);
+                meshes.push_back(std::move(mesh));
             }
-
             // Generate models on mono thread (OpenGL)
             for (size_t i = 0; i < meshes.size(); i++) {
                 UploadMesh(&meshes[i], false);
-                Model world_model = LoadModelFromMesh(meshes[i]);
-                models.push_back(world_model);
+                models.push_back(raylib::Model(meshes[i]));
             }
             return models;
         }
@@ -317,9 +304,6 @@ class world_model
 
                         int border_count = count_border(x, y, z, _chunk);
                         int neighbour_count = count_neighbours(x, y, z, _chunk);
-
-                        current_block.neighbors = neighbour_count;
-                        current_block.edges = border_count;
 
                         if (current_block.x == 48 && current_block.y == 36 && current_block.z == 50) {
                             std::cout << "Block: " << current_block.x << ", " << current_block.y << ", " << current_block.z << std::endl;

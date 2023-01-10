@@ -21,17 +21,17 @@
 
 namespace block_type
 {
-size_t constexpr air = 0;
-size_t constexpr grass = 1;
-size_t constexpr dirt = 2;
-size_t constexpr stone = 3;
-size_t constexpr sand = 4;
-size_t constexpr water = 5;
-size_t constexpr wood = 6;
-size_t constexpr leaves = 7;
-size_t constexpr unknown = std::numeric_limits<size_t>::max();
+uint8_t constexpr air = 0;
+uint8_t constexpr grass = 1;
+uint8_t constexpr dirt = 2;
+uint8_t constexpr stone = 3;
+uint8_t constexpr sand = 4;
+uint8_t constexpr water = 5;
+uint8_t constexpr wood = 6;
+uint8_t constexpr leaves = 7;
+uint8_t constexpr unknown = std::numeric_limits<uint8_t>::max();
 
-[[nodiscard]] inline std::string get_name(size_t block_type)
+[[nodiscard]] inline std::string get_name(uint8_t block_type)
 {
     switch (block_type) {
         case air:
@@ -60,11 +60,10 @@ size_t constexpr unknown = std::numeric_limits<size_t>::max();
 class block
 {
     public:
-        explicit block(int x, int y, int z, Color color, size_t block_type, bool is_visible)
+        explicit block(int x, int y, int z, uint8_t block_type, bool is_visible)
             : x(x)
             , y(y)
             , z(z)
-            , color(color)
             , block_type(block_type)
             , is_visible(is_visible)
         {
@@ -75,23 +74,17 @@ class block
         ~block() {}
 
         [[nodiscard]] Vector3i get_position() const { return {x, y, z}; }
-        [[nodiscard]] size_t get_block_type() const { return block_type; }
+        [[nodiscard]] uint8_t get_block_type() const { return block_type; }
 
         // Block coordinates
         int x = 0;
         int y = 0;
         int z = 0;
 
-        size_t block_type = 0;
+        uint8_t block_type = 0;
 
         // For rendering
-        // raylib::Texture2D* texture = nullptr;
-        Color color = raylib::Color::Gray();
         bool is_visible = true;
-
-        // For debug
-        size_t neighbors = 0;
-        size_t edges = 0;
 };
 
 #endif  // WORLD_OF_CUBE_BLOCK_HPP
