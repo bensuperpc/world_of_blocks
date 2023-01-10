@@ -25,6 +25,7 @@ void game::run()
 
     raylib::Texture2D texture = LoadTexture("grass.png");
     world_new.generate_world();
+    exit(0);
 
     for (size_t ci = 0; ci < world_new.chunks_model.size(); ci++) {
         world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
@@ -124,22 +125,41 @@ void game::run()
                 if (world_new.chunks_model.size() <= ci) {
                     continue;
                 }
-
                 Model& current_model = world_new.chunks_model[ci];
 
                 Vector3 chunk_pos = {static_cast<float>(chunk_coor.x * chunk::chunk_size_x * 1.0f),
                                      static_cast<float>(chunk_coor.y * chunk::chunk_size_y * 1.0f),
                                      static_cast<float>(chunk_coor.z * chunk::chunk_size_z * 1.0f)};
 
-                DrawModelEx(current_model, chunk_pos, {0, 0, 0}, 1.0f, {1, 1, 1}, WHITE);
+                Vector3 chunk_pos_center = {static_cast<float>(chunk_coor.x * chunk::chunk_size_x + chunk::chunk_size_x / 2.0f),
+                                            static_cast<float>(chunk_coor.y * chunk::chunk_size_y + chunk::chunk_size_y / 2.0f),
+                                            static_cast<float>(chunk_coor.z * chunk::chunk_size_z + chunk::chunk_size_z / 2.0f)};
 
-                if (!debug_menu) {
+                if (debug_menu) {
+                    display_vectices_count += current_model.meshes->vertexCount;
+                    display_triangles_count += current_model.meshes->triangleCount;
+                    display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
+                    display_chunk_count++;
+                }
+
+                const raylib::Vector2&& chunk_screen_pos = player1.camera.GetWorldToScreen(chunk_pos_center);
+
+                if (chunk_screen_pos.x < 0.0 || chunk_screen_pos.x > static_cast<float>(GetScreenWidth()) || chunk_screen_pos.y < 0.0
+                    || chunk_screen_pos.y > static_cast<float>(GetScreenHeight()))
+                {
                     continue;
                 }
-                display_vectices_count += current_model.meshes->vertexCount;
-                display_triangles_count += current_model.meshes->triangleCount;
-                display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
-                display_chunk_count++;
+
+                DrawModelEx(current_model, chunk_pos, {0, 0, 0}, 1.0f, {1, 1, 1}, WHITE);
+                if (debug_menu) {
+                    chunks_on_screen_count++;
+                    continue;
+                    DrawCubeWires(chunk_pos,
+                                  static_cast<float>(chunk::chunk_size_x),
+                                  static_cast<float>(chunk::chunk_size_y),
+                                  static_cast<float>(chunk::chunk_size_z),
+                                  raylib::Color::Red());
+                }
             }
 
             if (block_grid) {
@@ -191,11 +211,10 @@ void game::draw_debug_menu()
 
     // Draw statistics
     DrawText(("Blocks on world: " + std::to_string(display_block_count)).c_str(), 10, 70, 20, raylib::Color::Black());
-
     DrawText(("Chunks on world: " + std::to_string(display_chunk_count)).c_str(), 10, 90, 20, raylib::Color::Black());
     DrawText(("Vertices on world: " + std::to_string(display_vectices_count)).c_str(), 10, 110, 20, raylib::Color::Black());
-
     DrawText(("Triangles on world: " + std::to_string(display_triangles_count)).c_str(), 10, 130, 20, raylib::Color::Black());
+    DrawText(("Chunks on screen: " + std::to_string(chunks_on_screen_count)).c_str(), 10, 170, 20, raylib::Color::Black());
 
     // Draw player position
     /*
@@ -213,4 +232,5 @@ void game::draw_debug_menu()
     display_triangles_count = 0;
     display_block_count = 0;
     display_chunk_count = 0;
+    chunks_on_screen_count = 0;
 }

@@ -58,6 +58,7 @@ class game
         size_t display_triangles_count = 0;
         size_t display_block_count = 0;
         size_t display_chunk_count = 0;
+        size_t chunks_on_screen_count = 0;
 
         Vector3i block_info_pos = {0, 0, 0};
         size_t block_info_index = 0;

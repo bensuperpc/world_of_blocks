@@ -79,7 +79,6 @@ class generator
                 std::cout << "Generating 2D noise..." << std::endl;
             }
 
-#pragma omp parallel for collapse(2) schedule(auto)
             for (uint32_t x = 0; x < size_x; x++) {
                 for (uint32_t z = 0; z < size_z; z++) {
                     // Calculate real x and z from begin_x and begin_z
@@ -135,7 +134,6 @@ class generator
                 std::cout << "Generating 3D noise..." << std::endl;
             }
 
-#pragma omp parallel for collapse(3) schedule(auto)
             for (uint32_t x = 0; x < size_x; x++) {
                 for (uint32_t z = 0; z < size_z; z++) {
                     for (uint32_t y = 0; y < size_y; y++) {
@@ -269,8 +267,7 @@ class generator
             if constexpr (debug) {
                 std::cout << "Generating blocks..." << std::endl;
             }
-// Generate blocks
-#pragma omp parallel for collapse(2) schedule(auto)
+            // Generate blocks
             for (uint32_t x = 0; x < size_x; x++) {
                 for (uint32_t z = 0; z < size_z; z++) {
                     // Noise value is divided by 4 to make it smaller and it is used as the height of the block (z)
@@ -328,7 +325,6 @@ class generator
                 std::cout << "Generating blocks..." << std::endl;
             }
             // Generate blocks
-            // #pragma omp parallel for collapse(3) schedule(auto)
             for (uint32_t x = 0; x < size_x; x++) {
                 for (uint32_t z = 0; z < size_z; z++) {
                     for (uint32_t y = 0; y < size_y; y++) {
