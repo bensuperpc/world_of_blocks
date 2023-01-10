@@ -51,11 +51,10 @@ class generator
 
         [[nodiscard]] uint32_t get_seed() const { return seed; }
 
-        template<typename T = int32_t>
         void generate_2d_heightmap(std::vector<uint32_t>& heightmap,
-                                   const T begin_x,
-                                   const T begin_y,
-                                   const T begin_z,
+                                   const int32_t begin_x,
+                                   const int32_t begin_y,
+                                   const int32_t begin_z,
                                    const uint32_t size_x,
                                    const uint32_t size_y,
                                    const uint32_t size_z)
@@ -67,9 +66,9 @@ class generator
                 exit(1);
             }
 
-            const T end_x = static_cast<T>(begin_x + size_x);
-            const T end_y = static_cast<T>(begin_y + size_y);
-            const T end_z = static_cast<T>(begin_z + size_z);
+            const int32_t end_x = static_cast<int32_t>(begin_x + size_x);
+            const int32_t end_y = static_cast<int32_t>(begin_y + size_y);
+            const int32_t end_z = static_cast<int32_t>(begin_z + size_z);
 
             if constexpr (debug) {
                 std::cout << "Generating:" << std::endl;
@@ -108,11 +107,10 @@ class generator
             }
         }
 
-        template<typename T = int32_t>
         void generate_3d_heightmap(std::vector<uint32_t>& heightmap,
-                                   const T begin_x,
-                                   const T begin_y,
-                                   const T begin_z,
+                                   const int32_t begin_x,
+                                   const int32_t begin_y,
+                                   const int32_t begin_z,
                                    const uint32_t size_x,
                                    const uint32_t size_y,
                                    const uint32_t size_z)
@@ -124,9 +122,9 @@ class generator
                 exit(1);
             }
 
-            const T end_x = static_cast<T>(begin_x + size_x);
-            const T end_y = static_cast<T>(begin_y + size_y);
-            const T end_z = static_cast<T>(begin_z + size_z);
+            const int32_t end_x = static_cast<int32_t>(begin_x + size_x);
+            const int32_t end_y = static_cast<int32_t>(begin_y + size_y);
+            const int32_t end_z = static_cast<int32_t>(begin_z + size_z);
 
             if constexpr (debug) {
                 std::cout << "Generating:" << std::endl;
@@ -171,10 +169,9 @@ class generator
             }
         }
 
-        template<typename T = int32_t>
-        std::vector<chunk> generate_word(const T begin_chunk_x,
-                                         const T begin_chunk_y,
-                                         const T begin_chunk_z,
+        std::vector<chunk> generate_word(const int32_t begin_chunk_x,
+                                         const int32_t begin_chunk_y,
+                                         const int32_t begin_chunk_z,
                                          const uint32_t chunk_x,
                                          const uint32_t chunk_y,
                                          const uint32_t chunk_z)
@@ -188,11 +185,10 @@ class generator
             return chunks;
         }
 
-        template<typename T = int32_t>
         void generate_word(std::vector<chunk>& chunks,
-                           const T begin_chunk_x,
-                           const T begin_chunk_y,
-                           const T begin_chunk_z,
+                           const int32_t begin_chunk_x,
+                           const int32_t begin_chunk_y,
+                           const int32_t begin_chunk_z,
                            const uint32_t chunk_x,
                            const uint32_t chunk_y,
                            const uint32_t chunk_z,
@@ -210,16 +206,16 @@ class generator
             for (uint32_t x = 0; x < chunk_x; x++) {
                 for (uint32_t z = 0; z < chunk_z; z++) {
                     for (uint32_t y = 0; y < chunk_y; y++) {
-                        const T real_x = static_cast<T>(x) + begin_chunk_x;
-                        const T real_y = static_cast<T>(y) + begin_chunk_y;
-                        const T real_z = static_cast<T>(z) + begin_chunk_z;
+                        const int32_t real_x = static_cast<int32_t>(x) + begin_chunk_x;
+                        const int32_t real_y = static_cast<int32_t>(y) + begin_chunk_y;
+                        const int32_t real_z = static_cast<int32_t>(z) + begin_chunk_z;
 
                         if constexpr (debug) {
 #pragma omp critical
                             std::cout << "Generating chunk: " << real_x << ", " << real_y << ", " << real_z << std::endl;
                         }
                         std::vector<block> blocks = std::vector<block>(chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z, block());
-                        
+
                         if (generate_3d_terrian) {
                             generate_3d(blocks,
                                         real_x * chunk::chunk_size_x,
@@ -247,20 +243,19 @@ class generator
             }
         }
 
-        template<typename T = int32_t>
-        void generate_2d(std::vector<block>& blocks,
-                         const T begin_x,
-                         const T begin_y,
-                         const T begin_z,
-                         const uint32_t size_x,
-                         const uint32_t size_y,
-                         const uint32_t size_z)
+        inline void generate_2d(std::vector<block>& blocks,
+                                const int32_t begin_x,
+                                const int32_t begin_y,
+                                const int32_t begin_z,
+                                const uint32_t size_x,
+                                const uint32_t size_y,
+                                const uint32_t size_z)
         {
             constexpr bool debug = false;
 
-            // const T end_x = static_cast<T>(begin_x + size_x);
-            // const T end_y = static_cast<T>(begin_y + size_y);
-            // const T end_z = static_cast<T>(begin_z + size_z);
+            // const int32_t end_x = static_cast<int32_t>(begin_x + size_x);
+            // const int32_t end_y = static_cast<int32_t>(begin_y + size_y);
+            // const int32_t end_z = static_cast<int32_t>(begin_z + size_z);
 
             std::vector<uint32_t> heightmap(size_x * size_z);
 
@@ -311,20 +306,19 @@ class generator
             }
         }
 
-        template<typename T = int32_t>
-        void generate_3d(std::vector<block>& blocks,
-                         const T begin_x,
-                         const T begin_y,
-                         const T begin_z,
-                         const uint32_t size_x,
-                         const uint32_t size_y,
-                         const uint32_t size_z)
+        inline void generate_3d(std::vector<block>& blocks,
+                                const int32_t begin_x,
+                                const int32_t begin_y,
+                                const int32_t begin_z,
+                                const uint32_t size_x,
+                                const uint32_t size_y,
+                                const uint32_t size_z)
         {
             constexpr bool debug = false;
 
-            const T end_x = static_cast<T>(begin_x + size_x);
-            const T end_y = static_cast<T>(begin_y + size_y);
-            const T end_z = static_cast<T>(begin_z + size_z);
+            const int32_t end_x = static_cast<int32_t>(begin_x + size_x);
+            const int32_t end_y = static_cast<int32_t>(begin_y + size_y);
+            const int32_t end_z = static_cast<int32_t>(begin_z + size_z);
 
             std::vector<uint32_t> heightmap(size_x * size_y * size_z);
 

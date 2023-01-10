@@ -160,7 +160,7 @@ void game::run()
 
             player1.camera.EndMode();
 
-            display_debug_menu();
+            draw_debug_menu();
 
             // Draw crosshair in the middle of the screen
             DrawLine(screen_middle.x - 10, screen_middle.y, screen_middle.x + 10, screen_middle.y, raylib::Color::SkyBlue());
@@ -170,7 +170,7 @@ void game::run()
     }
 }
 
-void game::display_debug_menu()
+void game::draw_debug_menu()
 {
     if (!this->debug_menu) {
         return;

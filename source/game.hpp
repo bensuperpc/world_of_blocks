@@ -38,7 +38,7 @@ class game
         void init();
         Mesh cube_mesh(chunk& _chunk);
 
-        void display_debug_menu();
+        void draw_debug_menu();
 
     private:
         // Game settings and window
