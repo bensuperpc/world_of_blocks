@@ -37,7 +37,7 @@ class game
         void run();
         void init();
         Mesh cube_mesh(chunk& _chunk);
-        
+
         void display_debug_menu();
 
     private:
@@ -62,9 +62,21 @@ class game
         Vector3i block_info_pos = {0, 0, 0};
         size_t block_info_index = 0;
 
+        // Debug
+        bool block_grid = true;
+
         // Game variables
-        raylib::Vector2 mouse_position = {0,0};
-        raylib::Vector2 screen_middle = {0,0};
+        raylib::Vector2 mouse_position = {0, 0};
+        raylib::Vector2 screen_middle = {0, 0};
+
+        // Camera and player
+        // player player1;
+
+        // Ray collision
+        raylib::Ray ray;
+        std::vector<std::pair<block*, RayCollision>> collisions;
+        raylib::RayCollision closest_collision = raylib::RayCollision(false, 0, {0, 0, 0}, {0, 0, 0});
+        block* closest_block = nullptr;
 };
 
 #endif  // GAME_HPP

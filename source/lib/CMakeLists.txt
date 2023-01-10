@@ -27,7 +27,22 @@ project(
     LANGUAGES C CXX
 )
 
-add_library(${PROJECT_NAME} INTERFACE)
+include(../../cmake/lib/openmp.cmake)
+include(../../cmake/lib/raylib.cmake)
+include(../../cmake/lib/raylib-cpp.cmake)
+include(../../cmake/lib/perlin_noise.cmake)
+
+set(SOURCES
+    world_model.cpp
+    world.cpp
+    generator.cpp
+)
+
+#add_library(${PROJECT_NAME} INTERFACE)
+add_library(${PROJECT_NAME} ${SOURCES})
+
+target_link_libraries(${PROJECT_NAME} PUBLIC raylib raylib_cpp)
+
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
 set_target_properties(world_of_blocks_lib
@@ -38,6 +53,9 @@ set_target_properties(world_of_blocks_lib
     PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
+
 target_include_directories(
     world_of_blocks_lib INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 )
+
+

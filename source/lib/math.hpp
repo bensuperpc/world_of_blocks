@@ -1,27 +1,7 @@
 #ifndef WORLD_OF_CUBE_MATH_HPP
 #define WORLD_OF_CUBE_MATH_HPP
 
-#include <algorithm>
-#include <filesystem>
-#include <iostream>
-#include <numeric>
-#include <random>
-#include <string>
-#include <string_view>
-#include <vector>
-
-struct Vector3i
-{
-        int x;
-        int y;
-        int z;
-};
-
-struct Vector2i
-{
-        int x;
-        int y;
-};
+#include "vector.hpp"
 
 namespace math
 {
@@ -34,18 +14,13 @@ template<typename T = size_t>
 
 /*
 template<typename T = size_t>
-[[nodiscard]] inline constexpr Vector3i convert_to_3d(const T index, const T max_x, const T max_y, const T max_z)
+Vector3i convert_to_3d(const T index, const T max_x, const T max_y, const T max_z)
 {
+    int z = i / (max_x * max_y);
+    const int tmp = i - (z * max_x * max_y);
+    int y = tmp / max_x;
+    int x = tmp % max_x;
 
-                int z = i / (chunk::chunk_size_x * chunk::chunk_size_y);
-            int tmp = i - (z * chunk::chunk_size_x * chunk::chunk_size_y);
-            int y = tmp / chunk::chunk_size_x;
-            int x = tmp % chunk::chunk_size_x;
-
-
-    const int z = index / (max_x * max_y);
-    const int y = (index - (z * max_x * max_y)) / max_x;
-    const int x = index - (z * max_x * max_y) - (y * max_x);
     return {x, y, z};
 }
 */

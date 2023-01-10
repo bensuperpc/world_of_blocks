@@ -8,8 +8,6 @@ void game::init() {}
 
 void game::run()
 {
-    bool show_block_grid = true;
-
     std::ios_base::sync_with_stdio(false);
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     raylib::Window _window(screen_width, screen_height, "Minecube");
@@ -32,15 +30,6 @@ void game::run()
         world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     }
 
-    const float block_size = 1.0f;
-
-    // Ray and closest_collision
-    raylib::Ray ray;
-    std::vector<std::pair<block*, RayCollision>> collisions;
-
-    RayCollision closest_collision = {0};
-    block* closest_block = nullptr;
-
     while (!window.ShouldClose()) {
         // If window is not focused or minimized, don't update to save resources
         // !IsWindowFocused()
@@ -60,7 +49,7 @@ void game::run()
         mouse_position = GetMousePosition();
         screen_middle = Vector2({static_cast<float>(screen_width / 2), static_cast<float>(screen_height / 2)});
 
-        ray = ray.GetMouse({}, player1.camera);
+        ray = ray.GetMouse(screen_middle, player1.camera);
 
         if (IsKeyPressed(KEY_R)) {
             siv::PerlinNoise::seed_type seed = std::random_device()();
@@ -73,7 +62,7 @@ void game::run()
         }
 
         if (IsKeyPressed(KEY_G)) {
-            show_block_grid = !show_block_grid;
+            block_grid = !block_grid;
         }
 
         if (IsKeyPressed(KEY_F3)) {
@@ -94,7 +83,7 @@ void game::run()
             for (size_t bi = 0; bi < current_chunk.size(); bi++) {
                 block& current_block = blocks[bi];
                 if (current_block.block_type != block_type::air) {
-                    raylib::BoundingBox box = block_utils::get_bounding_box(current_block, block_size);
+                    raylib::BoundingBox box = block_utils::get_bounding_box(current_block, 1.0f);
 
                     RayCollision box_hit_info = GetRayCollisionBox(ray, box);
                     if (box_hit_info.hit) {
@@ -132,11 +121,15 @@ void game::run()
                 auto&& chunk_coor = current_chunk.get_position();
                 auto& blocks = current_chunk.get_blocks();
 
+                if (world_new.chunks_model.size() <= ci) {
+                    continue;
+                }
+
                 Model& current_model = world_new.chunks_model[ci];
 
-                Vector3 chunk_pos = {static_cast<float>(chunk_coor.x * chunk::chunk_size_x * block_size),
-                                     static_cast<float>(chunk_coor.y * chunk::chunk_size_y * block_size),
-                                     static_cast<float>(chunk_coor.z * chunk::chunk_size_z * block_size)};
+                Vector3 chunk_pos = {static_cast<float>(chunk_coor.x * chunk::chunk_size_x * 1.0f),
+                                     static_cast<float>(chunk_coor.y * chunk::chunk_size_y * 1.0f),
+                                     static_cast<float>(chunk_coor.z * chunk::chunk_size_z * 1.0f)};
 
                 DrawModelEx(current_model, chunk_pos, {0, 0, 0}, 1.0f, {1, 1, 1}, WHITE);
 
@@ -149,7 +142,7 @@ void game::run()
                 display_chunk_count++;
             }
 
-            if (show_block_grid) {
+            if (block_grid) {
                 DrawGrid(256, 1.0f);
             }
 
@@ -191,9 +184,9 @@ void game::display_debug_menu()
 
     // Draw block info
     /*
-    std::string block_info ="XYZ: " + std::to_string(block_info_pos.x) + ", " + std::to_string(block_info_pos.y) + ", " + std::to_string(block_info_pos.z);
-    DrawText(block_info.c_str(), 10, 30, 20, raylib::Color::Black());
-    DrawText(("Index: " + std::to_string(block_info_index)).c_str(), 10, 50, 20, raylib::Color::Black());
+    std::string block_info ="XYZ: " + std::to_string(block_info_pos.x) + ", " + std::to_string(block_info_pos.y) + ", " +
+    std::to_string(block_info_pos.z); DrawText(block_info.c_str(), 10, 30, 20, raylib::Color::Black()); DrawText(("Index: " +
+    std::to_string(block_info_index)).c_str(), 10, 50, 20, raylib::Color::Black());
     */
 
     // Draw statistics

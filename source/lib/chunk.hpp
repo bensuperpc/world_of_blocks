@@ -33,8 +33,6 @@ class chunk
 
         ~chunk() {}
 
-        [[nodiscard]] Vector3i get_position() const { return {chunk_x, chunk_y, chunk_z}; }
-
         [[nodiscard]] std::vector<block>& get_blocks() { return blocks; }
 
         [[nodiscard]] block& get_block(const int x, const int y, const int z)
@@ -47,6 +45,8 @@ class chunk
         [[nodiscard]] std::vector<block>::size_type size() const { return blocks.size(); }
 
         [[nodiscard]] Vector3i chunk_size() const { return {chunk_size_x, chunk_size_y, chunk_size_z}; }
+
+        [[nodiscard]] Vector3i get_position() const { return {chunk_x, chunk_y, chunk_z}; }
 
         void set_chuck_pos(const int x, const int y, const int z)
         {

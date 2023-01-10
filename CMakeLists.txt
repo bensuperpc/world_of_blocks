@@ -13,8 +13,8 @@ project(
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
-# ---- Declare variables ----
-
+# ---- Declare options ----
+option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 # ---- Dependencies ----
 
@@ -29,7 +29,7 @@ include(cmake/lib/perlin_noise.cmake)
 
 # ---- Declare executable ----
 
-add_executable(world_of_blocks_exe source/main.cpp source/game.cpp)
+add_executable(world_of_blocks_exe source/main.cpp source/game.cpp source/player.cpp)
 add_executable(world_of_blocks::exe ALIAS world_of_blocks_exe)
 
 set_property(TARGET world_of_blocks_exe PROPERTY OUTPUT_NAME world_of_blocks)

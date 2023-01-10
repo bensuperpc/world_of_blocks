@@ -72,7 +72,7 @@ class block
         [[nodiscard]] uint16_t get_block_type() const { return block_type; }
 
         uint16_t block_type = 0;
-        
+
         // All aditional data
         // std::vector<data> data;
 };
