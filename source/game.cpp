@@ -93,7 +93,7 @@ void game::run()
 #pragma omp parallel for schedule(auto)
             for (size_t bi = 0; bi < current_chunk.size(); bi++) {
                 block& current_block = blocks[bi];
-                if (current_block.is_visible && current_block.block_type != block_type::air) {
+                if (current_block.block_type != block_type::air) {
                     raylib::BoundingBox box = block_utils::get_bounding_box(current_block, block_size);
 
                     RayCollision box_hit_info = GetRayCollisionBox(ray, box);

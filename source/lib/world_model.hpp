@@ -305,11 +305,13 @@ class world_model
                         int border_count = count_border(x, y, z, _chunk);
                         int neighbour_count = count_neighbours(x, y, z, _chunk);
 
+                        /*
                         if (current_block.x == 48 && current_block.y == 36 && current_block.z == 50) {
                             std::cout << "Block: " << current_block.x << ", " << current_block.y << ", " << current_block.z << std::endl;
                             std::cout << "Neighbours: " << neighbour_count << std::endl;
                             std::cout << "Borders: " << border_count << std::endl;
                         }
+                        */
 
                         if (neighbour_count + border_count == 6) {
                             continue;

@@ -15,6 +15,7 @@
 namespace block_utils
 {
 
+/*
 [[nodiscard]] inline raylib::Vector3 get_real_position(const block& block,
                                                        const float block_size_x,
                                                        const float block_size_y,
@@ -65,6 +66,7 @@ namespace block_utils
 {
     return get_center(block, block_size, block_size, block_size);
 }
+*/
 
 }  // namespace block_utils
 

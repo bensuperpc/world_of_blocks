@@ -278,10 +278,6 @@ class generator
 #pragma omp parallel for collapse(2) schedule(auto)
             for (uint32_t x = 0; x < size_x; x++) {
                 for (uint32_t z = 0; z < size_z; z++) {
-                    // Calculate real x and z from begin_x and begin_z
-                    const int32_t real_x = x + begin_x;
-                    const int32_t real_z = z + begin_z;
-
                     // Noise value is divided by 4 to make it smaller and it is used as the height of the block (z)
                     std::vector<block>::size_type vec_index = z * size_x + x;
 
@@ -295,7 +291,6 @@ class generator
 
                     for (uint32_t y = 0; y < size_y; y++) {
                         // Calculate real y from begin_y
-                        const int32_t real_y = y + begin_y;
                         vec_index = math::convert_to_1d(x, y, z, size_x, size_y, size_z);
 
                         if constexpr (debug) {
@@ -305,18 +300,11 @@ class generator
 
                         block& current_block = blocks[vec_index];
 
-                        current_block.x = real_x;
-                        current_block.y = real_y;
-                        current_block.z = real_z;
-
                         // If the noise value is greater than the current block, make it air
                         if (y > noise_value) {
-                            current_block.is_visible = false;
                             current_block.block_type = block_type::air;
                             continue;
                         }
-
-                        current_block.is_visible = true;
                         current_block.block_type = block_type::stone;
                     }
                 }
@@ -350,10 +338,6 @@ class generator
             for (uint32_t x = 0; x < size_x; x++) {
                 for (uint32_t z = 0; z < size_z; z++) {
                     for (uint32_t y = 0; y < size_y; y++) {
-                        // Calculate real y from begin_y
-                        const int32_t real_y = y + begin_y;
-                        const int32_t real_x = x + begin_x;
-                        const int32_t real_z = z + begin_z;
                         size_t vec_index = math::convert_to_1d(x, y, z, size_x, size_y, size_z);
                         auto noise_value = heightmap[vec_index];
                         auto& current_block = blocks[vec_index];
@@ -363,17 +347,10 @@ class generator
                                       << ", noise: " << static_cast<int32_t>(noise_value) << std::endl;
                         }
 
-                        current_block.x = real_x;
-                        current_block.y = real_y;
-                        current_block.z = real_z;
-
                         if (noise_value < 120) {
-                            current_block.is_visible = false;
                             current_block.block_type = block_type::air;
                             continue;
                         }
-
-                        current_block.is_visible = true;
                         current_block.block_type = block_type::stone;
                     }
                 }
