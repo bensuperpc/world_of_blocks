@@ -47,7 +47,7 @@ void game::run()
         collisions.clear();
 
         mouse_position = GetMousePosition();
-        screen_middle = Vector2({static_cast<float>(screen_width / 2), static_cast<float>(screen_height / 2)});
+        screen_middle = Vector2({static_cast<float>(screen_width / 2), static_cast<float>(triangles_on_world_count / 2)});
 
         ray = ray.GetMouse(screen_middle, player1.camera);
 
@@ -135,8 +135,8 @@ void game::run()
                                             static_cast<float>(chunk_coor.z * chunk::chunk_size_z + chunk::chunk_size_z / 2.0f)};
 
                 if (debug_menu) {
-                    display_vectices_count += current_model.meshes->vertexCount;
-                    display_triangles_count += current_model.meshes->triangleCount;
+                    vectices_on_world_count += current_model.meshes->vertexCount;
+                    triangles_on_world_count += current_model.meshes->triangleCount;
                     display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
                     display_chunk_count++;
                 }
@@ -152,6 +152,8 @@ void game::run()
                 DrawModelEx(current_model, chunk_pos, {0, 0, 0}, 1.0f, {1, 1, 1}, WHITE);
                 if (debug_menu) {
                     chunks_on_screen_count++;
+                    vectices_on_screen_count += current_model.meshes->vertexCount;
+                    triangles_on_screen_count += current_model.meshes->triangleCount;
                     continue;
                     DrawCubeWires(chunk_pos,
                                   static_cast<float>(chunk::chunk_size_x),
@@ -195,8 +197,8 @@ void game::draw_debug_menu()
         return;
     }
 
-    DrawRectangle(4, 4, 300, 200, Fade(SKYBLUE, 0.5f));
-    DrawRectangleLines(4, 4, 300, 200, BLUE);
+    DrawRectangle(4, 4, 320, 230, Fade(SKYBLUE, 0.5f));
+    DrawRectangleLines(4, 4, 320, 230, BLUE);
 
     // Draw FPS
     DrawFPS(8, 8);
@@ -211,9 +213,11 @@ void game::draw_debug_menu()
     // Draw statistics
     DrawText(("Blocks on world: " + std::to_string(display_block_count)).c_str(), 10, 70, 20, raylib::Color::Black());
     DrawText(("Chunks on world: " + std::to_string(display_chunk_count)).c_str(), 10, 90, 20, raylib::Color::Black());
-    DrawText(("Vertices on world: " + std::to_string(display_vectices_count)).c_str(), 10, 110, 20, raylib::Color::Black());
-    DrawText(("Triangles on world: " + std::to_string(display_triangles_count)).c_str(), 10, 130, 20, raylib::Color::Black());
+    DrawText(("Vertices on world: " + std::to_string(vectices_on_world_count)).c_str(), 10, 110, 20, raylib::Color::Black());
+    DrawText(("Triangles on world: " + std::to_string(triangles_on_world_count)).c_str(), 10, 130, 20, raylib::Color::Black());
     DrawText(("Chunks on screen: " + std::to_string(chunks_on_screen_count)).c_str(), 10, 170, 20, raylib::Color::Black());
+    DrawText(("Vertices on screen: " + std::to_string(vectices_on_screen_count)).c_str(), 10, 190, 20, raylib::Color::Black());
+    DrawText(("Triangles on screen: " + std::to_string(triangles_on_screen_count)).c_str(), 10, 210, 20, raylib::Color::Black());
 
     // Draw player position
     /*
@@ -227,9 +231,12 @@ void game::draw_debug_menu()
     */
 
     // Reset statistics
-    display_vectices_count = 0;
-    display_triangles_count = 0;
+    vectices_on_world_count = 0;
+    triangles_on_world_count = 0;
     display_block_count = 0;
     display_chunk_count = 0;
+
     chunks_on_screen_count = 0;
+    triangles_on_screen_count = 0;
+    vectices_on_screen_count = 0;
 }

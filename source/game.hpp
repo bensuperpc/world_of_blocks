@@ -54,11 +54,14 @@ class game
         bool debug_menu = true;
 
         // Debug menu
-        size_t display_vectices_count = 0;
-        size_t display_triangles_count = 0;
+        size_t vectices_on_world_count = 0;
+        size_t triangles_on_world_count = 0;
         size_t display_block_count = 0;
         size_t display_chunk_count = 0;
+
         size_t chunks_on_screen_count = 0;
+        size_t vectices_on_screen_count = 0;
+        size_t triangles_on_screen_count = 0;
 
         Vector3i block_info_pos = {0, 0, 0};
         size_t block_info_index = 0;
