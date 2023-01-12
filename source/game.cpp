@@ -4,27 +4,43 @@ game::game() {}
 
 game::~game() {}
 
-void game::init() {}
+void game::init()
+{
+    std::ios_base::sync_with_stdio(false);
+    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
+}
 
 void game::run()
 {
-    std::ios_base::sync_with_stdio(false);
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     raylib::Window _window(screen_width, screen_height, "Minecube");
     this->window = std::move(_window);
 
-    player player1 = player();
+    auto generate_world_async = std::async(std::launch::async, [&]() { world_new.generate_world(); });
+
+    // Play intro animation
+    SetTargetFPS(60);
+    // raylib::AudioDevice audiodevice;
+
+    // async intro animation
+    play_intro_raylib(screen_width, screen_height);
+    play_intro_raylib_cpp(screen_width, screen_height);
+    play_intro_benlib(screen_width, screen_height);
+
+    generate_world_async.wait();
+    world_new.generate_world_models();
 
     SetTargetFPS(target_fps);
 
+    player player1 = player();
+
     // raylib::Image img = GenImageChecked(256, 256, 32, 32, GREEN, RED);
-    raylib::Image img = GenImageColor(16, 16, raylib::Color::White());
-    raylib::Texture2D textureGrid = LoadTextureFromImage(img);
+    // raylib::Image img = GenImageColor(16, 16, raylib::Color::White());
+    // raylib::Texture2D textureGrid = LoadTextureFromImage(img);
     // SetTextureFilter(textureGrid, TEXTURE_FILTER_ANISOTROPIC_16X);
     // SetTextureWrap(textureGrid, TEXTURE_WRAP_CLAMP);
 
     raylib::Texture2D texture = LoadTexture("grass.png");
-    world_new.generate_world();
 
     for (size_t ci = 0; ci < world_new.chunks_model.size(); ci++) {
         world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
@@ -56,6 +72,7 @@ void game::run()
             world_new.seed = seed;
             std::cout << "seed: " << seed << std::endl;
             world_new.generate_world();
+            world_new.generate_world_models();
             for (size_t ci = 0; ci < world_new.chunks_model.size(); ci++) {
                 world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
             }

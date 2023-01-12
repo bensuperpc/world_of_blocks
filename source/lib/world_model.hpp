@@ -32,7 +32,8 @@ class world_model
 
         void add_cube(Mesh& mesh, size_t& triangle_index, size_t& vert_index, Vector3&& position, bool faces[6], int block);
 
-        std::vector<raylib::Model> generate_world_models(std::vector<chunk>& chunks);
+        std::vector<raylib::Model> generate_world_models(std::vector<chunk>& chunk);
+        raylib::Model generate_chunk_model(chunk& chunks);
 
         inline bool block_is_solid(int x, int y, int z, chunk& _chunk);
 
@@ -42,7 +43,7 @@ class world_model
 
         int face_count(chunk& _chunk);
 
-        Mesh chunk_mesh(std::vector<chunk>& chunks, size_t chunk_index);
+        Mesh chunk_mesh(chunk& chunk);
 };
 
 #endif  // WORLD_OF_CUBE_WORLD_HPP

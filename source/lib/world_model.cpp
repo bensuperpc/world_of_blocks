@@ -1,6 +1,6 @@
 #include "world_model.hpp"
 
-void world_model::add_vertex(
+inline void world_model::add_vertex(
     Mesh& mesh, size_t& triangle_index, size_t& vert_index, Vector3& vertex, Vector3 offset, Vector3 normal, Vector2 texcoords)
 {
     size_t index = triangle_index * 12 + vert_index * 3;
@@ -26,12 +26,12 @@ void world_model::add_vertex(
     }
 }
 
-void world_model::add_cube(Mesh& mesh, size_t& triangle_index, size_t& vert_index, Vector3&& position, bool faces[6], int block)
+inline void world_model::add_cube(Mesh& mesh, size_t& triangle_index, size_t& vert_index, Vector3&& position, bool faces[6], int block)
 {
     Rectangle texcoords_rect = Rectangle {0.25f, 0, 0.5f, 1};
     // z-
     if (faces[north_face]) {
-        Vector3 normal = Vector3 {0, 0, -1};
+        const Vector3 normal = Vector3 {0, 0, -1};
 
         add_vertex(mesh, triangle_index, vert_index, position, {0, 0, 0}, normal, {texcoords_rect.x, texcoords_rect.y});
 
@@ -50,7 +50,7 @@ void world_model::add_cube(Mesh& mesh, size_t& triangle_index, size_t& vert_inde
 
     // z+
     if (faces[south_face]) {
-        Vector3 normal = Vector3 {0, 0, 1};
+        const Vector3 normal = Vector3 {0, 0, 1};
 
         add_vertex(mesh, triangle_index, vert_index, position, {0, 0, 1}, normal, {texcoords_rect.x, texcoords_rect.y});
 
@@ -67,7 +67,7 @@ void world_model::add_cube(Mesh& mesh, size_t& triangle_index, size_t& vert_inde
 
     // x+
     if (faces[west_face]) {
-        Vector3 normal = Vector3 {1, 0, 0};
+        const Vector3 normal = Vector3 {1, 0, 0};
 
         add_vertex(mesh, triangle_index, vert_index, position, {1, 0, 1}, normal, {texcoords_rect.x, texcoords_rect.height});
 
@@ -84,7 +84,7 @@ void world_model::add_cube(Mesh& mesh, size_t& triangle_index, size_t& vert_inde
 
     // x-
     if (faces[east_face]) {
-        Vector3 normal = Vector3 {-1, 0, 0};
+        const Vector3 normal = Vector3 {-1, 0, 0};
 
         add_vertex(mesh, triangle_index, vert_index, position, {0, 0, 1}, normal, {texcoords_rect.x, texcoords_rect.height});
 
@@ -101,7 +101,7 @@ void world_model::add_cube(Mesh& mesh, size_t& triangle_index, size_t& vert_inde
 
     // y+
     if (faces[up_face]) {
-        Vector3 normal = Vector3 {0, 1, 0};
+        const Vector3 normal = Vector3 {0, 1, 0};
 
         add_vertex(mesh, triangle_index, vert_index, position, {0, 1, 0}, normal, {texcoords_rect.x, texcoords_rect.y});
 
@@ -118,7 +118,7 @@ void world_model::add_cube(Mesh& mesh, size_t& triangle_index, size_t& vert_inde
 
     // y-
     if (faces[down_face]) {
-        Vector3 normal = Vector3 {0, -1, 0};
+        const Vector3 normal = Vector3 {0, -1, 0};
 
         add_vertex(mesh, triangle_index, vert_index, position, {0, 0, 0}, normal, {texcoords_rect.x, texcoords_rect.y});
 
@@ -143,7 +143,7 @@ std::vector<raylib::Model> world_model::generate_world_models(std::vector<chunk>
 // Generate meshes on multiple threads
 #pragma omp for ordered schedule(static, 1)
     for (size_t i = 0; i < chunks.size(); i++) {
-        Mesh mesh = chunk_mesh(chunks, i);
+        Mesh mesh = chunk_mesh(chunks[i]);
 #pragma omp ordered
         meshes.push_back(std::move(mesh));
     }
@@ -155,7 +155,16 @@ std::vector<raylib::Model> world_model::generate_world_models(std::vector<chunk>
     return models;
 }
 
-bool world_model::block_is_solid(int x, int y, int z, chunk& _chunk)
+raylib::Model world_model::generate_chunk_model(chunk& chunks)
+{
+    raylib::Model models;
+    Mesh mesh = chunk_mesh(chunks);
+    UploadMesh(&mesh, false);
+    models = raylib::Model(mesh);
+    return models;
+}
+
+inline bool world_model::block_is_solid(int x, int y, int z, chunk& _chunk)
 {
     // Check out of bounds
     if (x < 0 || x >= chunk::chunk_size_x) {
@@ -173,7 +182,7 @@ bool world_model::block_is_solid(int x, int y, int z, chunk& _chunk)
 }
 
 // Count the number of solid blocks around a block (excluding diagonals and corners)
-int world_model::count_neighbours(int x, int y, int z, chunk& _chunk)
+inline int world_model::count_neighbours(int x, int y, int z, chunk& _chunk)
 {
     int count = 0;
     if (block_is_solid(x - 1, y, z, _chunk))
@@ -250,11 +259,10 @@ int world_model::face_count(chunk& _chunk)
     return count;
 }
 
-Mesh world_model::chunk_mesh(std::vector<chunk>& chunks, size_t chunk_index)
+Mesh world_model::chunk_mesh(chunk& chunk)
 {
-    chunk& _chunk = chunks[chunk_index];
     Mesh mesh = {0};
-    int faces_count = face_count(_chunk);
+    int faces_count = face_count(chunk);
     mesh.vertexCount = faces_count * 6;
     mesh.triangleCount = faces_count * 2;
 
@@ -265,18 +273,18 @@ Mesh world_model::chunk_mesh(std::vector<chunk>& chunks, size_t chunk_index)
     size_t triangle_index = 0;
     size_t vert_index = 0;
 
-    auto& blocks = _chunk.get_blocks();
+    auto& blocks = chunk.get_blocks();
 
     for (int x = 0; x < chunk::chunk_size_x; x++) {
         for (int y = 0; y < chunk::chunk_size_y; y++) {
             for (int z = 0; z < chunk::chunk_size_z; z++) {
-                block& current_block = _chunk.get_block(x, y, z);
+                block& current_block = chunk.get_block(x, y, z);
                 if (current_block.block_type == block_type::air) {
                     continue;
                 }
 
-                int border_count = count_border(x, y, z, _chunk);
-                int neighbour_count = count_neighbours(x, y, z, _chunk);
+                int border_count = count_border(x, y, z, chunk);
+                int neighbour_count = count_neighbours(x, y, z, chunk);
 
                 /*
                 if (current_block.x == 48 && current_block.y == 36 && current_block.z == 50) {
@@ -292,17 +300,17 @@ Mesh world_model::chunk_mesh(std::vector<chunk>& chunks, size_t chunk_index)
 
                 bool faces[6] = {false, false, false, false, false, false};
 
-                faces[world_model::east_face] = !block_is_solid(x - 1, y, z, _chunk);
+                faces[world_model::east_face] = !block_is_solid(x - 1, y, z, chunk);
 
-                faces[world_model::west_face] = !block_is_solid(x + 1, y, z, _chunk);
+                faces[world_model::west_face] = !block_is_solid(x + 1, y, z, chunk);
 
-                faces[world_model::down_face] = !block_is_solid(x, y - 1, z, _chunk);
+                faces[world_model::down_face] = !block_is_solid(x, y - 1, z, chunk);
 
-                faces[world_model::up_face] = !block_is_solid(x, y + 1, z, _chunk);
+                faces[world_model::up_face] = !block_is_solid(x, y + 1, z, chunk);
 
-                faces[world_model::south_face] = !block_is_solid(x, y, z + 1, _chunk);
+                faces[world_model::south_face] = !block_is_solid(x, y, z + 1, chunk);
 
-                faces[world_model::north_face] = !block_is_solid(x, y, z - 1, _chunk);
+                faces[world_model::north_face] = !block_is_solid(x, y, z - 1, chunk);
 
                 add_cube(mesh, triangle_index, vert_index, {(float)x, (float)y, (float)z}, faces, 1);
             }

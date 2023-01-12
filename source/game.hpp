@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <chrono>
 #include <filesystem>
+#include <future>
 #include <iostream>
 #include <numeric>
 #include <random>
@@ -20,6 +21,13 @@
 #include "raymath.h"
 
 // Cube lib
+
+extern "C"
+{
+#include "benlib_intro.h"
+#include "raylib_cpp_intro.h"
+#include "raylib_intro.h"
+}
 
 #include "block.hpp"
 #include "block_utils.hpp"

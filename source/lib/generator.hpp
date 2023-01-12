@@ -51,13 +51,13 @@ class generator
 
         [[nodiscard]] uint32_t get_seed() const { return seed; }
 
-        void generate_2d_heightmap(std::vector<uint32_t>& heightmap,
-                                   const int32_t begin_x,
-                                   const int32_t begin_y,
-                                   const int32_t begin_z,
-                                   const uint32_t size_x,
-                                   const uint32_t size_y,
-                                   const uint32_t size_z)
+        inline void generate_2d_heightmap(std::vector<uint32_t>& heightmap,
+                                          const int32_t begin_x,
+                                          const int32_t begin_y,
+                                          const int32_t begin_z,
+                                          const uint32_t size_x,
+                                          const uint32_t size_y,
+                                          const uint32_t size_z)
         {
             constexpr bool debug = false;
 
@@ -93,7 +93,6 @@ class generator
                         std::cout << "x: " << x << ", z: " << z << " index: " << z * size_z + x << ", value: " << static_cast<int32_t>(value_int)
                                   << std::endl;
                     }
-                    // heightmap[z * size_x + x] = value_int;
                     heightmap[math::convert_to_1d(x, z, size_x, size_z)] = value_int;
                 }
             }
@@ -106,13 +105,13 @@ class generator
             }
         }
 
-        void generate_3d_heightmap(std::vector<uint32_t>& heightmap,
-                                   const int32_t begin_x,
-                                   const int32_t begin_y,
-                                   const int32_t begin_z,
-                                   const uint32_t size_x,
-                                   const uint32_t size_y,
-                                   const uint32_t size_z)
+        inline void generate_3d_heightmap(std::vector<uint32_t>& heightmap,
+                                          const int32_t begin_x,
+                                          const int32_t begin_y,
+                                          const int32_t begin_z,
+                                          const uint32_t size_x,
+                                          const uint32_t size_y,
+                                          const uint32_t size_z)
         {
             constexpr bool debug = false;
 

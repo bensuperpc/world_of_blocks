@@ -1,23 +1,10 @@
 #ifndef WORLD_OF_CUBE_CHUNK_HPP
 #define WORLD_OF_CUBE_CHUNK_HPP
 
-#include <algorithm>
-#include <chrono>
-#include <filesystem>
-#include <iostream>
-#include <numeric>
-#include <random>
-#include <string>
-#include <string_view>
-#include <vector>
-
-#include <omp.h>
-
-#include "PerlinNoise.hpp"
-
 // Cube lib
 #include "block.hpp"
 #include "math.hpp"
+#include "raylib.h"
 
 class chunk
 {
@@ -33,9 +20,9 @@ class chunk
 
         ~chunk() {}
 
-        [[nodiscard]] std::vector<block>& get_blocks() { return blocks; }
+        [[nodiscard]] inline std::vector<block>& get_blocks() { return blocks; }
 
-        [[nodiscard]] block& get_block(const int x, const int y, const int z)
+        [[nodiscard]] inline block& get_block(const int x, const int y, const int z)
         {
             return blocks[math::convert_to_1d(x, y, z, chunk_size_x, chunk_size_y, chunk_size_z)];
         }

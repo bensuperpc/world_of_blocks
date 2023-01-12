@@ -1,17 +1,6 @@
 #ifndef WORLD_OF_CUBE_BLOCK_UTILS_HPP
 #define WORLD_OF_CUBE_BLOCK_UTILS_HPP
 
-#include <algorithm>
-#include <filesystem>
-#include <iostream>
-#include <numeric>
-#include <random>
-#include <string>
-#include <string_view>
-#include <vector>
-
-#include <omp.h>
-
 namespace block_utils
 {
 
