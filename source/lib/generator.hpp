@@ -51,20 +51,12 @@ class generator
 
         [[nodiscard]] uint32_t get_seed() const { return seed; }
 
-        inline void generate_2d_heightmap(std::vector<uint32_t>& heightmap,
-                                          const int32_t begin_x,
-                                          const int32_t begin_y,
-                                          const int32_t begin_z,
-                                          const uint32_t size_x,
-                                          const uint32_t size_y,
-                                          const uint32_t size_z)
+        inline std::vector<uint32_t> generate_2d_heightmap(
+            const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y, const uint32_t size_z)
         {
             constexpr bool debug = false;
 
-            if (heightmap.size() < size_x * size_z) {
-                std::cout << "Heightmap size is not equal or bigger than size_x * size_z" << std::endl;
-                exit(1);
-            }
+            std::vector<uint32_t> heightmap(size_x * size_z);
 
             const int32_t end_x = static_cast<int32_t>(begin_x + size_x);
             const int32_t end_y = static_cast<int32_t>(begin_y + size_y);
@@ -103,22 +95,15 @@ class generator
                 std::cout << "min: " << static_cast<int32_t>(*minmax.first) << std::endl;
                 std::cout << "max: " << static_cast<int32_t>(*minmax.second) << std::endl;
             }
+            return heightmap;
         }
 
-        inline void generate_3d_heightmap(std::vector<uint32_t>& heightmap,
-                                          const int32_t begin_x,
-                                          const int32_t begin_y,
-                                          const int32_t begin_z,
-                                          const uint32_t size_x,
-                                          const uint32_t size_y,
-                                          const uint32_t size_z)
+        inline std::vector<uint32_t> generate_3d_heightmap(
+            const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y, const uint32_t size_z)
         {
             constexpr bool debug = false;
 
-            if (heightmap.size() < size_x * size_y * size_z) {
-                std::cout << "Heightmap size is not equal or bigger than size_x * size_y * size_z!" << std::endl;
-                exit(1);
-            }
+            std::vector<uint32_t> heightmap(size_x * size_y * size_z);
 
             const int32_t end_x = static_cast<int32_t>(begin_x + size_x);
             const int32_t end_y = static_cast<int32_t>(begin_y + size_y);
@@ -164,6 +149,30 @@ class generator
                 std::cout << "min: " << static_cast<int32_t>(*minmax.first) << std::endl;
                 std::cout << "max: " << static_cast<int32_t>(*minmax.second) << std::endl;
             }
+
+            return heightmap;
+        }
+
+        inline chunk generate_chunk(const int32_t chunk_x, const int32_t chunk_y, const int32_t chunk_z, const bool generate_3d_terrain)
+        {
+            const int32_t real_x = chunk_x * chunk::chunk_size_x;
+            const int32_t real_y = chunk_y * chunk::chunk_size_y;
+            const int32_t real_z = chunk_z * chunk::chunk_size_z;
+
+            std::vector<block> blocks;
+
+            chunk _chunk;
+
+            if (generate_3d_terrain) {
+                blocks = std::move(generate_3d(real_x, real_y, real_z, chunk::chunk_size_x, chunk::chunk_size_y, chunk::chunk_size_z));
+            } else {
+                blocks = std::move(generate_2d(real_x, real_y, real_z, chunk::chunk_size_x, chunk::chunk_size_y, chunk::chunk_size_z));
+            }
+
+            _chunk.set_blocks(blocks);
+            _chunk.set_chuck_pos(chunk_x, chunk_y, chunk_z);
+
+            return _chunk;
         }
 
         std::vector<chunk> generate_word(const int32_t begin_chunk_x,
@@ -171,27 +180,12 @@ class generator
                                          const int32_t begin_chunk_z,
                                          const uint32_t chunk_x,
                                          const uint32_t chunk_y,
-                                         const uint32_t chunk_z)
+                                         const uint32_t chunk_z,
+                                         const bool generate_3d_terrain)
         {
             constexpr bool debug = false;
 
             std::vector<chunk> chunks(chunk_x * chunk_y * chunk_z);
-
-            generate_word(chunks, begin_chunk_x, begin_chunk_y, begin_chunk_z, chunk_x, chunk_y, chunk_z);
-
-            return chunks;
-        }
-
-        void generate_word(std::vector<chunk>& chunks,
-                           const int32_t begin_chunk_x,
-                           const int32_t begin_chunk_y,
-                           const int32_t begin_chunk_z,
-                           const uint32_t chunk_x,
-                           const uint32_t chunk_y,
-                           const uint32_t chunk_z,
-                           const bool generate_3d_terrian = true)
-        {
-            constexpr bool debug = false;
 
             if (chunks.size() < chunk_x * chunk_y * chunk_z) {
                 std::cout << "Chunks size is not equal or bigger than chunk_x * chunk_y * chunk_z!" << std::endl;
@@ -203,65 +197,24 @@ class generator
             for (uint32_t x = 0; x < chunk_x; x++) {
                 for (uint32_t z = 0; z < chunk_z; z++) {
                     for (uint32_t y = 0; y < chunk_y; y++) {
-                        const int32_t real_x = static_cast<int32_t>(x) + begin_chunk_x;
-                        const int32_t real_y = static_cast<int32_t>(y) + begin_chunk_y;
-                        const int32_t real_z = static_cast<int32_t>(z) + begin_chunk_z;
-
-                        if constexpr (debug) {
-#pragma omp critical
-                            std::cout << "Generating chunk: " << real_x << ", " << real_y << ", " << real_z << std::endl;
-                        }
-                        std::vector<block> blocks = std::vector<block>(chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z, block());
-
-                        if (generate_3d_terrian) {
-                            generate_3d(blocks,
-                                        real_x * chunk::chunk_size_x,
-                                        real_y * chunk::chunk_size_y,
-                                        real_z * chunk::chunk_size_z,
-                                        chunk::chunk_size_x,
-                                        chunk::chunk_size_y,
-                                        chunk::chunk_size_z);
-                        } else {
-                            generate_2d(blocks,
-                                        real_x * chunk::chunk_size_x,
-                                        real_y * chunk::chunk_size_y,
-                                        real_z * chunk::chunk_size_z,
-                                        chunk::chunk_size_x,
-                                        chunk::chunk_size_y,
-                                        chunk::chunk_size_z);
-                        }
-
-                        chunk& current_chunk = chunks[math::convert_to_1d(x, y, z, chunk_x, chunk_y, chunk_z)];
-
-                        current_chunk.set_blocks(blocks);
-                        current_chunk.set_chuck_pos(real_x, real_y, real_z);
+                        // #pragma omp critical
+                        chunks[math::convert_to_1d(x, y, z, chunk_x, chunk_y, chunk_z)] = std::move(generate_chunk(x, y, z, generate_3d_terrain));
                     }
                 }
             }
+
+            return chunks;
         }
 
-        inline void generate_2d(std::vector<block>& blocks,
-                                const int32_t begin_x,
-                                const int32_t begin_y,
-                                const int32_t begin_z,
-                                const uint32_t size_x,
-                                const uint32_t size_y,
-                                const uint32_t size_z)
+        inline std::vector<block> generate_2d(
+            const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y, const uint32_t size_z)
         {
             constexpr bool debug = false;
 
-            // const int32_t end_x = static_cast<int32_t>(begin_x + size_x);
-            // const int32_t end_y = static_cast<int32_t>(begin_y + size_y);
-            // const int32_t end_z = static_cast<int32_t>(begin_z + size_z);
+            std::vector<uint32_t> heightmap;
+            std::vector<block> blocks = std::vector<block>(size_x * size_y * size_z, block());
 
-            std::vector<uint32_t> heightmap(size_x * size_z);
-
-            generate_2d_heightmap(heightmap, begin_x, begin_y, begin_z, size_x, size_y, size_z);
-
-            // Insert blocks if needed to make sure the vector is the correct size
-            if (blocks.size() < size_x * size_y * size_z) {
-                blocks.insert(blocks.end(), size_x * size_y * size_z - blocks.size(), block());
-            }
+            heightmap = std::move(generate_2d_heightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z));
 
             if constexpr (debug) {
                 std::cout << "Generating blocks..." << std::endl;
@@ -271,12 +224,6 @@ class generator
                 for (uint32_t z = 0; z < size_z; z++) {
                     // Noise value is divided by 4 to make it smaller and it is used as the height of the block (z)
                     std::vector<block>::size_type vec_index = z * size_x + x;
-
-                    /*
-                    if constexpr (debug) {
-                        std::cout << "x: " << x << ", z: " << z << " index: " << vec_index << std::endl;
-                    }
-                    */
 
                     uint32_t noise_value = heightmap[vec_index] / 4;
 
@@ -300,15 +247,11 @@ class generator
                     }
                 }
             }
+            return blocks;
         }
 
-        inline void generate_3d(std::vector<block>& blocks,
-                                const int32_t begin_x,
-                                const int32_t begin_y,
-                                const int32_t begin_z,
-                                const uint32_t size_x,
-                                const uint32_t size_y,
-                                const uint32_t size_z)
+        inline std::vector<block> generate_3d(
+            const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y, const uint32_t size_z)
         {
             constexpr bool debug = false;
 
@@ -316,9 +259,11 @@ class generator
             const int32_t end_y = static_cast<int32_t>(begin_y + size_y);
             const int32_t end_z = static_cast<int32_t>(begin_z + size_z);
 
-            std::vector<uint32_t> heightmap(size_x * size_y * size_z);
+            std::vector<block> blocks = std::vector<block>(size_x * size_y * size_z, block());
 
-            generate_3d_heightmap(heightmap, begin_x, begin_y, begin_z, size_x, size_y, size_z);
+            std::vector<uint32_t> heightmap;
+
+            heightmap = std::move(generate_3d_heightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z));
 
             if constexpr (debug) {
                 std::cout << "Generating blocks..." << std::endl;
@@ -344,6 +289,7 @@ class generator
                     }
                 }
             }
+            return blocks;
         }
 
     private:

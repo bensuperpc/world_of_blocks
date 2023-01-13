@@ -18,7 +18,16 @@ class chunk
         {
         }
 
-        ~chunk() {}
+        ~chunk() {
+            /*
+            if (model.materials != nullptr) {
+                UnloadModel(model);
+            }
+            if (mesh.vertices != nullptr) {
+                UnloadMesh(mesh);
+            }
+            */
+        }
 
         [[nodiscard]] inline std::vector<block>& get_blocks() { return blocks; }
 
@@ -42,9 +51,14 @@ class chunk
             chunk_z = z;
         }
 
-        static constexpr int chunk_size_x = 16;
-        static constexpr int chunk_size_y = 64;
-        static constexpr int chunk_size_z = 16;
+        static constexpr int chunk_size_x = 32;
+        static constexpr int chunk_size_y = 128;
+        static constexpr int chunk_size_z = 32;
+
+        // Raylib stuff
+        // Model model;
+        // Mesh mesh;
+        //bool mesh_is_uploaded = false;
 
     protected:
         std::vector<block> blocks;

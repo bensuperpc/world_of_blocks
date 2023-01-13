@@ -34,9 +34,9 @@ class world
 
         void generate_world_models();
 
-        int world_chunk_size_x = 24;
-        int world_chunk_size_y = 4;
-        int world_chunk_size_z = 24;
+        int world_chunk_size_x = 12;
+        int world_chunk_size_y = 2;
+        int world_chunk_size_z = 12;
 
         int world_chunk_start_x = 0;
         int world_chunk_start_y = 0;

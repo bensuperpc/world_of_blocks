@@ -13,12 +13,14 @@ void world::generate_world()
 
     // Generate new perlin noise
     gen.reseed(this->seed);
+    
+    // Generate the world
+    auto start = std::chrono::high_resolution_clock::now();
+    chunks = std::move(gen.generate_word(world_chunk_start_x, world_chunk_start_y, world_chunk_start_z, world_chunk_size_x, world_chunk_size_y, world_chunk_size_z, true));
+    auto end = std::chrono::high_resolution_clock::now();
 
-    uint32_t chunk_size = world_chunk_size_x * world_chunk_size_y * world_chunk_size_z;
-    chunks = std::vector<chunk>(chunk_size, chunk());
-
-    gen.generate_word(
-        chunks, world_chunk_start_x, world_chunk_start_y, world_chunk_start_z, world_chunk_size_x, world_chunk_size_y, world_chunk_size_z, true);
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "World generation took " << duration.count() << "ms" << std::endl;
 }
 
 void world::generate_world_models()
