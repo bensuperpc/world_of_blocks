@@ -16,6 +16,11 @@ player::player()
     this->camera = _camera;
 }
 
+Vector3 player::get_position() const
+{
+    return this->camera.position;
+}
+
 player::~player() {}
 
 void player::update()

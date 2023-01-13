@@ -143,9 +143,7 @@ void game::run()
                 }
                 Model& current_model = world_new.chunks_model[ci];
 
-                Vector3 chunk_pos = {static_cast<float>(chunk_coor.x * chunk::chunk_size_x * 1.0f),
-                                     static_cast<float>(chunk_coor.y * chunk::chunk_size_y * 1.0f),
-                                     static_cast<float>(chunk_coor.z * chunk::chunk_size_z * 1.0f)};
+                auto&& chunk_pos = chunk::get_real_position(current_chunk);
 
                 Vector3 chunk_pos_center = {static_cast<float>(chunk_coor.x * chunk::chunk_size_x + chunk::chunk_size_x / 2.0f),
                                             static_cast<float>(chunk_coor.y * chunk::chunk_size_y + chunk::chunk_size_y / 2.0f),

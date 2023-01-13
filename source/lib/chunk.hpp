@@ -4,6 +4,8 @@
 // Cube lib
 #include "block.hpp"
 #include "math.hpp"
+// Raylib
+#include "raylib-cpp.hpp"
 #include "raylib.h"
 
 class chunk
@@ -18,16 +20,7 @@ class chunk
         {
         }
 
-        ~chunk() {
-            /*
-            if (model.materials != nullptr) {
-                UnloadModel(model);
-            }
-            if (mesh.vertices != nullptr) {
-                UnloadMesh(mesh);
-            }
-            */
-        }
+        ~chunk() {}
 
         [[nodiscard]] inline std::vector<block>& get_blocks() { return blocks; }
 
@@ -36,15 +29,15 @@ class chunk
             return blocks[math::convert_to_1d(x, y, z, chunk_size_x, chunk_size_y, chunk_size_z)];
         }
 
-        void set_blocks(std::vector<block>& blocks) { this->blocks = std::move(blocks); }
+        inline void set_blocks(std::vector<block>& blocks) { this->blocks = std::move(blocks); }
 
-        [[nodiscard]] std::vector<block>::size_type size() const { return blocks.size(); }
+        [[nodiscard]] inline std::vector<block>::size_type size() const { return blocks.size(); }
 
-        [[nodiscard]] Vector3i chunk_size() const { return {chunk_size_x, chunk_size_y, chunk_size_z}; }
+        [[nodiscard]] inline Vector3i chunk_size() const { return {chunk_size_x, chunk_size_y, chunk_size_z}; }
 
-        [[nodiscard]] Vector3i get_position() const { return {chunk_x, chunk_y, chunk_z}; }
+        [[nodiscard]] inline Vector3i get_position() const { return {chunk_x, chunk_y, chunk_z}; }
 
-        void set_chuck_pos(const int x, const int y, const int z)
+        inline void set_chuck_pos(const int x, const int y, const int z)
         {
             chunk_x = x;
             chunk_y = y;
@@ -55,10 +48,18 @@ class chunk
         static constexpr int chunk_size_y = 128;
         static constexpr int chunk_size_z = 32;
 
-        // Raylib stuff
-        // Model model;
-        // Mesh mesh;
-        //bool mesh_is_uploaded = false;
+        // From chunk position to real position
+        [[nodiscard]] static inline raylib::Vector3 get_real_position(const chunk& chunk)
+        {
+            auto&& chunk_pos = chunk.get_position();
+            return {chunk_pos.x * chunk::chunk_size_x, chunk_pos.y * chunk::chunk_size_y, chunk_pos.z * chunk::chunk_size_z};
+        }
+
+        // From real position to chunk position
+        [[nodiscard]] static inline Vector3i get_chunk_position(const float x, const float y, const float z)
+        {
+            return {static_cast<int>(x / chunk::chunk_size_x), static_cast<int>(y / chunk::chunk_size_y), static_cast<int>(z / chunk::chunk_size_z)};
+        }
 
     protected:
         std::vector<block> blocks;

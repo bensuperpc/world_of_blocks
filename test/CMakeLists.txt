@@ -58,7 +58,7 @@ if(NOT WIN32)
     #add_test_fn(world_of_blocks_test)
     add_test_fn(generator_test)
   # Add bench
-    # add_bench_fn(world_of_blocks_bench)
+    add_bench_fn(generator_bench)
 endif()
 
 # ---- End-of-file commands ----

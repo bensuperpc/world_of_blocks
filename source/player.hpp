@@ -12,6 +12,9 @@
 #include "raylib.h"
 #include "raymath.h"
 
+// World of blocks
+#include "chunk.hpp"
+
 class player
 {
     public:
@@ -21,9 +24,9 @@ class player
 
         void update();
 
-        raylib::Camera camera;
+        Vector3 get_position() const;
 
-        Vector3& position = this->camera.position;
+        raylib::Camera camera;
 };
 
 #endif  // WORLD_OF_CUBE_WORLD_HPP

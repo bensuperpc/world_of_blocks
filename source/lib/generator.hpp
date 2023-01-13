@@ -51,6 +51,18 @@ class generator
 
         [[nodiscard]] uint32_t get_seed() const { return seed; }
 
+        void set_octaves(uint32_t octaves) { this->octaves = octaves; }
+
+        [[nodiscard]] uint32_t get_octaves() const { return octaves; }
+
+        void set_persistence(double persistence) { this->persistence = persistence; }
+
+        [[nodiscard]] double get_persistence() const { return persistence; }
+
+        void set_lacunarity(double lacunarity) { this->lacunarity = lacunarity; }
+
+        [[nodiscard]] double get_lacunarity() const { return lacunarity; }
+
         inline std::vector<uint32_t> generate_2d_heightmap(
             const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y, const uint32_t size_z)
         {
@@ -223,7 +235,8 @@ class generator
             for (uint32_t x = 0; x < size_x; x++) {
                 for (uint32_t z = 0; z < size_z; z++) {
                     // Noise value is divided by 4 to make it smaller and it is used as the height of the block (z)
-                    std::vector<block>::size_type vec_index = z * size_x + x;
+                    // std::vector<block>::size_type vec_index = z * size_x + x;
+                    std::vector<block>::size_type vec_index = math::convert_to_1d(x, z, size_x, size_z);
 
                     uint32_t noise_value = heightmap[vec_index] / 4;
 
