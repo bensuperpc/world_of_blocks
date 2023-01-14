@@ -58,8 +58,12 @@ class chunk
         // From real position to chunk position
         [[nodiscard]] static inline Vector3i get_chunk_position(const float x, const float y, const float z)
         {
-            return {static_cast<int>(x / chunk::chunk_size_x), static_cast<int>(y / chunk::chunk_size_y), static_cast<int>(z / chunk::chunk_size_z)};
+            return {static_cast<int>((x < 0 ? std::floor(x / chunk_size_x) : x / chunk_size_x)),
+                    static_cast<int>((y < 0 ? std::floor(y / chunk_size_y) : y / chunk_size_y)),
+                    static_cast<int>((z < 0 ? std::floor(z / chunk_size_z) : z / chunk_size_z))};
         }
+
+        [[nodiscard]] static inline Vector3i get_chunk_position(const raylib::Vector3& pos) { return get_chunk_position(pos.x, pos.y, pos.z); }
 
     protected:
         std::vector<block> blocks;

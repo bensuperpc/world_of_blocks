@@ -30,7 +30,6 @@ project(
 include(../../cmake/lib/openmp.cmake)
 include(../../cmake/lib/raylib.cmake)
 include(../../cmake/lib/raylib-cpp.cmake)
-include(../../cmake/lib/perlin_noise.cmake)
 
 set(SOURCES
     raylib_intro.c

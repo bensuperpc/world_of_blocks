@@ -31,12 +31,14 @@ class world
         ~world();
 
         void generate_world();
+        void generate_chunk(const int32_t x, const int32_t y, const int32_t z);
 
         void generate_world_models();
+        void clear();
 
-        int world_chunk_size_x = 12;
-        int world_chunk_size_y = 2;
-        int world_chunk_size_z = 12;
+        int world_chunk_size_x = 4;
+        int world_chunk_size_y = 1;
+        int world_chunk_size_z = 4;
 
         int world_chunk_start_x = 0;
         int world_chunk_start_y = 0;

@@ -12,7 +12,6 @@ void game::init()
 
 void game::run()
 {
-    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     raylib::Window _window(screen_width, screen_height, "Minecube");
     this->window = std::move(_window);
 
@@ -63,6 +62,10 @@ void game::run()
         collisions.clear();
 
         mouse_position = GetMousePosition();
+
+        player_chunk_pos = std::move(chunk::get_chunk_position(player1.camera.position));
+        player_pos = std::move(player1.camera.position);
+
         screen_middle = Vector2({static_cast<float>(screen_width / 2), static_cast<float>(triangles_on_world_count / 2)});
 
         ray = ray.GetMouse(screen_middle, player1.camera);
@@ -76,6 +79,10 @@ void game::run()
             for (size_t ci = 0; ci < world_new.chunks_model.size(); ci++) {
                 world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
             }
+        }
+
+        if (IsKeyPressed(KEY_C)) {
+            world_new.clear();
         }
 
         if (IsKeyPressed(KEY_G)) {
@@ -127,6 +134,23 @@ void game::run()
         }
         */
 
+        // Check if the player is in a new chunk by finding if chunk position exists in the world chunks
+        auto it = std::find_if(world_new.chunks.begin(),
+                               world_new.chunks.end(),
+                               [&](const auto& chunk)
+                               {
+                                   const auto&& chunk_pos = chunk.get_position();
+                                   return chunk_pos.x == player_chunk_pos.x && chunk_pos.y == player_chunk_pos.y && chunk_pos.z == player_chunk_pos.z;
+                               });
+
+        if (it == world_new.chunks.end()) {
+            // Player is in a new chunk
+            std::cout << "Player is in a new chunk:" << std::endl;
+            std::cout << "x: " << player_chunk_pos.x << " y: " << player_chunk_pos.y << " z: " << player_chunk_pos.z << std::endl;
+            world_new.generate_chunk(player_chunk_pos.x, player_chunk_pos.y, player_chunk_pos.z);
+            world_new.chunks_model.back().materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+        }
+
         BeginDrawing();
         {
             window.ClearBackground(RAYWHITE);
@@ -138,7 +162,7 @@ void game::run()
                 auto&& chunk_coor = current_chunk.get_position();
                 auto& blocks = current_chunk.get_blocks();
 
-                if (world_new.chunks_model.size() <= ci) {
+                if (world_new.chunks_model.size() < ci) {
                     continue;
                 }
                 Model& current_model = world_new.chunks_model[ci];
@@ -155,21 +179,26 @@ void game::run()
                     display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
                     display_chunk_count++;
                 }
-
+                /*
                 const raylib::Vector2&& chunk_screen_pos = player1.camera.GetWorldToScreen(chunk_pos_center);
 
-                if (chunk_screen_pos.x < 0.0 || chunk_screen_pos.x > static_cast<float>(GetScreenWidth()) || chunk_screen_pos.y < 0.0
-                    || chunk_screen_pos.y > static_cast<float>(GetScreenHeight()))
+                if (chunk_screen_pos.x < -1000.0 || chunk_screen_pos.x > static_cast<float>(GetScreenWidth()) + 1000.0 || chunk_screen_pos.y < -1000.0
+                    || chunk_screen_pos.y > static_cast<float>(GetScreenHeight()) + 1000.0)
                 {
                     continue;
                 }
+                */
 
                 DrawModelEx(current_model, chunk_pos, {0, 0, 0}, 1.0f, {1, 1, 1}, WHITE);
                 if (debug_menu) {
                     chunks_on_screen_count++;
                     vectices_on_screen_count += current_model.meshes->vertexCount;
                     triangles_on_screen_count += current_model.meshes->triangleCount;
-                    continue;
+
+                    chunk_pos.x += static_cast<float>(chunk::chunk_size_x / 2.0f);
+                    chunk_pos.y += static_cast<float>(chunk::chunk_size_y / 2.0f);
+                    chunk_pos.z += static_cast<float>(chunk::chunk_size_z / 2.0f);
+
                     DrawCubeWires(chunk_pos,
                                   static_cast<float>(chunk::chunk_size_x),
                                   static_cast<float>(chunk::chunk_size_y),
@@ -212,8 +241,8 @@ void game::draw_debug_menu()
         return;
     }
 
-    DrawRectangle(4, 4, 320, 230, Fade(SKYBLUE, 0.5f));
-    DrawRectangleLines(4, 4, 320, 230, BLUE);
+    DrawRectangle(4, 4, 370, 290, Fade(SKYBLUE, 0.5f));
+    DrawRectangleLines(4, 4, 370, 290, BLUE);
 
     // Draw FPS
     DrawFPS(8, 8);
@@ -235,15 +264,20 @@ void game::draw_debug_menu()
     DrawText(("Triangles on screen: " + std::to_string(triangles_on_screen_count)).c_str(), 10, 210, 20, raylib::Color::Black());
 
     // Draw player position
-    /*
-    DrawText(
-        ("Position: " + std::to_string(player1.position.x) + ", " + std::to_string(player1.position.y) + ", " + std::to_string(player1.position.z))
-            .c_str(),
-        10,
-        150,
-        20,
-        raylib::Color::Black());
-    */
+
+    DrawText(("Player position: " + std::to_string(player_pos.x) + ", " + std::to_string(player_pos.y) + ", " + std::to_string(player_pos.z)).c_str(),
+             10,
+             250,
+             20,
+             raylib::Color::Black());
+
+    DrawText(("Player chunk position: " + std::to_string(player_chunk_pos.x) + ", " + std::to_string(player_chunk_pos.y) + ", "
+              + std::to_string(player_chunk_pos.z))
+                 .c_str(),
+             10,
+             270,
+             20,
+             raylib::Color::Black());
 
     // Reset statistics
     vectices_on_world_count = 0;

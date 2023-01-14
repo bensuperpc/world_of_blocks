@@ -55,7 +55,6 @@ if(NOT WIN32)
   include(../cmake/lib/raylib-cpp.cmake)
 
   # Add tests
-    #add_test_fn(world_of_blocks_test)
     add_test_fn(generator_test)
   # Add bench
     add_bench_fn(generator_bench)

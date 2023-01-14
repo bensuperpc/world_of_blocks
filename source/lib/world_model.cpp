@@ -152,18 +152,16 @@ std::vector<raylib::Model> world_model::generate_world_models(std::vector<chunk>
     // Generate models on mono thread (OpenGL)
     for (size_t i = 0; i < meshes.size(); i++) {
         UploadMesh(&meshes[i], false);
-        models.push_back(raylib::Model(meshes[i]));
+        models.push_back(std::move(raylib::Model(meshes[i])));
     }
     return models;
 }
 
 raylib::Model world_model::generate_chunk_model(chunk& chunks)
 {
-    raylib::Model models;
     Mesh mesh = chunk_mesh(chunks);
     UploadMesh(&mesh, false);
-    models = raylib::Model(mesh);
-    return models;
+    return raylib::Model(mesh);
 }
 
 inline bool world_model::block_is_solid(int x, int y, int z, chunk& _chunk)
