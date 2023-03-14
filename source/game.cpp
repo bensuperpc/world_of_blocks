@@ -12,14 +12,13 @@ void game::init()
 
 void game::run()
 {
-    raylib::Window _window(screen_width, screen_height, "Minecube");
-    this->window = std::move(_window);
+    InitWindow(screen_width, screen_height, "World of blocks");
 
     auto generate_world_async = std::async(std::launch::async, [&]() { world_new.generate_world(); });
 
     // Play intro animation
     SetTargetFPS(60);
-    // raylib::AudioDevice audiodevice;
+    // AudioDevice audiodevice;
 
     // async intro animation
     play_intro_raylib(screen_width, screen_height);
@@ -33,19 +32,19 @@ void game::run()
 
     player player1 = player();
 
-    // raylib::Image img = GenImageChecked(256, 256, 32, 32, GREEN, RED);
-    // raylib::Image img = GenImageColor(16, 16, raylib::Color::White());
-    // raylib::Texture2D textureGrid = LoadTextureFromImage(img);
+    // Image img = GenImageChecked(256, 256, 32, 32, GREEN, RED);
+    // Image img = GenImageColor(16, 16, WHITE);
+    // Texture2D textureGrid = LoadTextureFromImage(img);
     // SetTextureFilter(textureGrid, TEXTURE_FILTER_ANISOTROPIC_16X);
     // SetTextureWrap(textureGrid, TEXTURE_WRAP_CLAMP);
 
-    raylib::Texture2D texture = LoadTexture("grass.png");
+    Texture2D texture = LoadTexture("grass.png");
 
     for (size_t ci = 0; ci < world_new.chunks_model.size(); ci++) {
         world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     }
 
-    while (!window.ShouldClose()) {
+    while (!WindowShouldClose()) {
         // If window is not focused or minimized, don't update to save resources
         // !IsWindowFocused()
         if (IsWindowMinimized()) {
@@ -68,7 +67,7 @@ void game::run()
 
         screen_middle = Vector2({static_cast<float>(screen_width / 2), static_cast<float>(triangles_on_world_count / 2)});
 
-        ray = ray.GetMouse(screen_middle, player1.camera);
+        ray = GetMouseRay(screen_middle, player1.camera);
 
         if (IsKeyPressed(KEY_R)) {
             siv::PerlinNoise::seed_type seed = std::random_device()();
@@ -153,7 +152,7 @@ void game::run()
 
         BeginDrawing();
         {
-            window.ClearBackground(RAYWHITE);
+            ClearBackground(RAYWHITE);
 
             player1.camera.BeginMode();
 
@@ -180,7 +179,7 @@ void game::run()
                     display_chunk_count++;
                 }
                 /*
-                const raylib::Vector2&& chunk_screen_pos = player1.camera.GetWorldToScreen(chunk_pos_center);
+                const Vector2&& chunk_screen_pos = player1.camera.GetWorldToScreen(chunk_pos_center);
 
                 if (chunk_screen_pos.x < -1000.0 || chunk_screen_pos.x > static_cast<float>(GetScreenWidth()) + 1000.0 || chunk_screen_pos.y < -1000.0
                     || chunk_screen_pos.y > static_cast<float>(GetScreenHeight()) + 1000.0)
@@ -203,7 +202,7 @@ void game::run()
                                   static_cast<float>(chunk::chunk_size_x),
                                   static_cast<float>(chunk::chunk_size_y),
                                   static_cast<float>(chunk::chunk_size_z),
-                                  raylib::Color::Red());
+                                RED);
                 }
             }
 
@@ -212,15 +211,15 @@ void game::run()
             }
 
             if (closest_collision.hit) {
-                DrawCube(closest_collision.point, 0.3f, 0.3f, 0.3f, raylib::Color::Yellow());
-                DrawCubeWires(closest_collision.point, 0.3f, 0.3f, 0.3f, raylib::Color::Black());
+                DrawCube(closest_collision.point, 0.3f, 0.3f, 0.3f, YELLOW);
+                DrawCubeWires(closest_collision.point, 0.3f, 0.3f, 0.3f, BLACK);
 
                 Vector3 normalEnd;
                 normalEnd.x = closest_collision.point.x + closest_collision.normal.x;
                 normalEnd.y = closest_collision.point.y + closest_collision.normal.y;
                 normalEnd.z = closest_collision.point.z + closest_collision.normal.z;
 
-                DrawLine3D(closest_collision.point, normalEnd, raylib::Color::Blue());
+                DrawLine3D(closest_collision.point, normalEnd, BLUE);
             }
 
             player1.camera.EndMode();
@@ -228,8 +227,8 @@ void game::run()
             draw_debug_menu();
 
             // Draw crosshair in the middle of the screen
-            DrawLine(screen_middle.x - 10, screen_middle.y, screen_middle.x + 10, screen_middle.y, raylib::Color::SkyBlue());
-            DrawLine(screen_middle.x, screen_middle.y - 10, screen_middle.x, screen_middle.y + 10, raylib::Color::SkyBlue());
+            DrawLine(screen_middle.x - 10, screen_middle.y, screen_middle.x + 10, screen_middle.y, SKYBLUE);
+            DrawLine(screen_middle.x, screen_middle.y - 10, screen_middle.x, screen_middle.y + 10, SKYBLUE);
         }
         EndDrawing();
     }
@@ -250,18 +249,18 @@ void game::draw_debug_menu()
     // Draw block info
     /*
     std::string block_info ="XYZ: " + std::to_string(block_info_pos.x) + ", " + std::to_string(block_info_pos.y) + ", " +
-    std::to_string(block_info_pos.z); DrawText(block_info.c_str(), 10, 30, 20, raylib::Color::Black()); DrawText(("Index: " +
-    std::to_string(block_info_index)).c_str(), 10, 50, 20, raylib::Color::Black());
+    std::to_string(block_info_pos.z); DrawText(block_info.c_str(), 10, 30, 20, BLACK); DrawText(("Index: " +
+    std::to_string(block_info_index)).c_str(), 10, 50, 20, BLACK);
     */
 
     // Draw statistics
-    DrawText(("Blocks on world: " + std::to_string(display_block_count)).c_str(), 10, 70, 20, raylib::Color::Black());
-    DrawText(("Chunks on world: " + std::to_string(display_chunk_count)).c_str(), 10, 90, 20, raylib::Color::Black());
-    DrawText(("Vertices on world: " + std::to_string(vectices_on_world_count)).c_str(), 10, 110, 20, raylib::Color::Black());
-    DrawText(("Triangles on world: " + std::to_string(triangles_on_world_count)).c_str(), 10, 130, 20, raylib::Color::Black());
-    DrawText(("Chunks on screen: " + std::to_string(chunks_on_screen_count)).c_str(), 10, 170, 20, raylib::Color::Black());
-    DrawText(("Vertices on screen: " + std::to_string(vectices_on_screen_count)).c_str(), 10, 190, 20, raylib::Color::Black());
-    DrawText(("Triangles on screen: " + std::to_string(triangles_on_screen_count)).c_str(), 10, 210, 20, raylib::Color::Black());
+    DrawText(("Blocks on world: " + std::to_string(display_block_count)).c_str(), 10, 70, 20, BLACK);
+    DrawText(("Chunks on world: " + std::to_string(display_chunk_count)).c_str(), 10, 90, 20, BLACK);
+    DrawText(("Vertices on world: " + std::to_string(vectices_on_world_count)).c_str(), 10, 110, 20, BLACK);
+    DrawText(("Triangles on world: " + std::to_string(triangles_on_world_count)).c_str(), 10, 130, 20, BLACK);
+    DrawText(("Chunks on screen: " + std::to_string(chunks_on_screen_count)).c_str(), 10, 170, 20, BLACK);
+    DrawText(("Vertices on screen: " + std::to_string(vectices_on_screen_count)).c_str(), 10, 190, 20, BLACK);
+    DrawText(("Triangles on screen: " + std::to_string(triangles_on_screen_count)).c_str(), 10, 210, 20, BLACK);
 
     // Draw player position
 
@@ -269,7 +268,7 @@ void game::draw_debug_menu()
              10,
              250,
              20,
-             raylib::Color::Black());
+             BLACK);
 
     DrawText(("Player chunk position: " + std::to_string(player_chunk_pos.x) + ", " + std::to_string(player_chunk_pos.y) + ", "
               + std::to_string(player_chunk_pos.z))
@@ -277,7 +276,7 @@ void game::draw_debug_menu()
              10,
              270,
              20,
-             raylib::Color::Black());
+             BLACK);
 
     // Reset statistics
     vectices_on_world_count = 0;

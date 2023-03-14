@@ -5,7 +5,6 @@
 #include "block.hpp"
 #include "math.hpp"
 // Raylib
-#include "raylib-cpp.hpp"
 #include "raylib.h"
 
 class chunk
@@ -49,10 +48,10 @@ class chunk
         static constexpr int chunk_size_z = 32;
 
         // From chunk position to real position
-        [[nodiscard]] static inline raylib::Vector3 get_real_position(const chunk& chunk)
+        [[nodiscard]] static inline Vector3 get_real_position(const chunk& chunk)
         {
             auto&& chunk_pos = chunk.get_position();
-            return {chunk_pos.x * chunk::chunk_size_x, chunk_pos.y * chunk::chunk_size_y, chunk_pos.z * chunk::chunk_size_z};
+            return {static_cast<float>(chunk_pos.x * chunk::chunk_size_x), static_cast<float>(chunk_pos.y * chunk::chunk_size_y), static_cast<float>(chunk_pos.z * chunk::chunk_size_z)};
         }
 
         // From real position to chunk position
@@ -63,7 +62,7 @@ class chunk
                     static_cast<int>((z < 0 ? std::floor(z / chunk_size_z) : z / chunk_size_z))};
         }
 
-        [[nodiscard]] static inline Vector3i get_chunk_position(const raylib::Vector3& pos) { return get_chunk_position(pos.x, pos.y, pos.z); }
+        [[nodiscard]] static inline Vector3i get_chunk_position(const Vector3& pos) { return get_chunk_position(pos.x, pos.y, pos.z); }
 
     protected:
         std::vector<block> blocks;

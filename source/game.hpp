@@ -16,7 +16,6 @@
 
 // #include "PerlinNoise.hpp"
 //  Raylib
-#include "raylib-cpp.hpp"
 #include "raylib.h"
 #include "raymath.h"
 
@@ -50,7 +49,6 @@ class game
 
     private:
         // Game settings and window
-        raylib::Window window;
         int screen_width = 1920;
         int screen_height = 1080;
         int target_fps = 240;
@@ -81,16 +79,16 @@ class game
         bool block_grid = true;
 
         // Game variables
-        raylib::Vector2 mouse_position = {0, 0};
-        raylib::Vector2 screen_middle = {0, 0};
+        Vector2 mouse_position = {0, 0};
+        Vector2 screen_middle = {0, 0};
 
         // Camera and player
         // player player1;
 
         // Ray collision
-        raylib::Ray ray;
+        Ray ray;
         std::vector<std::pair<block*, RayCollision>> collisions;
-        raylib::RayCollision closest_collision = raylib::RayCollision(false, 0, {0, 0, 0}, {0, 0, 0});
+        RayCollision closest_collision = {false, 0, {0, 0, 0}, {0, 0, 0}};
         block* closest_block = nullptr;
 };
 

@@ -14,7 +14,6 @@
 #include <omp.h>
 
 #include "PerlinNoise.hpp"
-#include "raylib-cpp.hpp"
 #include "raylib.h"
 
 // Cube lib
@@ -50,7 +49,7 @@ class world
         world_model world_md = world_model();
 
         std::vector<chunk> chunks;
-        std::vector<raylib::Model> chunks_model;
+        std::vector<Model> chunks_model;
 };
 
 #endif  // WORLD_OF_CUBE_WORLD_HPP

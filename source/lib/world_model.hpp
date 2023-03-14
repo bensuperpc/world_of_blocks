@@ -4,7 +4,6 @@
 
 #include <omp.h>
 
-#include "raylib-cpp.hpp"
 #include "raylib.h"
 #include "raymath.h"
 
@@ -32,8 +31,8 @@ class world_model
 
         void add_cube(Mesh& mesh, size_t& triangle_index, size_t& vert_index, Vector3&& position, bool faces[6], int block);
 
-        std::vector<raylib::Model> generate_world_models(std::vector<chunk>& chunk);
-        raylib::Model generate_chunk_model(chunk& chunks);
+        std::vector<Model> generate_world_models(std::vector<chunk>& chunk);
+        Model generate_chunk_model(chunk& chunks);
 
         inline bool block_is_solid(int x, int y, int z, chunk& _chunk);
 

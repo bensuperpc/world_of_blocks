@@ -136,9 +136,9 @@ inline void world_model::add_cube(Mesh& mesh, size_t& triangle_index, size_t& ve
     }
 }
 
-std::vector<raylib::Model> world_model::generate_world_models(std::vector<chunk>& chunks)
+std::vector<Model> world_model::generate_world_models(std::vector<chunk>& chunks)
 {
-    std::vector<raylib::Model> models;
+    std::vector<Model> models;
     std::vector<Mesh> meshes;
     meshes.reserve(chunks.size());
     models.reserve(chunks.size());
@@ -152,16 +152,19 @@ std::vector<raylib::Model> world_model::generate_world_models(std::vector<chunk>
     // Generate models on mono thread (OpenGL)
     for (size_t i = 0; i < meshes.size(); i++) {
         UploadMesh(&meshes[i], false);
-        models.push_back(std::move(raylib::Model(meshes[i])));
+
+
+
+        models.push_back(std::move(LoadModelFromMesh(meshes[i])));
     }
     return models;
 }
 
-raylib::Model world_model::generate_chunk_model(chunk& chunks)
+Model world_model::generate_chunk_model(chunk& chunks)
 {
     Mesh mesh = chunk_mesh(chunks);
     UploadMesh(&mesh, false);
-    return raylib::Model(mesh);
+    return LoadModelFromMesh(mesh);
 }
 
 inline bool world_model::block_is_solid(int x, int y, int z, chunk& _chunk)

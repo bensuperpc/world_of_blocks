@@ -27,6 +27,12 @@ void world::generate_world()
 void world::generate_world_models()
 {
     // Free the models
+    for (auto& model : chunks_model)
+    {
+        UnloadModel(model);
+    }
+
+    // Free the models
     chunks_model.clear();
     chunks_model.shrink_to_fit();
 
@@ -57,6 +63,12 @@ void world::clear()
     // Clear the chunks
     chunks.clear();
     chunks.shrink_to_fit();
+
+    // Free the models
+    for (auto& model : chunks_model)
+    {
+        UnloadModel(model);
+    }
 
     // Free the models
     chunks_model.clear();
