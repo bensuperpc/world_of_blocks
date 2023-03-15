@@ -7,7 +7,7 @@
 #//                             |_|             |_|          //
 #//////////////////////////////////////////////////////////////
 #//                                                          //
-#//  Script, 2022                                            //
+#//  new_app, 2023                                           //
 #//  Created: 19, April, 2022                                //
 #//  Modified: 04, July, 2022                                //
 #//  file: -                                                 //
@@ -18,7 +18,7 @@
 #//                                                          //
 #//////////////////////////////////////////////////////////////
 
-PROJECT_NAME = "experimentation"
+PROJECT_NAME := world_of_blocks
 
 PARALLEL := 1
 
@@ -60,13 +60,13 @@ all: release debug minsizerel coverage relwithdebinfo minsizerel relwithdebinfo 
 
 .PHONY: base
 base:
-	cmake --preset=$@ -G $(GENERATOR)
+	cmake -B build/$@ -S . -G $(GENERATOR) --preset=$@
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --timeout $(CTEST_TIMEOUT) --parallel $(PARALLEL) --test-dir build/$@
 
 .PHONY: base-clang
 base-clang:
-	cmake --preset=$@ -G $(GENERATOR)
+	cmake --preset=$@ -S . -G $(GENERATOR)
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --timeout $(CTEST_TIMEOUT) --parallel $(PARALLEL) --test-dir build/$@
 
