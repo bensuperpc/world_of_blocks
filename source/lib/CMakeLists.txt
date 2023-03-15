@@ -29,7 +29,6 @@ project(
 
 include(../../cmake/lib/openmp.cmake)
 include(../../cmake/lib/raylib.cmake)
-include(../../cmake/lib/raylib-cpp.cmake)
 include(../../cmake/lib/perlin_noise.cmake)
 
 set(SOURCES
@@ -40,7 +39,7 @@ set(SOURCES
 #add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC raylib raylib_cpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC raylib)
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 

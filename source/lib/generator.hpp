@@ -268,9 +268,9 @@ class generator
         {
             constexpr bool debug = false;
 
-            const int32_t end_x = static_cast<int32_t>(begin_x + size_x);
-            const int32_t end_y = static_cast<int32_t>(begin_y + size_y);
-            const int32_t end_z = static_cast<int32_t>(begin_z + size_z);
+            //const int32_t end_x = static_cast<int32_t>(begin_x + size_x);
+            //const int32_t end_y = static_cast<int32_t>(begin_y + size_y);
+            //const int32_t end_z = static_cast<int32_t>(begin_z + size_z);
 
             std::vector<block> blocks = std::vector<block>(size_x * size_y * size_z, block());
 

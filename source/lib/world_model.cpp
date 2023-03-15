@@ -3,7 +3,7 @@
 #include "world_model.hpp"
 
 inline void world_model::add_vertex(
-    Mesh& mesh, size_t& triangle_index, size_t& vert_index, Vector3& vertex, Vector3 offset, Vector3 normal, Vector2 texcoords)
+    Mesh& mesh, size_t& triangle_index, size_t& vert_index, const Vector3& vertex, const Vector3 &offset, const Vector3& normal, const Vector2 &texcoords)
 {
     size_t index = triangle_index * 12 + vert_index * 3;
 
@@ -28,7 +28,7 @@ inline void world_model::add_vertex(
     }
 }
 
-inline void world_model::add_cube(Mesh& mesh, size_t& triangle_index, size_t& vert_index, Vector3&& position, bool faces[6], int block)
+inline void world_model::add_cube(Mesh& mesh, size_t& triangle_index, size_t& vert_index, const Vector3& position, bool faces[6], int block)
 {
     Rectangle texcoords_rect = Rectangle {0.25f, 0, 0.5f, 1};
     // z-

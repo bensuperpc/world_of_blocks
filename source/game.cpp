@@ -154,7 +154,7 @@ void game::run()
         {
             ClearBackground(RAYWHITE);
 
-            player1.camera.BeginMode();
+            BeginMode3D(player1.camera);
 
             for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
                 chunk& current_chunk = world_new.chunks[ci];
@@ -221,8 +221,7 @@ void game::run()
 
                 DrawLine3D(closest_collision.point, normalEnd, BLUE);
             }
-
-            player1.camera.EndMode();
+            EndMode3D();
 
             draw_debug_menu();
 

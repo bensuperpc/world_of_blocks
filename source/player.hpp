@@ -8,7 +8,6 @@
 #include <omp.h>
 
 // Raylib
-#include "raylib-cpp.hpp"
 #include "raylib.h"
 #include "raymath.h"
 
@@ -26,7 +25,7 @@ class player
 
         Vector3 get_position() const;
 
-        raylib::Camera camera;
+        Camera camera;
 };
 
 #endif  // WORLD_OF_CUBE_WORLD_HPP

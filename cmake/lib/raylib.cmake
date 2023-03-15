@@ -11,7 +11,7 @@ set(INCLUDE_EVERYTHING ON CACHE BOOL "" FORCE)
 if (NOT raylib_FOUND)
     FetchContent_Declare(raylib
         GIT_REPOSITORY https://github.com/raysan5/raylib.git
-        GIT_TAG 4.2.0
+        GIT_TAG cf04425bc2afcf8da998d8c5d24a320cf8a076bb
     )
     FetchContent_MakeAvailable(raylib)
 endif()
