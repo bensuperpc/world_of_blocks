@@ -277,7 +277,6 @@ Mesh world_model::chunk_mesh(chunk& chunk)
     size_t vert_index = 0;
 
     auto& blocks = chunk.get_blocks();
-
     for (int x = 0; x < chunk::chunk_size_x; x++) {
         for (int y = 0; y < chunk::chunk_size_y; y++) {
             for (int z = 0; z < chunk::chunk_size_z; z++) {

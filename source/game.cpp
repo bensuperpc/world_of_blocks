@@ -30,6 +30,8 @@ void game::run()
 
     SetTargetFPS(target_fps);
 
+    uint64_t frame_count = 0;
+
     player player1 = player();
 
     // Image img = GenImageChecked(256, 256, 32, 32, GREEN, RED);
@@ -117,7 +119,6 @@ void game::run()
             }
         }
 
-
         if (!collisions.empty()) {
             // sort by distance and get the closest collision
             std::sort(collisions.begin(), collisions.end(), [](const auto& a, const auto& b) { return a.second.distance < b.second.distance; });
@@ -133,21 +134,20 @@ void game::run()
         }
         */
 
-        // Check if the player is in a new chunk by finding if chunk position exists in the world chunks
-        auto it = std::find_if(world_new.chunks.begin(),
-                               world_new.chunks.end(),
-                               [&](const auto& chunk)
-                               {
-                                   const auto&& chunk_pos = chunk.get_position();
-                                   return chunk_pos.x == player_chunk_pos.x && chunk_pos.y == player_chunk_pos.y && chunk_pos.z == player_chunk_pos.z;
-                               });
 
-        if (it == world_new.chunks.end()) {
-            // Player is in a new chunk
-            std::cout << "Player is in a new chunk:" << std::endl;
-            std::cout << "x: " << player_chunk_pos.x << " y: " << player_chunk_pos.y << " z: " << player_chunk_pos.z << std::endl;
-            world_new.generate_chunk(player_chunk_pos.x, player_chunk_pos.y, player_chunk_pos.z);
-            world_new.chunks_model.back().materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+        if (frame_count % 10 == 0) {
+            // TODO: make render distance configurable on x, y and z axis, and -x, -y and -z axis
+            int32_t render_distance = 2;
+            for (int32_t x = -render_distance; x <= render_distance; x++) {
+                for (int32_t y = -render_distance; y <= render_distance; y++) {
+                    for (int32_t z = -render_distance; z <= render_distance; z++) {
+                        if (!world_new.is_chunk_exist(player_chunk_pos.x + x, player_chunk_pos.y + y, player_chunk_pos.z + z)) {
+                            world_new.generate_chunk(player_chunk_pos.x + x, player_chunk_pos.y + y, player_chunk_pos.z + z, true);
+                            world_new.chunks_model.back().materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+                        }
+                    }
+                }
+            }
         }
 
         BeginDrawing();
@@ -178,9 +178,10 @@ void game::run()
                     display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
                     display_chunk_count++;
                 }
+                
                 /*
-                const Vector2&& chunk_screen_pos = player1.camera.GetWorldToScreen(chunk_pos_center);
-
+                const Vector2&& chunk_screen_pos = player1.camera.GetWorldToScreen(chunk_pos_center, player1.camera);
+                
                 if (chunk_screen_pos.x < -1000.0 || chunk_screen_pos.x > static_cast<float>(GetScreenWidth()) + 1000.0 || chunk_screen_pos.y < -1000.0
                     || chunk_screen_pos.y > static_cast<float>(GetScreenHeight()) + 1000.0)
                 {
@@ -230,6 +231,7 @@ void game::run()
             DrawLine(screen_middle.x, screen_middle.y - 10, screen_middle.x, screen_middle.y + 10, SKYBLUE);
         }
         EndDrawing();
+        frame_count++;
     }
 }
 

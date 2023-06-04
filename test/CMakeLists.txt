@@ -56,7 +56,7 @@ if(NOT WIN32)
   # Add tests
     add_test_fn(generator_test)
   # Add bench
-    add_bench_fn(generator_bench)
+  #  add_bench_fn(generator_bench)
 endif()
 
 # ---- End-of-file commands ----

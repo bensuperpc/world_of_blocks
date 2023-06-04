@@ -1,11 +1,11 @@
 # ---- Developer mode ----
 
 # Developer mode enables targets and code paths in the CMake scripts that are
-# only relevant for the developer(s) of world_of_blocks
+# only relevant for the developer(s) of sandbox
 # Targets necessary to build the project must be provided unconditionally, so
 # consumers can trivially build and package the project
 if(PROJECT_IS_TOP_LEVEL)
-  option(world_of_blocks_DEVELOPER_MODE "Enable developer mode" OFF)
+  option(sandbox_DEVELOPER_MODE "Enable developer mode" OFF)
 endif()
 
 # ---- Warning guard ----
@@ -17,12 +17,12 @@ endif()
 set(warning_guard "")
 if(NOT PROJECT_IS_TOP_LEVEL)
   option(
-      world_of_blocks_INCLUDES_WITH_SYSTEM
-      "Use SYSTEM modifier for world_of_blocks's includes, disabling warnings"
+      sandbox_INCLUDES_WITH_SYSTEM
+      "Use SYSTEM modifier for sandbox's includes, disabling warnings"
       ON
   )
-  mark_as_advanced(world_of_blocks_INCLUDES_WITH_SYSTEM)
-  if(world_of_blocks_INCLUDES_WITH_SYSTEM)
+  mark_as_advanced(sandbox_INCLUDES_WITH_SYSTEM)
+  if(sandbox_INCLUDES_WITH_SYSTEM)
     set(warning_guard SYSTEM)
   endif()
 endif()

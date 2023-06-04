@@ -51,7 +51,7 @@
       "hidden": true,
       "cacheVariables": {
         "CMAKE_CXX_EXTENSIONS": "ON",
-        "CMAKE_CXX_STANDARD": "17",
+        "CMAKE_CXX_STANDARD": "20",
         "CMAKE_CXX_STANDARD_REQUIRED": "ON",
         "CMAKE_C_EXTENSIONS": "ON",
         "CMAKE_C_STANDARD": "11",
@@ -89,6 +89,7 @@
       "hidden": true,
       "cacheVariables": {
         "CUDA_NVCC_FLAGS": "--default-stream per-thread -arch=all-major",
+        "CUDA_ARCHITECTURES": "50;52;53;60;61;62;70;72;75;80;86",
         "CUDA_PROPAGATE_HOST_FLAGS": "ON",
         "CUDA_SEPARABLE_COMPILATION": "ON"
       }
@@ -205,7 +206,7 @@
       "name": "gprof",
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build/gprof",
-      "inherits": ["ci-std", "flags-gprof", "dev-mode", "ci-cuda"],
+      "inherits": ["ci-std", "flags-gprof", "dev-mode"],
       "hidden": false,
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"

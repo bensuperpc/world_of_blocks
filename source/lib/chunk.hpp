@@ -44,7 +44,7 @@ class chunk
         }
 
         static constexpr int chunk_size_x = 32;
-        static constexpr int chunk_size_y = 128;
+        static constexpr int chunk_size_y = 32;
         static constexpr int chunk_size_z = 32;
 
         // From chunk position to real position

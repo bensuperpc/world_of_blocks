@@ -7,7 +7,7 @@ include(FetchContent)
 if (NOT json_FOUND)
     FetchContent_Declare(json
         GIT_REPOSITORY https://github.com/nlohmann/json.git
-        GIT_TAG b2306145e1789368e6f261680e8dc007e91cc986 # 2023-02-24
+        GIT_TAG bbe337c3a30d5f6eea418b4aee399525536de37a # 2023-03-08
     )
     FetchContent_MakeAvailable(json)
     # nlohmann_json::nlohmann_json

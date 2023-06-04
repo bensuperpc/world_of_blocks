@@ -22,7 +22,7 @@ endif()
 if (NOT raylib_FOUND)
     FetchContent_Declare(raylib
         GIT_REPOSITORY https://github.com/raysan5/raylib.git
-        GIT_TAG cf04425bc2afcf8da998d8c5d24a320cf8a076bb
+        GIT_TAG 4.5.0  # 08-04-2023
     )
     FetchContent_MakeAvailable(raylib)
 endif()

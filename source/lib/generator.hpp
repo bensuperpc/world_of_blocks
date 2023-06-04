@@ -129,7 +129,7 @@ class generator
 
                 std::cout << "Generating 3D noise..." << std::endl;
             }
-
+//#pragma omp parallel for collapse(3) schedule(dynamic)
             for (uint32_t x = 0; x < size_x; x++) {
                 for (uint32_t z = 0; z < size_z; z++) {
                     for (uint32_t y = 0; y < size_y; y++) {
@@ -187,7 +187,7 @@ class generator
             return _chunk;
         }
 
-        std::vector<chunk> generate_word(const int32_t begin_chunk_x,
+        std::vector<chunk> generate_chunks(const int32_t begin_chunk_x,
                                          const int32_t begin_chunk_y,
                                          const int32_t begin_chunk_z,
                                          const uint32_t chunk_x,
@@ -274,9 +274,7 @@ class generator
 
             std::vector<block> blocks = std::vector<block>(size_x * size_y * size_z, block());
 
-            std::vector<uint32_t> heightmap;
-
-            heightmap = std::move(generate_3d_heightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z));
+            std::vector<uint32_t> heightmap = std::move(generate_3d_heightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z));
 
             if constexpr (debug) {
                 std::cout << "Generating blocks..." << std::endl;
@@ -286,7 +284,7 @@ class generator
                 for (uint32_t z = 0; z < size_z; z++) {
                     for (uint32_t y = 0; y < size_y; y++) {
                         size_t vec_index = math::convert_to_1d(x, y, z, size_x, size_y, size_z);
-                        auto noise_value = heightmap[vec_index];
+                        const auto noise_value = heightmap[vec_index];
                         auto& current_block = blocks[vec_index];
 
                         if constexpr (debug) {

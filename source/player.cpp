@@ -2,24 +2,10 @@
 
 player::player()
 {
-    /*
-    raylib::Camera _camera(
-        // raylib::Vector3(48.0f, 48.0f, -48.0f),
-        raylib::Vector3(-28.0f, 48.0f, -28.0f),
-        raylib::Vector3(16.0f, 16.0f, 16.0f),
-        raylib::Vector3(0.0f, 1.0f, 0.0f),
-        80.0f,
-        CAMERA_PERSPECTIVE);
-
-    _camera.SetMode(CAMERA_FIRST_PERSON);
-    // To disable free camera movement, just set movement controls to KEY_NULL
-    // _camera.SetMoveControls(KEY_NULL, KEY_NULL, KEY_NULL, KEY_NULL, KEY_NULL, KEY_NULL);
-    this->camera = _camera;
-    */
-    Camera _camera = { 0 };
-    _camera.position = (Vector3){ 48.0f, 48.0f, -48.0f };
-    _camera.target = (Vector3){ -28.0f, 48.0f, -28.0f };
-    _camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    Camera _camera = {0};
+    _camera.position = (Vector3) {48.0f, 48.0f, -48.0f};
+    _camera.target = (Vector3) {-28.0f, 48.0f, -28.0f};
+    _camera.up = (Vector3) {0.0f, 1.0f, 0.0f};
     _camera.fovy = 80.0f;
     _camera.projection = CAMERA_PERSPECTIVE;
 
@@ -36,5 +22,34 @@ player::~player() {}
 
 void player::update()
 {
-    UpdateCamera(&camera, CAMERA_FIRST_PERSON);
+    float player_speed = 0.5f;
+    float zoom = GetMouseWheelMove() * 0.5f;
+    Vector3 movement = { 0.0f, 0.0f, 0.0f };
+    Vector3 rotation = { 0.0f, 0.0f, 0.0f };
+
+
+    if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {
+        movement.x = player_speed;
+    }
+    if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) {
+        movement.x = -player_speed;
+    }
+    if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
+        movement.y = player_speed;
+    }
+    if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
+        movement.y = -player_speed;
+    }
+    if (IsKeyDown(KEY_SPACE)) {
+        movement.z = player_speed;
+    }
+    if (IsKeyDown(KEY_LEFT_SHIFT)) {
+        movement.z = -player_speed;
+    }
+
+    rotation.x = GetMouseDelta().x * 0.05f;
+    rotation.y = GetMouseDelta().y * 0.05f;
+
+
+    UpdateCameraPro(&camera,movement,rotation,zoom);
 }

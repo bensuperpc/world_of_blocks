@@ -30,18 +30,19 @@ class world
         ~world();
 
         void generate_world();
-        void generate_chunk(const int32_t x, const int32_t y, const int32_t z);
+        void generate_chunk(const int32_t, const int32_t, const int32_t, bool);
+        bool is_chunk_exist(const int32_t, const int32_t, const int32_t);
 
         void generate_world_models();
         void clear();
 
-        int world_chunk_size_x = 4;
-        int world_chunk_size_y = 1;
-        int world_chunk_size_z = 4;
+        int32_t world_chunk_size_x = 4;
+        int32_t world_chunk_size_y = 1;
+        int32_t world_chunk_size_z = 4;
 
-        int world_chunk_start_x = 0;
-        int world_chunk_start_y = 0;
-        int world_chunk_start_z = 0;
+        int32_t world_chunk_start_x = 0;
+        int32_t world_chunk_start_y = 0;
+        int32_t world_chunk_start_z = 0;
 
         siv::PerlinNoise::seed_type seed = 2510586073u;
 

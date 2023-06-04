@@ -12,14 +12,14 @@ static void generate_3d_word(benchmark::State& state)
     generator gen = generator(seed);
 
     for (auto _ : state) {
-        std::vector<chunk> chunks = std::move(gen.generate_word(0, 0, 0, size, 1, size, true));
+        std::vector<chunk> chunks = std::move(gen.generate_chunks(0, 0, 0, size, 1, size, true));
         benchmark::DoNotOptimize(chunks);
         benchmark::ClobberMemory();
     }
     state.SetItemsProcessed(state.iterations() * size * size);
     state.SetBytesProcessed(state.iterations() * size * size * sizeof(chunk));
 }
-BENCHMARK(generate_3d_word)->Name("generate_3d_word")->RangeMultiplier(2)->Range(1, 8);
+BENCHMARK(generate_3d_word)->Name("generate_3d_word")->RangeMultiplier(2)->Range(1, 8)->ThreadRange(1, 1);
 
 static void generate_3d_chunk(benchmark::State& state)
 {
@@ -36,7 +36,7 @@ static void generate_3d_chunk(benchmark::State& state)
     state.SetItemsProcessed(state.iterations());
     state.SetBytesProcessed(state.iterations() * sizeof(chunk));
 }
-BENCHMARK(generate_3d_chunk)->Name("generate_3d_chunk")->RangeMultiplier(2)->Range(1, 1);
+BENCHMARK(generate_3d_chunk)->Name("generate_3d_chunk")->RangeMultiplier(2)->Range(1, 1)->ThreadRange(1, 1);
 
 static void generate_2d_word(benchmark::State& state)
 {
@@ -46,14 +46,14 @@ static void generate_2d_word(benchmark::State& state)
     generator gen = generator(seed);
 
     for (auto _ : state) {
-        std::vector<chunk> chunks = std::move(gen.generate_word(0, 0, 0, size, 1, size, false));
+        std::vector<chunk> chunks = std::move(gen.generate_chunks(0, 0, 0, size, 1, size, false));
         benchmark::DoNotOptimize(chunks);
         benchmark::ClobberMemory();
     }
     state.SetItemsProcessed(state.iterations() * size * size);
     state.SetBytesProcessed(state.iterations() * size * size * sizeof(chunk));
 }
-BENCHMARK(generate_2d_word)->Name("generate_2d_word")->RangeMultiplier(2)->Range(1, 8);
+BENCHMARK(generate_2d_word)->Name("generate_2d_word")->RangeMultiplier(2)->Range(1, 8)->ThreadRange(1, 1);
 
 static void generate_2d_chunk(benchmark::State& state)
 {
@@ -70,4 +70,4 @@ static void generate_2d_chunk(benchmark::State& state)
     state.SetItemsProcessed(state.iterations());
     state.SetBytesProcessed(state.iterations() * sizeof(chunk));
 }
-BENCHMARK(generate_2d_chunk)->Name("generate_2d_chunk")->RangeMultiplier(2)->Range(1, 1);
+BENCHMARK(generate_2d_chunk)->Name("generate_2d_chunk")->RangeMultiplier(2)->Range(1, 1)->ThreadRange(1, 1);
