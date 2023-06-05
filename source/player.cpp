@@ -20,8 +20,7 @@ Vector3 player::get_position() const
 
 player::~player() {}
 
-void player::update()
-{
+void player::update() {
     float player_speed = 0.5f;
     float zoom = GetMouseWheelMove() * 0.5f;
     Vector3 movement = { 0.0f, 0.0f, 0.0f };
@@ -52,4 +51,12 @@ void player::update()
 
 
     UpdateCameraPro(&camera,movement,rotation,zoom);
+}
+
+void player::draw2d() {
+
+}
+
+void player::draw3d() {
+
 }

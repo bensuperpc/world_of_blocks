@@ -36,6 +36,8 @@ extern "C"
 #include "world.hpp"
 #include "world_model.hpp"
 
+#include "debug_menu.hpp"
+
 class game
 {
     public:
@@ -48,6 +50,8 @@ class game
         void draw_debug_menu();
 
     private:
+        debug_menu debug_menu1;
+        
         // Game settings and window
         int screen_width = 1920;
         int screen_height = 1080;
@@ -55,25 +59,6 @@ class game
 
         // Generator
         world world_new = world();
-
-        // Menu
-        bool debug_menu = true;
-
-        // Debug menu
-        size_t vectices_on_world_count = 0;
-        size_t triangles_on_world_count = 0;
-        size_t display_block_count = 0;
-        size_t display_chunk_count = 0;
-
-        size_t chunks_on_screen_count = 0;
-        size_t vectices_on_screen_count = 0;
-        size_t triangles_on_screen_count = 0;
-
-        Vector3 player_pos = {0, 0, 0};
-        Vector3i player_chunk_pos = {0, 0, 0};
-
-        Vector3i block_info_pos = {0, 0, 0};
-        size_t block_info_index = 0;
 
         // Debug
         bool block_grid = true;

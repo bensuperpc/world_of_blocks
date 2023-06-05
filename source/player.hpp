@@ -22,6 +22,8 @@ class player
         ~player();
 
         void update();
+        void draw2d();
+        void draw3d();
 
         Vector3 get_position() const;
 

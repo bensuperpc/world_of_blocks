@@ -54,6 +54,7 @@ void game::run()
         }
 
         player1.update();
+        debug_menu1.update();
 
         closest_collision = {0};
         closest_collision.hit = false;
@@ -64,10 +65,10 @@ void game::run()
 
         mouse_position = GetMousePosition();
 
-        player_chunk_pos = std::move(chunk::get_chunk_position(player1.camera.position));
-        player_pos = std::move(player1.camera.position);
+        debug_menu1.player_chunk_pos = std::move(chunk::get_chunk_position(player1.camera.position));
+        debug_menu1.player_pos = std::move(player1.camera.position);
 
-        screen_middle = Vector2({static_cast<float>(screen_width / 2), static_cast<float>(triangles_on_world_count / 2)});
+        screen_middle = Vector2({static_cast<float>(screen_width / 2), static_cast<float>(debug_menu1.triangles_on_world_count / 2)});
 
         ray = GetMouseRay(screen_middle, player1.camera);
 
@@ -88,10 +89,6 @@ void game::run()
 
         if (IsKeyPressed(KEY_G)) {
             block_grid = !block_grid;
-        }
-
-        if (IsKeyPressed(KEY_F3)) {
-            debug_menu = !debug_menu;
         }
 
         if (IsKeyPressed(KEY_F5)) {
@@ -141,8 +138,8 @@ void game::run()
             for (int32_t x = -render_distance; x <= render_distance; x++) {
                 for (int32_t y = -render_distance; y <= render_distance; y++) {
                     for (int32_t z = -render_distance; z <= render_distance; z++) {
-                        if (!world_new.is_chunk_exist(player_chunk_pos.x + x, player_chunk_pos.y + y, player_chunk_pos.z + z)) {
-                            world_new.generate_chunk(player_chunk_pos.x + x, player_chunk_pos.y + y, player_chunk_pos.z + z, true);
+                        if (!world_new.is_chunk_exist(debug_menu1.player_chunk_pos.x + x, debug_menu1.player_chunk_pos.y + y, debug_menu1.player_chunk_pos.z + z)) {
+                            world_new.generate_chunk(debug_menu1.player_chunk_pos.x + x, debug_menu1.player_chunk_pos.y + y, debug_menu1.player_chunk_pos.z + z, true);
                             world_new.chunks_model.back().materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
                         }
                     }
@@ -172,11 +169,11 @@ void game::run()
                                             static_cast<float>(chunk_coor.y * chunk::chunk_size_y + chunk::chunk_size_y / 2.0f),
                                             static_cast<float>(chunk_coor.z * chunk::chunk_size_z + chunk::chunk_size_z / 2.0f)};
 
-                if (debug_menu) {
-                    vectices_on_world_count += current_model.meshes->vertexCount;
-                    triangles_on_world_count += current_model.meshes->triangleCount;
-                    display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
-                    display_chunk_count++;
+                if (debug_menu1.display_debug_menu) {
+                    debug_menu1.vectices_on_world_count += current_model.meshes->vertexCount;
+                    debug_menu1.triangles_on_world_count += current_model.meshes->triangleCount;
+                    debug_menu1.display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
+                    debug_menu1.display_chunk_count++;
                 }
                 
                 /*
@@ -190,10 +187,10 @@ void game::run()
                 */
 
                 DrawModelEx(current_model, chunk_pos, {0, 0, 0}, 1.0f, {1, 1, 1}, WHITE);
-                if (debug_menu) {
-                    chunks_on_screen_count++;
-                    vectices_on_screen_count += current_model.meshes->vertexCount;
-                    triangles_on_screen_count += current_model.meshes->triangleCount;
+                if (debug_menu1.display_debug_menu) {
+                    debug_menu1.chunks_on_screen_count++;
+                    debug_menu1.vectices_on_screen_count += current_model.meshes->vertexCount;
+                    debug_menu1.triangles_on_screen_count += current_model.meshes->triangleCount;
 
                     chunk_pos.x += static_cast<float>(chunk::chunk_size_x / 2.0f);
                     chunk_pos.y += static_cast<float>(chunk::chunk_size_y / 2.0f);
@@ -224,7 +221,7 @@ void game::run()
             }
             EndMode3D();
 
-            draw_debug_menu();
+            debug_menu1.draw2d();
 
             // Draw crosshair in the middle of the screen
             DrawLine(screen_middle.x - 10, screen_middle.y, screen_middle.x + 10, screen_middle.y, SKYBLUE);
@@ -233,59 +230,4 @@ void game::run()
         EndDrawing();
         frame_count++;
     }
-}
-
-void game::draw_debug_menu()
-{
-    if (!this->debug_menu) {
-        return;
-    }
-
-    DrawRectangle(4, 4, 370, 290, Fade(SKYBLUE, 0.5f));
-    DrawRectangleLines(4, 4, 370, 290, BLUE);
-
-    // Draw FPS
-    DrawFPS(8, 8);
-
-    // Draw block info
-    /*
-    std::string block_info ="XYZ: " + std::to_string(block_info_pos.x) + ", " + std::to_string(block_info_pos.y) + ", " +
-    std::to_string(block_info_pos.z); DrawText(block_info.c_str(), 10, 30, 20, BLACK); DrawText(("Index: " +
-    std::to_string(block_info_index)).c_str(), 10, 50, 20, BLACK);
-    */
-
-    // Draw statistics
-    DrawText(("Blocks on world: " + std::to_string(display_block_count)).c_str(), 10, 70, 20, BLACK);
-    DrawText(("Chunks on world: " + std::to_string(display_chunk_count)).c_str(), 10, 90, 20, BLACK);
-    DrawText(("Vertices on world: " + std::to_string(vectices_on_world_count)).c_str(), 10, 110, 20, BLACK);
-    DrawText(("Triangles on world: " + std::to_string(triangles_on_world_count)).c_str(), 10, 130, 20, BLACK);
-    DrawText(("Chunks on screen: " + std::to_string(chunks_on_screen_count)).c_str(), 10, 170, 20, BLACK);
-    DrawText(("Vertices on screen: " + std::to_string(vectices_on_screen_count)).c_str(), 10, 190, 20, BLACK);
-    DrawText(("Triangles on screen: " + std::to_string(triangles_on_screen_count)).c_str(), 10, 210, 20, BLACK);
-
-    // Draw player position
-
-    DrawText(("Player position: " + std::to_string(player_pos.x) + ", " + std::to_string(player_pos.y) + ", " + std::to_string(player_pos.z)).c_str(),
-             10,
-             250,
-             20,
-             BLACK);
-
-    DrawText(("Player chunk position: " + std::to_string(player_chunk_pos.x) + ", " + std::to_string(player_chunk_pos.y) + ", "
-              + std::to_string(player_chunk_pos.z))
-                 .c_str(),
-             10,
-             270,
-             20,
-             BLACK);
-
-    // Reset statistics
-    vectices_on_world_count = 0;
-    triangles_on_world_count = 0;
-    display_block_count = 0;
-    display_chunk_count = 0;
-
-    chunks_on_screen_count = 0;
-    triangles_on_screen_count = 0;
-    vectices_on_screen_count = 0;
 }

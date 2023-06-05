@@ -29,7 +29,7 @@ include(cmake/lib/perlin_noise.cmake)
 
 # ---- Declare executable ----
 
-add_executable(world_of_blocks_exe source/main.cpp source/game.cpp source/player.cpp)
+add_executable(world_of_blocks_exe source/main.cpp source/game.cpp source/player.cpp source/debug_menu.cpp)
 add_executable(world_of_blocks::exe ALIAS world_of_blocks_exe)
 
 set_property(TARGET world_of_blocks_exe PROPERTY OUTPUT_NAME world_of_blocks)
