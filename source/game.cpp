@@ -8,6 +8,9 @@ void game::init()
 {
     std::ios_base::sync_with_stdio(false);
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
+
+    debug_menu1 = std::make_shared<debug_menu>();
+    game_classes.push_back(debug_menu1);
 }
 
 void game::run()
@@ -32,8 +35,6 @@ void game::run()
 
     uint64_t frame_count = 0;
 
-    player player1 = player();
-
     // Image img = GenImageChecked(256, 256, 32, 32, GREEN, RED);
     // Image img = GenImageColor(16, 16, WHITE);
     // Texture2D textureGrid = LoadTextureFromImage(img);
@@ -46,15 +47,15 @@ void game::run()
         world_new.chunks_model[ci].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
     }
 
+    player1 = std::make_shared<player>();
+    game_classes.push_back(player1);
+
     while (!WindowShouldClose()) {
         // If window is not focused or minimized, don't update to save resources
         // !IsWindowFocused()
         if (IsWindowMinimized()) {
             continue;
         }
-
-        player1.update();
-        debug_menu1.update();
 
         closest_collision = {0};
         closest_collision.hit = false;
@@ -65,12 +66,16 @@ void game::run()
 
         mouse_position = GetMousePosition();
 
-        debug_menu1.player_chunk_pos = std::move(chunk::get_chunk_position(player1.camera.position));
-        debug_menu1.player_pos = std::move(player1.camera.position);
+        debug_menu1->player_chunk_pos = std::move(chunk::get_chunk_position(player1->camera.position));
+        debug_menu1->player_pos = std::move(player1->camera.position);
 
-        screen_middle = Vector2({static_cast<float>(screen_width / 2), static_cast<float>(debug_menu1.triangles_on_world_count / 2)});
+        screen_middle = Vector2({static_cast<float>(screen_width / 2), static_cast<float>(debug_menu1->triangles_on_world_count / 2)});
 
-        ray = GetMouseRay(screen_middle, player1.camera);
+        ray = GetMouseRay(screen_middle, player1->camera);
+
+        for (auto& item : game_classes) {
+            item->update();
+        }
 
         if (IsKeyPressed(KEY_R)) {
             siv::PerlinNoise::seed_type seed = std::random_device()();
@@ -100,12 +105,7 @@ void game::run()
         // TODO: optimize to check only the blocks around the player
         for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
             auto& current_chunk = world_new.chunks[ci];
-            auto& blocks = current_chunk.get_blocks();
-#pragma omp parallel for schedule(auto)
-            for (size_t bi = 0; bi < current_chunk.size(); bi++) {
-                block& current_block = blocks[bi];
-                if (current_block.block_type != block_type::air) {
-                    raylib::BoundingBox box = block_utils::get_bounding_box(current_block, 1.0f);
+            auto& blocks = current_chdebug_menu1Box box = block_utils::get_bounding_box(current_block, 1.0f);
 
                     RayCollision box_hit_info = GetRayCollisionBox(ray, box);
                     if (box_hit_info.hit) {
@@ -131,15 +131,17 @@ void game::run()
         }
         */
 
-
         if (frame_count % 10 == 0) {
             // TODO: make render distance configurable on x, y and z axis, and -x, -y and -z axis
             int32_t render_distance = 2;
             for (int32_t x = -render_distance; x <= render_distance; x++) {
                 for (int32_t y = -render_distance; y <= render_distance; y++) {
                     for (int32_t z = -render_distance; z <= render_distance; z++) {
-                        if (!world_new.is_chunk_exist(debug_menu1.player_chunk_pos.x + x, debug_menu1.player_chunk_pos.y + y, debug_menu1.player_chunk_pos.z + z)) {
-                            world_new.generate_chunk(debug_menu1.player_chunk_pos.x + x, debug_menu1.player_chunk_pos.y + y, debug_menu1.player_chunk_pos.z + z, true);
+                        if (!world_new.is_chunk_exist(
+                                debug_menu1->player_chunk_pos.x + x, debug_menu1->player_chunk_pos.y + y, debug_menu1->player_chunk_pos.z + z))
+                        {
+                            world_new.generate_chunk(
+                                debug_menu1->player_chunk_pos.x + x, debug_menu1->player_chunk_pos.y + y, debug_menu1->player_chunk_pos.z + z, true);
                             world_new.chunks_model.back().materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
                         }
                     }
@@ -151,7 +153,7 @@ void game::run()
         {
             ClearBackground(RAYWHITE);
 
-            BeginMode3D(player1.camera);
+            BeginMode3D(player1->camera);
 
             for (size_t ci = 0; ci < world_new.chunks.size(); ci++) {
                 chunk& current_chunk = world_new.chunks[ci];
@@ -169,16 +171,16 @@ void game::run()
                                             static_cast<float>(chunk_coor.y * chunk::chunk_size_y + chunk::chunk_size_y / 2.0f),
                                             static_cast<float>(chunk_coor.z * chunk::chunk_size_z + chunk::chunk_size_z / 2.0f)};
 
-                if (debug_menu1.display_debug_menu) {
-                    debug_menu1.vectices_on_world_count += current_model.meshes->vertexCount;
-                    debug_menu1.triangles_on_world_count += current_model.meshes->triangleCount;
-                    debug_menu1.display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
-                    debug_menu1.display_chunk_count++;
+                if (debug_menu1->display_debug_menu) {
+                    debug_menu1->vectices_on_world_count += current_model.meshes->vertexCount;
+                    debug_menu1->triangles_on_world_count += current_model.meshes->triangleCount;
+                    debug_menu1->display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
+                    debug_menu1->display_chunk_count++;
                 }
-                
+
                 /*
-                const Vector2&& chunk_screen_pos = player1.camera.GetWorldToScreen(chunk_pos_center, player1.camera);
-                
+                const Vector2&& chunk_screen_pos = player1->camera.GetWorldToScreen(chunk_pos_center, player1->camera);
+
                 if (chunk_screen_pos.x < -1000.0 || chunk_screen_pos.x > static_cast<float>(GetScreenWidth()) + 1000.0 || chunk_screen_pos.y < -1000.0
                     || chunk_screen_pos.y > static_cast<float>(GetScreenHeight()) + 1000.0)
                 {
@@ -187,10 +189,10 @@ void game::run()
                 */
 
                 DrawModelEx(current_model, chunk_pos, {0, 0, 0}, 1.0f, {1, 1, 1}, WHITE);
-                if (debug_menu1.display_debug_menu) {
-                    debug_menu1.chunks_on_screen_count++;
-                    debug_menu1.vectices_on_screen_count += current_model.meshes->vertexCount;
-                    debug_menu1.triangles_on_screen_count += current_model.meshes->triangleCount;
+                if (debug_menu1->display_debug_menu) {
+                    debug_menu1->chunks_on_screen_count++;
+                    debug_menu1->vectices_on_screen_count += current_model.meshes->vertexCount;
+                    debug_menu1->triangles_on_screen_count += current_model.meshes->triangleCount;
 
                     chunk_pos.x += static_cast<float>(chunk::chunk_size_x / 2.0f);
                     chunk_pos.y += static_cast<float>(chunk::chunk_size_y / 2.0f);
@@ -200,7 +202,7 @@ void game::run()
                                   static_cast<float>(chunk::chunk_size_x),
                                   static_cast<float>(chunk::chunk_size_y),
                                   static_cast<float>(chunk::chunk_size_z),
-                                RED);
+                                  RED);
                 }
             }
 
@@ -221,7 +223,9 @@ void game::run()
             }
             EndMode3D();
 
-            debug_menu1.draw2d();
+            for (auto& item : game_classes) {
+                item->draw2d();
+            }
 
             // Draw crosshair in the middle of the screen
             DrawLine(screen_middle.x - 10, screen_middle.y, screen_middle.x + 10, screen_middle.y, SKYBLUE);

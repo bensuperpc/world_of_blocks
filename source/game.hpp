@@ -37,6 +37,7 @@ extern "C"
 #include "world_model.hpp"
 
 #include "debug_menu.hpp"
+#include "game_class.hpp"
 
 class game
 {
@@ -50,8 +51,9 @@ class game
         void draw_debug_menu();
 
     private:
-        debug_menu debug_menu1;
-        
+        std::shared_ptr<debug_menu> debug_menu1;
+        std::shared_ptr<player> player1;
+
         // Game settings and window
         int screen_width = 1920;
         int screen_height = 1080;
@@ -75,6 +77,8 @@ class game
         std::vector<std::pair<block*, RayCollision>> collisions;
         RayCollision closest_collision = {false, 0, {0, 0, 0}, {0, 0, 0}};
         block* closest_block = nullptr;
+
+        std::vector<std::shared_ptr<game_class>> game_classes;
 };
 
 #endif  // GAME_HPP

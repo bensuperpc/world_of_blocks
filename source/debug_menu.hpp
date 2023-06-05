@@ -12,17 +12,18 @@
 #include "raymath.h"
 
 #include "vector.hpp"
+#include "game_class.hpp"
 
-class debug_menu
+class debug_menu: public game_class
 {
     public:
         debug_menu();
 
         ~debug_menu();
 
-        void update();
-        void draw2d();
-        void draw3d();
+        void update() override;
+        void draw2d() override;
+        void draw3d() override;
 
         // Menu
         bool display_debug_menu = true;

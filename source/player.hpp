@@ -13,17 +13,18 @@
 
 // World of blocks
 #include "chunk.hpp"
+#include "game_class.hpp"
 
-class player
+class player : public game_class
 {
     public:
         player();
 
         ~player();
 
-        void update();
-        void draw2d();
-        void draw3d();
+        void update() override;
+        void draw2d() override;
+        void draw3d() override;
 
         Vector3 get_position() const;
 
