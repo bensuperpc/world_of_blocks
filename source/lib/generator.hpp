@@ -165,7 +165,8 @@ class generator
             return heightmap;
         }
 
-        inline chunk generate_chunk(const int32_t chunk_x, const int32_t chunk_y, const int32_t chunk_z, const bool generate_3d_terrain)
+        [[nodiscard]]
+        inline std::unique_ptr<chunk> generate_chunk(const int32_t chunk_x, const int32_t chunk_y, const int32_t chunk_z, const bool generate_3d_terrain)
         {
             const int32_t real_x = chunk_x * chunk::chunk_size_x;
             const int32_t real_y = chunk_y * chunk::chunk_size_y;
@@ -173,7 +174,7 @@ class generator
 
             std::vector<block> blocks;
 
-            chunk _chunk;
+            std::unique_ptr<chunk> _chunk = std::make_unique<chunk>();
 
             if (generate_3d_terrain) {
                 blocks = std::move(generate_3d(real_x, real_y, real_z, chunk::chunk_size_x, chunk::chunk_size_y, chunk::chunk_size_z));
@@ -181,13 +182,14 @@ class generator
                 blocks = std::move(generate_2d(real_x, real_y, real_z, chunk::chunk_size_x, chunk::chunk_size_y, chunk::chunk_size_z));
             }
 
-            _chunk.set_blocks(blocks);
-            _chunk.set_chuck_pos(chunk_x, chunk_y, chunk_z);
+            _chunk->set_blocks(blocks);
+            _chunk->set_chuck_pos(chunk_x, chunk_y, chunk_z);
 
             return _chunk;
         }
 
-        std::vector<chunk> generate_chunks(const int32_t begin_chunk_x,
+        [[nodiscard]]
+        std::vector<std::unique_ptr<chunk>> generate_chunks(const int32_t begin_chunk_x,
                                          const int32_t begin_chunk_y,
                                          const int32_t begin_chunk_z,
                                          const uint32_t chunk_x,
@@ -197,7 +199,7 @@ class generator
         {
             constexpr bool debug = false;
 
-            std::vector<chunk> chunks(chunk_x * chunk_y * chunk_z);
+            std::vector<std::unique_ptr<chunk>> chunks(chunk_x * chunk_y * chunk_z);
 
             if (chunks.size() < chunk_x * chunk_y * chunk_z) {
                 std::cout << "Chunks size is not equal or bigger than chunk_x * chunk_y * chunk_z!" << std::endl;

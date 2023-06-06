@@ -38,6 +38,7 @@ extern "C"
 
 #include "debug_menu.hpp"
 #include "game_class.hpp"
+#include "game_context.hpp"
 
 class game
 {
@@ -53,30 +54,11 @@ class game
     private:
         std::shared_ptr<debug_menu> debug_menu1;
         std::shared_ptr<player> player1;
-
-        // Game settings and window
-        int screen_width = 1920;
-        int screen_height = 1080;
-        int target_fps = 240;
-
-        // Generator
-        world world_new = world();
+        std::shared_ptr<world> world_new;
+        std::shared_ptr<game_context> game_context1;
 
         // Debug
         bool block_grid = true;
-
-        // Game variables
-        Vector2 mouse_position = {0, 0};
-        Vector2 screen_middle = {0, 0};
-
-        // Camera and player
-        // player player1;
-
-        // Ray collision
-        Ray ray;
-        std::vector<std::pair<block*, RayCollision>> collisions;
-        RayCollision closest_collision = {false, 0, {0, 0, 0}, {0, 0, 0}};
-        block* closest_block = nullptr;
 
         std::vector<std::shared_ptr<game_class>> game_classes;
 };

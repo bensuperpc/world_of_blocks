@@ -1,6 +1,10 @@
 #ifndef WORLD_OF_CUBE_CHUNK_HPP
 #define WORLD_OF_CUBE_CHUNK_HPP
 
+#include <memory>
+#include <vector>
+#include <iostream>
+
 // Cube lib
 #include "block.hpp"
 #include "math.hpp"
@@ -19,7 +23,9 @@ class chunk
         {
         }
 
-        ~chunk() {}
+        ~chunk() {
+            unload_model();
+        }
 
         [[nodiscard]] inline std::vector<block>& get_blocks() { return blocks; }
 
@@ -63,6 +69,16 @@ class chunk
         }
 
         [[nodiscard]] static inline Vector3i get_chunk_position(const Vector3& pos) { return get_chunk_position(pos.x, pos.y, pos.z); }
+
+        void unload_model()
+        {
+            if (model == nullptr) {
+                return;
+            }
+            UnloadModel(*model);
+        }
+
+        std::unique_ptr<Model> model;
 
     protected:
         std::vector<block> blocks;

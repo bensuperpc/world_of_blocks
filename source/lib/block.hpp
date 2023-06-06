@@ -2,6 +2,7 @@
 #define WORLD_OF_CUBE_BLOCK_HPP
 
 #include <cstdint>
+#include <optional>
 
 #include "block_type.hpp"
 

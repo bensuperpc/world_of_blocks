@@ -31,8 +31,8 @@ class world_model
 
         void add_cube(Mesh& mesh, size_t& triangle_index, size_t& vert_index, const Vector3& position, bool faces[6], int block);
 
-        std::vector<Model> generate_world_models(std::vector<chunk>& chunk);
-        Model generate_chunk_model(chunk& chunks);
+        std::vector<std::unique_ptr<Model>> generate_world_models(std::vector<chunk>& chunk);
+        std::unique_ptr<Model> generate_chunk_model(chunk& chunks);
 
         inline bool block_is_solid(int x, int y, int z, chunk& _chunk);
 

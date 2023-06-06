@@ -1,6 +1,6 @@
 #include "player.hpp"
 
-player::player()
+player::player(game_context& game_context_ref) : _game_context_ref(game_context_ref)
 {
     Camera _camera = {0};
     _camera.position = (Vector3) {48.0f, 48.0f, -48.0f};
@@ -21,6 +21,16 @@ Vector3 player::get_position() const
 player::~player() {}
 
 void player::update() {
+    closest_collision = {0};
+    closest_collision.hit = false;
+    closest_collision.distance = std::numeric_limits<float>::max();
+    if (closest_block != nullptr) {
+    }
+    collisions.clear();
+
+    ray = GetMouseRay(_game_context_ref.screen_middle, camera);
+
+
     float player_speed = 0.5f;
     float zoom = GetMouseWheelMove() * 0.5f;
     Vector3 movement = { 0.0f, 0.0f, 0.0f };
@@ -51,10 +61,16 @@ void player::update() {
 
 
     UpdateCameraPro(&camera,movement,rotation,zoom);
+
+    // Update player chunk position in game context
+    _game_context_ref.player_chunk_pos = std::move(chunk::get_chunk_position(camera.position));
+    _game_context_ref.player_pos = std::move(camera.position);
 }
 
 void player::draw2d() {
-
+    // Draw crosshair in the middle of the screen
+    DrawLine(_game_context_ref.screen_middle.x - 10, _game_context_ref.screen_middle.y, _game_context_ref.screen_middle.x + 10, _game_context_ref.screen_middle.y, SKYBLUE);
+    DrawLine(_game_context_ref.screen_middle.x, _game_context_ref.screen_middle.y - 10, _game_context_ref.screen_middle.x, _game_context_ref.screen_middle.y + 10, SKYBLUE);
 }
 
 void player::draw3d() {

@@ -34,6 +34,9 @@ include(../../cmake/lib/perlin_noise.cmake)
 set(SOURCES
     world.cpp
     world_model.cpp
+    player.cpp
+    debug_menu.cpp
+    game_context.cpp
 )
 
 #add_library(${PROJECT_NAME} INTERFACE)

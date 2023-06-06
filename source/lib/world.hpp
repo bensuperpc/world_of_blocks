@@ -21,11 +21,13 @@
 #include "chunk.hpp"
 #include "generator.hpp"
 #include "world_model.hpp"
+#include "game_class.hpp"
+#include "game_context.hpp"
 
-class world
+class world : public game_class
 {
     public:
-        world();
+        world(game_context& game_context_ref);
 
         ~world();
 
@@ -36,8 +38,12 @@ class world
         void generate_world_models();
         void clear();
 
+        void update() override;
+        void draw2d() override;
+        void draw3d() override;
+
         int32_t world_chunk_size_x = 4;
-        int32_t world_chunk_size_y = 1;
+        int32_t world_chunk_size_y = 2;
         int32_t world_chunk_size_z = 4;
 
         int32_t world_chunk_start_x = 0;
@@ -49,8 +55,12 @@ class world
         generator gen = generator(this->seed);
         world_model world_md = world_model();
 
-        std::vector<chunk> chunks;
-        std::vector<Model> chunks_model;
+        std::vector<std::unique_ptr<chunk>> chunks;
+
+        bool display_debug_menu = true;
+        int32_t render_distance = 2;
+
+        game_context& _game_context_ref;
 };
 
 #endif  // WORLD_OF_CUBE_WORLD_HPP
