@@ -26,6 +26,7 @@ add_subdirectory(source/intro) # benlib_intro
 include(cmake/lib/openmp.cmake)
 include(cmake/lib/raylib.cmake)
 include(cmake/lib/perlin_noise.cmake)
+include(cmake/lib/fast_noise2.cmake)
 
 # ---- Declare executable ----
 
@@ -37,7 +38,7 @@ set_property(TARGET world_of_blocks_exe PROPERTY OUTPUT_NAME world_of_blocks)
 target_compile_features(world_of_blocks_exe PRIVATE cxx_std_20)
 
 target_link_libraries(world_of_blocks_exe PRIVATE world_of_blocks_lib benlib_intro)
-target_link_libraries(world_of_blocks_exe PRIVATE raylib OpenMP::OpenMP_CXX)
+target_link_libraries(world_of_blocks_exe PRIVATE FastNoise2 raylib OpenMP::OpenMP_CXX)
 
 set_target_properties(world_of_blocks_exe
     PROPERTIES

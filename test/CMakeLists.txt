@@ -9,7 +9,7 @@ include(../cmake/windows-set-path.cmake)
 function(add_test_fn TEST_NAME)
   add_executable("${TEST_NAME}" "source/${TEST_NAME}.cpp")
   target_link_libraries("${TEST_NAME}" PRIVATE world_of_blocks_lib gtest_main)
-  target_link_libraries("${TEST_NAME}" PRIVATE raylib)
+  target_link_libraries("${TEST_NAME}" PRIVATE raylib FastNoise2)
 
   if (OpenMP_FOUND OR OpenMP_CXX_FOUND)
     target_link_libraries("${TEST_NAME}" PRIVATE OpenMP::OpenMP_CXX)
@@ -28,7 +28,7 @@ endfunction()
 function(add_bench_fn BENCH_NAME)
   add_executable("${BENCH_NAME}" "source/${BENCH_NAME}.cpp")
   target_link_libraries("${BENCH_NAME}" PRIVATE world_of_blocks_lib benchmark::benchmark_main)
-  target_link_libraries("${BENCH_NAME}" PRIVATE raylib)
+  target_link_libraries("${BENCH_NAME}" PRIVATE raylib FastNoise2)
 
   if (OpenMP_FOUND OR OpenMP_CXX_FOUND)
     target_link_libraries("${BENCH_NAME}" PRIVATE OpenMP::OpenMP_CXX)
@@ -57,6 +57,8 @@ if(NOT WIN32)
     add_test_fn(generator_test)
   # Add bench
   #  add_bench_fn(generator_bench)
+  #add_bench_fn(noise_bench)
+  
 endif()
 
 # ---- End-of-file commands ----

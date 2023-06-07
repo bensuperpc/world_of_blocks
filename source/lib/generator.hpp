@@ -14,6 +14,7 @@
 #include <omp.h>
 
 #include "PerlinNoise.hpp"
+#include "FastNoise/FastNoise.h"
 
 // Cube lib
 #include "block.hpp"
@@ -27,9 +28,27 @@ class generator
             : seed(_seed)
         {
             perlin.reseed(seed);
+
+            fnSimplex = FastNoise::New<FastNoise::Simplex>();
+            fnFractal = FastNoise::New<FastNoise::FractalFBm>();
+
+            //double lacunarity = 255.0f;
+            fnFractal->SetSource(fnSimplex);
+            fnFractal->SetOctaveCount(octaves);
+            //fnFractal->SetGain(0.8f);
+            fnFractal->SetLacunarity(lacunarity);
         }
 
-        generator() = default;
+        generator() {
+            fnSimplex = FastNoise::New<FastNoise::Simplex>();
+            fnFractal = FastNoise::New<FastNoise::FractalFBm>();
+
+            //double lacunarity = 255.0f;
+            fnFractal->SetSource(fnSimplex);
+            fnFractal->SetOctaveCount(octaves);
+            //fnFractal->SetGain(0.8f);
+            fnFractal->SetLacunarity(lacunarity);
+        }
 
         ~generator() {}
 
@@ -114,8 +133,28 @@ class generator
             const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y, const uint32_t size_z)
         {
             constexpr bool debug = false;
-
+    
             std::vector<uint32_t> heightmap(size_x * size_y * size_z);
+            /*
+            std::vector<float> noiseOutput(size_x * size_y * size_z);
+            std::cout << "Generating 3D noise..." << std::endl;
+
+            if (fnFractal == nullptr) {
+                std::cout << "fnFractal is nullptr" << std::endl;
+                return heightmap;
+            }
+
+
+            fnFractal->GenUniformGrid3D(noiseOutput.data(), begin_x, begin_y, begin_z, size_x, size_y, size_z, 0.4f, seed);
+
+            std::cout << "Converting to heightmap..." << std::endl;
+
+            // Convert noiseOutput to heightmap
+            for (uint32_t i = 0; i < size_x * size_y * size_z; i++) {
+                heightmap[i] = static_cast<uint32_t>(noiseOutput[i] * 255.0f);
+            }
+            return heightmap;
+            */
 
             const int32_t end_x = static_cast<int32_t>(begin_x + size_x);
             const int32_t end_y = static_cast<int32_t>(begin_y + size_y);
@@ -309,6 +348,10 @@ class generator
         // default seed
         siv::PerlinNoise::seed_type seed = 2647393077u;
         siv::PerlinNoise perlin {seed};
+
+        FastNoise::SmartNode<FastNoise::Simplex> fnSimplex;
+        FastNoise::SmartNode<FastNoise::FractalFBm> fnFractal;
+
         int32_t octaves = 4;
         double persistence = 0.8f;
         double lacunarity = 255.0f;

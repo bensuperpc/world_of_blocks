@@ -30,6 +30,7 @@ project(
 include(../../cmake/lib/openmp.cmake)
 include(../../cmake/lib/raylib.cmake)
 include(../../cmake/lib/perlin_noise.cmake)
+include(../../cmake/lib/fast_noise2.cmake)
 
 set(SOURCES
     world.cpp
@@ -42,7 +43,7 @@ set(SOURCES
 #add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC raylib)
+target_link_libraries(${PROJECT_NAME} PUBLIC raylib FastNoise2)
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
