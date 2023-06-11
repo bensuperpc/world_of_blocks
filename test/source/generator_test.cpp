@@ -1,12 +1,12 @@
 #include <string>
 
-#include "generator.hpp"
+#include "generatorv1.hpp"
 
 #include "gtest/gtest.h"
 
 TEST(world_of_blocks, basic_generation_1)
 {
-    generator new_generator(2510586073u);
+    generatorv1 new_generator(2510586073u);
 
     uint32_t chunk_x = 6;
     uint32_t chunk_y = 1;

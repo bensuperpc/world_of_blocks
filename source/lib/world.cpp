@@ -14,7 +14,7 @@ void world::generate_world()
     chunks.shrink_to_fit();
 
     // Generate new perlin noise
-    gen.reseed(this->seed);
+    genv2.reseed(this->seed);
 
     // Generate the world
     auto start = std::chrono::high_resolution_clock::now();
@@ -49,7 +49,7 @@ void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bo
 {
     // Generate the chunk
     auto start = std::chrono::high_resolution_clock::now();
-    std::unique_ptr<chunk> chunk_new = std::move(gen.generate_chunk(x, y, z, true));
+    std::unique_ptr<chunk> chunk_new = std::move(genv2.generate_chunk(x, y, z, true));
     auto end = std::chrono::high_resolution_clock::now();
 
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);

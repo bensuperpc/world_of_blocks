@@ -19,7 +19,8 @@
 // Cube lib
 #include "block.hpp"
 #include "chunk.hpp"
-#include "generator.hpp"
+#include "generatorv1.hpp"
+#include "generatorv2.hpp"
 #include "world_model.hpp"
 #include "game_class.hpp"
 #include "game_context.hpp"
@@ -52,7 +53,9 @@ class world : public game_class
 
         siv::PerlinNoise::seed_type seed = 2510586073u;
 
-        generator gen = generator(this->seed);
+        generatorv1 genv1 = generatorv1(this->seed);
+        generatorv2 genv2 = generatorv2(this->seed);
+
         world_model world_md = world_model();
 
         std::vector<std::unique_ptr<chunk>> chunks;

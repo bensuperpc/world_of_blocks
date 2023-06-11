@@ -1,18 +1,21 @@
 #include "debug_menu.hpp"
 
-debug_menu::debug_menu(game_context& game_context_ref) : _game_context_ref(game_context_ref)
+debug_menu::debug_menu(game_context& game_context_ref)
+    : _game_context_ref(game_context_ref)
 {
 }
 
 debug_menu::~debug_menu() {}
 
-void debug_menu::update() {
+void debug_menu::update()
+{
     if (IsKeyPressed(KEY_F3)) {
         display_debug_menu = !display_debug_menu;
     }
 }
 
-void debug_menu::draw2d() {
+void debug_menu::draw2d()
+{
     if (!this->display_debug_menu) {
         return;
     }
@@ -41,14 +44,17 @@ void debug_menu::draw2d() {
 
     // Draw player position
 
-    DrawText(("Player position: " + std::to_string(_game_context_ref.player_pos.x) + ", " + std::to_string(_game_context_ref.player_pos.y) + ", " + std::to_string(_game_context_ref.player_pos.z)).c_str(),
+    DrawText(("Player position: " + std::to_string(static_cast<int32_t>(_game_context_ref.player_pos.x)) + ", "
+              + std::to_string(static_cast<int32_t>(_game_context_ref.player_pos.y)) + ", "
+              + std::to_string(static_cast<int32_t>(_game_context_ref.player_pos.z)))
+                 .c_str(),
              10,
              250,
              20,
              BLACK);
 
-    DrawText(("Player chunk position: " + std::to_string(_game_context_ref.player_chunk_pos.x) + ", " + std::to_string(_game_context_ref.player_chunk_pos.y) + ", "
-              + std::to_string(_game_context_ref.player_chunk_pos.z))
+    DrawText(("Player chunk position: " + std::to_string(_game_context_ref.player_chunk_pos.x) + ", "
+              + std::to_string(_game_context_ref.player_chunk_pos.y) + ", " + std::to_string(_game_context_ref.player_chunk_pos.z))
                  .c_str(),
              10,
              270,
@@ -56,6 +62,4 @@ void debug_menu::draw2d() {
              BLACK);
 }
 
-void debug_menu::draw3d() {
-
-}
+void debug_menu::draw3d() {}

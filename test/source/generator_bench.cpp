@@ -1,4 +1,4 @@
-#include "generator.hpp"
+#include "generatorv1.hpp"
 
 #include <benchmark/benchmark.h>
 
@@ -9,7 +9,7 @@ static void generate_3d_word(benchmark::State& state)
     auto size = state.range(0);
     siv::PerlinNoise::seed_type seed = 2510586073u;
 
-    generator gen = generator(seed);
+    generatorv1 gen = generatorv1(seed);
 
     for (auto _ : state) {
         std::vector<std::unique_ptr<chunk>> chunks = std::move(gen.generate_chunks(0, 0, 0, size, 1, size, true));
@@ -26,7 +26,7 @@ static void generate_3d_chunk(benchmark::State& state)
     auto size = state.range(0);
     siv::PerlinNoise::seed_type seed = 2510586073u;
 
-    generator gen = generator(seed);
+    generatorv1 gen = generatorv1(seed);
 
     for (auto _ : state) {
         std::unique_ptr<chunk> _chunk = std::move(gen.generate_chunk(0, 0, 0, true));
@@ -43,7 +43,7 @@ static void generate_2d_word(benchmark::State& state)
     auto size = state.range(0);
     siv::PerlinNoise::seed_type seed = 2510586073u;
 
-    generator gen = generator(seed);
+    generatorv1 gen = generatorv1(seed);
 
     for (auto _ : state) {
         std::vector<std::unique_ptr<chunk>> chunks = std::move(gen.generate_chunks(0, 0, 0, size, 1, size, false));
@@ -60,7 +60,7 @@ static void generate_2d_chunk(benchmark::State& state)
     auto size = state.range(0);
     siv::PerlinNoise::seed_type seed = 2510586073u;
 
-    generator gen = generator(seed);
+    generatorv1 gen = generatorv1(seed);
 
     for (auto _ : state) {
         std::unique_ptr<chunk> _chunk = std::move(gen.generate_chunk(0, 0, 0, false));
