@@ -1,6 +1,8 @@
 #include "game.hpp"
 
-game::game() {}
+game::game(nlohmann::json& _config_json): config_json(_config_json) {
+
+}
 
 game::~game() {}
 
@@ -9,7 +11,7 @@ void game::init()
     std::ios_base::sync_with_stdio(false);
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
 
-    game_context1 = std::make_shared<game_context>();
+    game_context1 = std::make_shared<game_context>(game_classes, config_json);
     game_classes.push_back(game_context1);
 
     world_new = std::make_shared<world>(*game_context1.get());
@@ -41,20 +43,12 @@ void game::run()
 
     SetTargetFPS(game_context1->target_fps);
 
-    // Image img = GenImageChecked(256, 256, 32, 32, GREEN, RED);
-    // Image img = GenImageColor(16, 16, WHITE);
-    // Texture2D textureGrid = LoadTextureFromImage(img);
-    // SetTextureFilter(textureGrid, TEXTURE_FILTER_ANISOTROPIC_16X);
-    // SetTextureWrap(textureGrid, TEXTURE_WRAP_CLAMP);
-
     // Player init after window is created
     player1 = std::make_shared<player>(*game_context1.get());
     game_classes.push_back(player1);
 
     while (!WindowShouldClose()) {
-        // If window is not focused or minimized, don't update to save resources
-        // !IsWindowFocused()
-        if (IsWindowMinimized()) {
+        if (IsWindowMinimized() || !IsWindowFocused()) {
             continue;
         }
 
@@ -102,37 +96,37 @@ void game::run()
         }
 
         BeginDrawing();
-        {
-            ClearBackground(RAYWHITE);
+        
+        ClearBackground(RAYWHITE);
 
-            BeginMode3D(player1->camera);
+        BeginMode3D(player1->camera);
 
-            if (block_grid) {
-                DrawGrid(256, 1.0f);
-            }
-
-            /*
-            if (closest_collision.hit) {
-                DrawCube(closest_collision.point, 0.3f, 0.3f, 0.3f, YELLOW);
-                DrawCubeWires(closest_collision.point, 0.3f, 0.3f, 0.3f, BLACK);
-
-                Vector3 normalEnd;
-                normalEnd.x = closest_collision.point.x + closest_collision.normal.x;
-                normalEnd.y = closest_collision.point.y + closest_collision.normal.y;
-                normalEnd.z = closest_collision.point.z + closest_collision.normal.z;
-
-                DrawLine3D(closest_collision.point, normalEnd, BLUE);
-            }
-            */
-            for (auto& item : game_classes) {
-                item->draw3d();
-            }
-            EndMode3D();
-
-            for (auto& item : game_classes) {
-                item->draw2d();
-            }
+        if (block_grid) {
+            DrawGrid(256, 1.0f);
         }
+
+        /*
+        if (closest_collision.hit) {
+            DrawCube(closest_collision.point, 0.3f, 0.3f, 0.3f, YELLOW);
+            DrawCubeWires(closest_collision.point, 0.3f, 0.3f, 0.3f, BLACK);
+
+            Vector3 normalEnd;
+            normalEnd.x = closest_collision.point.x + closest_collision.normal.x;
+            normalEnd.y = closest_collision.point.y + closest_collision.normal.y;
+            normalEnd.z = closest_collision.point.z + closest_collision.normal.z;
+
+            DrawLine3D(closest_collision.point, normalEnd, BLUE);
+        }
+        */
+        for (auto& item : game_classes) {
+            item->draw3d();
+        }
+        EndMode3D();
+
+        for (auto& item : game_classes) {
+            item->draw2d();
+        }
+        
         EndDrawing();
         game_context1->frame_count++;
     }

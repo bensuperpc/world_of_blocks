@@ -20,8 +20,7 @@
 #include "math.hpp"
 
 #include "generator.hpp"
-
-class generatorv2 : public generator
+class generatorv2 final : public generator
 {
     public:
         explicit generatorv2(int32_t _seed)
@@ -86,16 +85,13 @@ class generatorv2 : public generator
             std::vector<uint32_t> heightmap(size_x * size_z);
             
             std::vector<float> noiseOutput(size_x * size_z);
-            std::cout << "Generating 3D noise..." << std::endl;
 
             if (fnFractal == nullptr) {
                 std::cout << "fnFractal is nullptr" << std::endl;
                 return heightmap;
             }
 
-            fnFractal->GenUniformGrid2D(noiseOutput.data(), begin_x, begin_z, size_y, size_z, frequency, seed);
-
-            std::cout << "Converting to heightmap..." << std::endl;
+            fnFractal->GenUniformGrid2D(noiseOutput.data(), begin_x, begin_z, size_x, size_z, frequency, seed);
 
             // Convert noiseOutput to heightmap
             for (uint32_t i = 0; i < size_x * size_z; i++) {
@@ -122,7 +118,6 @@ class generatorv2 : public generator
             std::vector<uint32_t> heightmap(size_x * size_y * size_z);
             
             std::vector<float> noiseOutput(size_x * size_y * size_z);
-            std::cout << "Generating 3D noise..." << std::endl;
 
             if (fnFractal == nullptr) {
                 std::cout << "fnFractal is nullptr" << std::endl;
@@ -130,8 +125,6 @@ class generatorv2 : public generator
             }
 
             fnFractal->GenUniformGrid3D(noiseOutput.data(), begin_x, begin_y, begin_z, size_x, size_y, size_z, frequency, seed);
-
-            std::cout << "Converting to heightmap..." << std::endl;
 
             // Convert noiseOutput to heightmap
             for (uint32_t i = 0; i < size_x * size_y * size_z; i++) {
@@ -186,7 +179,7 @@ class generatorv2 : public generator
             std::vector<std::unique_ptr<chunk>> chunks(chunk_x * chunk_y * chunk_z);
 
             if (chunks.size() < chunk_x * chunk_y * chunk_z) {
-                std::cout << "Chunks size is not equal or bigger than chunk_x * chunk_y * chunk_z!" << std::endl;
+                spdlog::error("Chunks size is not equal or bigger than chunk_x * chunk_y * chunk_z!");
                 exit(1);
             }
 

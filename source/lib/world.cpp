@@ -42,7 +42,7 @@ void world::generate_world_models()
         chunk->model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = _game_context_ref._texture;
     }
 
-    std::cout << "Generating world models" << std::endl;
+    //std::cout << "Generating world models" << std::endl;
 }
 
 void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model)
@@ -53,7 +53,7 @@ void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bo
     auto end = std::chrono::high_resolution_clock::now();
 
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "Chunk generation took " << duration.count() << "ms" << std::endl;
+    //std::cout << "Chunk generation took " << duration.count() << "ms" << std::endl;
 
     // Add the chunk to the world
     if (generate_model) {
@@ -65,7 +65,7 @@ void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bo
 
         end = std::chrono::high_resolution_clock::now();
         duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        std::cout << "Chunk model generation took " << duration.count() << "ms" << std::endl;
+        //std::cout << "Chunk model generation took " << duration.count() << "ms" << std::endl;
     }
     chunks.push_back(std::move(chunk_new));
 }
@@ -107,7 +107,7 @@ void world::update()
         clear();
     }
 
-    if (_game_context_ref.frame_count % 10 == 0) {
+    if (_game_context_ref.frame_count % 20 == 0) {
         // TODO: make render distance configurable on x, y and z axis, and -x, -y and -z axis
         for (int32_t x = -render_distance; x <= render_distance; x++) {
             for (int32_t y = -render_distance; y <= render_distance; y++) {
@@ -123,10 +123,15 @@ void world::update()
 
 void world::draw3d()
 {
-    for (size_t ci = 0; ci < chunks.size(); ci++) {
+    for (decltype(chunks.size()) ci = 0; ci < chunks.size(); ci++) {
         chunk& current_chunk = *chunks[ci].get();
-        auto&& chunk_coor = current_chunk.get_position();
+        auto chunk_coor = current_chunk.get_position();
         auto& blocks = current_chunk.get_blocks();
+
+        if (current_chunk.model.get() == nullptr) {
+            spdlog::error("Chunk model is null");
+            continue;
+        }
 
         Model& current_model = *current_chunk.model.get();
 

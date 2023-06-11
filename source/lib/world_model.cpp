@@ -230,6 +230,7 @@ int world_model::face_count(chunk& _chunk)
                 block& current_block = _chunk.get_block(x, y, z);
                 if (current_block.block_type == block_type::air)
                     continue;
+                
                 int border_count = count_border(x, y, z, _chunk);
                 int neighbour_count = count_neighbours(x, y, z, _chunk);
 

@@ -15,10 +15,15 @@
 #include "game_class.hpp"
 #include "vector.hpp"
 
+#include "game_context.hpp"
+#include "game_class.hpp"
+
+#include "nlohmann/json.hpp"
+
 class game_context : public game_class
 {
     public:
-        game_context();
+        game_context(std::vector<std::shared_ptr<game_class>>& game_classes, nlohmann::json& _config_json);
 
         ~game_context();
 
@@ -55,6 +60,11 @@ class game_context : public game_class
         size_t chunks_on_screen_count = 0;
         size_t vectices_on_screen_count = 0;
         size_t triangles_on_screen_count = 0;
+
+
+        nlohmann::json& config_json;
+
+        std::vector<std::shared_ptr<game_class>>& game_classes;
 };
 
 #endif  // WORLD_OF_CUBE_WORLD_HPP

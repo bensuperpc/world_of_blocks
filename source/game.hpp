@@ -39,11 +39,12 @@ extern "C"
 #include "debug_menu.hpp"
 #include "game_class.hpp"
 #include "game_context.hpp"
+#include "nlohmann/json.hpp"
 
 class game
 {
     public:
-        game();
+        game(nlohmann::json& _config_json);
         ~game();
         void run();
         void init();
@@ -61,6 +62,8 @@ class game
         bool block_grid = true;
 
         std::vector<std::shared_ptr<game_class>> game_classes;
+
+        nlohmann::json& config_json;
 };
 
 #endif  // GAME_HPP

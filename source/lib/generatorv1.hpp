@@ -22,7 +22,7 @@
 
 #include "generator.hpp"
 
-class generatorv1 : public generator
+class generatorv1 final : public generator
 {
     public:
         explicit generatorv1(uint32_t _seed)
@@ -129,8 +129,6 @@ class generatorv1 : public generator
                 std::cout << "From (xyz): " << begin_x << ", " << begin_y << ", " << begin_z << std::endl;
                 std::cout << "To (xyz): " << end_x << ", " << end_y << ", " << end_z << std::endl;
                 std::cout << "Size (xyz): " << size_x << ", " << size_y << ", " << size_z << std::endl;
-
-                std::cout << "Generating 3D noise..." << std::endl;
             }
 //#pragma omp parallel for collapse(3) schedule(dynamic)
             for (uint32_t x = 0; x < size_x; x++) {
@@ -205,7 +203,7 @@ class generatorv1 : public generator
             std::vector<std::unique_ptr<chunk>> chunks(chunk_x * chunk_y * chunk_z);
 
             if (chunks.size() < chunk_x * chunk_y * chunk_z) {
-                std::cout << "Chunks size is not equal or bigger than chunk_x * chunk_y * chunk_z!" << std::endl;
+                spdlog::error("Chunks size is not equal or bigger than chunk_x * chunk_y * chunk_z!");
                 exit(1);
             }
 

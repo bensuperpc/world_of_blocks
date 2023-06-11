@@ -24,9 +24,14 @@ add_subdirectory(source/intro) # benlib_intro
 #include(cmake/lib/json.cmake)
 #include(cmake/lib/opencv.cmake)
 include(cmake/lib/openmp.cmake)
+include(cmake/lib/raygui.cmake)
 include(cmake/lib/raylib.cmake)
+include(cmake/lib/raylib-cpp.cmake)
 include(cmake/lib/perlin_noise.cmake)
 include(cmake/lib/fast_noise2.cmake)
+include(cmake/lib/spdlog.cmake)
+include(cmake/lib/json.cmake)
+
 
 # ---- Declare executable ----
 
@@ -39,6 +44,7 @@ target_compile_features(world_of_blocks_exe PRIVATE cxx_std_20)
 
 target_link_libraries(world_of_blocks_exe PRIVATE world_of_blocks_lib benlib_intro)
 target_link_libraries(world_of_blocks_exe PRIVATE FastNoise2 raylib OpenMP::OpenMP_CXX)
+target_link_libraries(world_of_blocks_exe PRIVATE spdlog::spdlog nlohmann_json::nlohmann_json)
 
 set_target_properties(world_of_blocks_exe
     PROPERTIES
