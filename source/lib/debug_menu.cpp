@@ -1,5 +1,7 @@
 #include "debug_menu.hpp"
 
+#include "raygui_cpp.hpp"
+
 debug_menu::debug_menu(game_context& game_context_ref)
     : _game_context_ref(game_context_ref)
 {
@@ -60,6 +62,8 @@ void debug_menu::draw2d()
              270,
              20,
              BLACK);
+     bool forceSquaredChecked = false;
+    GuiCheckBox((Rectangle){ 25, 108, 15, 15 }, "FORCE CHECK!", &forceSquaredChecked);
 }
 
 void debug_menu::draw3d() {}

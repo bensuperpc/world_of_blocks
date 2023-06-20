@@ -27,8 +27,10 @@ project(
     LANGUAGES C CXX
 )
 
-include(../../cmake/lib/openmp.cmake)
+include(../../cmake/lib/raygui.cmake)
 include(../../cmake/lib/raylib.cmake)
+include(../../cmake/lib/raylib-cpp.cmake)
+include(../../cmake/lib/openmp.cmake)
 include(../../cmake/lib/perlin_noise.cmake)
 include(../../cmake/lib/fast_noise2.cmake)
 include(../../cmake/lib/json.cmake)
@@ -45,8 +47,8 @@ set(SOURCES
 #add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC raylib FastNoise2)
-target_link_libraries(${PROJECT_NAME} PUBLIC nlohmann_json::nlohmann_json)
+target_link_libraries(${PROJECT_NAME} PUBLIC raylib raylib_cpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC FastNoise2 nlohmann_json::nlohmann_json)
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
