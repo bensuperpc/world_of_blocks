@@ -33,10 +33,12 @@ class world : public game_class
         ~world();
 
         void generate_world();
+        void generate_world_models();
+
         void generate_chunk(const int32_t, const int32_t, const int32_t, bool);
+        std::unique_ptr<chunk> generate_chunk_models(std::unique_ptr<chunk>);
         bool is_chunk_exist(const int32_t, const int32_t, const int32_t);
 
-        void generate_world_models();
         void clear();
 
         void update() override;

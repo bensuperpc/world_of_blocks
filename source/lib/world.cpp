@@ -53,21 +53,27 @@ void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bo
     auto end = std::chrono::high_resolution_clock::now();
 
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    //std::cout << "Chunk generation took " << duration.count() << "ms" << std::endl;
+    std::cout << "Chunk generation took " << duration.count() << "ms" << std::endl;
 
     // Add the chunk to the world
     if (generate_model) {
-        start = std::chrono::high_resolution_clock::now();
-        // Generate the model (TODO: Separate the model generation from the chunk generation)
-        std::unique_ptr<Model> chunk_model = world_md.generate_chunk_model(*chunk_new.get());
-        chunk_model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = _game_context_ref._texture;
-        chunk_new->model = std::move(chunk_model);
-
-        end = std::chrono::high_resolution_clock::now();
-        duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        //std::cout << "Chunk model generation took " << duration.count() << "ms" << std::endl;
+        chunk_new = generate_chunk_models(std::move(chunk_new));
     }
     chunks.push_back(std::move(chunk_new));
+}
+
+std::unique_ptr<chunk> world::generate_chunk_models(std::unique_ptr<chunk> chunk_new)
+{
+    auto start = std::chrono::high_resolution_clock::now();
+    // Generate the model (TODO: Separate the model generation from the chunk generation)
+    std::unique_ptr<Model> chunk_model = world_md.generate_chunk_model(*chunk_new.get());
+    chunk_model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = _game_context_ref._texture;
+    chunk_new->model = std::move(chunk_model);
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "Chunk model generation took " << duration.count() << "ms" << std::endl;
+    return chunk_new;
 }
 
 bool world::is_chunk_exist(const int32_t x, const int32_t y, const int32_t z)

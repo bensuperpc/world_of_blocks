@@ -63,7 +63,7 @@ void debug_menu::draw2d()
              20,
              BLACK);
      bool forceSquaredChecked = false;
-    GuiCheckBox((Rectangle){ 25, 108, 15, 15 }, "FORCE CHECK!", &forceSquaredChecked);
+    //GuiCheckBox((Rectangle){ 25, 108, 15, 15 }, "FORCE CHECK!", &forceSquaredChecked);
 }
 
 void debug_menu::draw3d() {}
