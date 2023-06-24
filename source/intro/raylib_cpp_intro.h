@@ -17,4 +17,4 @@
 
 void play_intro_raylib_cpp(const int screenWidth, const int screenHeight);
 
-#endif  // RAYLIB_CPP_INTRO_H_
+#endif // RAYLIB_CPP_INTRO_H_

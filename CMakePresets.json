@@ -95,11 +95,11 @@
       }
     },
     {
-      "name": "flags-gprof",
+      "name": "flags-debugger",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "-Og -g3 -Wall -Wextra -Wpedantic -pg",
-        "CMAKE_C_FLAGS": "-Og -g3 -Wall -Wextra -Wpedantic -pg"
+        "CMAKE_CXX_FLAGS": "-Og -g3 -ggdb3 -Wall -Wextra -Wpedantic -pg",
+        "CMAKE_C_FLAGS": "-Og -g3 -ggdb3 -Wall -Wextra -Wpedantic -pg"
       }
     },
     {
@@ -206,10 +206,20 @@
       "name": "gprof",
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build/gprof",
-      "inherits": ["ci-std", "flags-gprof", "dev-mode"],
+      "inherits": ["ci-std", "flags-debugger", "dev-mode"],
       "hidden": false,
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "debugger",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/debugger",
+      "inherits": ["ci-std", "flags-debugger", "dev-mode"],
+      "hidden": false,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
@@ -223,6 +233,14 @@
     {
       "name": "ci-windows",
       "inherits": ["ci-build", "ci-win64", "dev-mode"]
+    },
+    {
+      "name": "dev-common",
+      "hidden": true,
+      "inherits": ["dev-mode", "clang-tidy", "cppcheck"],
+      "cacheVariables": {
+        "BUILD_MCSS_DOCS": "ON"
+      }
     }
   ]
 }

@@ -3,13 +3,10 @@
 
 #include "vector.hpp"
 
-namespace math
-{
+namespace math {
 
-template<typename T = size_t>
-[[nodiscard]] inline constexpr T convert_to_1d(const T x, const T y, const T z, const T max_x, const T max_y, const T max_z)
-{
-    return (z * max_x * max_y) + (y * max_x) + x;
+template <typename T = size_t> [[nodiscard]] inline constexpr T convert_to_1d(const T x, const T y, const T z, const T max_x, const T max_y, const T max_z) {
+  return (z * max_x * max_y) + (y * max_x) + x;
 }
 
 /*
@@ -25,12 +22,8 @@ Vector3i convert_to_3d(const T index, const T max_x, const T max_y, const T max_
 }
 */
 
-template<typename T = size_t>
-[[nodiscard]] inline constexpr T convert_to_1d(const T x, const T y, const T max_x, const T max_y)
-{
-    return y * max_x + x;
-}
+template <typename T = size_t> [[nodiscard]] inline constexpr T convert_to_1d(const T x, const T y, const T max_x, const T max_y) { return y * max_x + x; }
 
-}  // namespace math
+} // namespace math
 
-#endif  // WORLD_OF_CUBE_BLOCK_HPP
+#endif // WORLD_OF_CUBE_BLOCK_HPP

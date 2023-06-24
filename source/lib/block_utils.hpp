@@ -1,8 +1,7 @@
 #ifndef WORLD_OF_CUBE_BLOCK_UTILS_HPP
 #define WORLD_OF_CUBE_BLOCK_UTILS_HPP
 
-namespace block_utils
-{
+namespace block_utils {
 
 /*
 [[nodiscard]] inline Vector3 get_real_position(const block& block,
@@ -57,6 +56,6 @@ namespace block_utils
 }
 */
 
-}  // namespace block_utils
+} // namespace block_utils
 
-#endif  // WORLD_OF_CUBE_BLOCK_HPP
+#endif // WORLD_OF_CUBE_BLOCK_HPP

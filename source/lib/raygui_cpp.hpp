@@ -9,4 +9,4 @@ extern "C" {
 }
 #endif
 
-#endif  // RAYGUI_CPP_HPP
+#endif // RAYGUI_CPP_HPP

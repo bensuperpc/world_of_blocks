@@ -17,4 +17,4 @@
 
 void play_intro_benlib(const int screenWidth, const int screenHeight);
 
-#endif  // BENLIB_CPP_INTRO_H_
+#endif // BENLIB_CPP_INTRO_H_

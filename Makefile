@@ -23,6 +23,7 @@ PROJECT_NAME := world_of_blocks
 PARALLEL := 1
 
 GENERATOR := Ninja
+PROJECT_ROOT := .
 
 CTEST_TIMEOUT := 1500
 CTEST_OPTIONS := --output-on-failure --timeout $(CTEST_TIMEOUT) --parallel $(PARALLEL) --verbose
@@ -39,70 +40,70 @@ all: release debug minsizerel coverage relwithdebinfo minsizerel relwithdebinfo 
 
 .PHONY: base
 base:
-	cmake -B build/$@ -S . -G $(GENERATOR) --preset=$@
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=$@
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
 
 .PHONY: base-clang
 base-clang:
-	cmake --preset=$@ -S . -G $(GENERATOR)
+	cmake --preset=$@ -S $(PROJECT_ROOT) -G $(GENERATOR)
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
 
 .PHONY: release
 release:
-	cmake -B build/$@ -S . -G $(GENERATOR) --preset=base -DCMAKE_BUILD_TYPE=Release
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=base -DCMAKE_BUILD_TYPE=Release
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
 
 .PHONY: release-clang
 release-clang:
-	cmake -B build/$@ -S . -G $(GENERATOR) --preset=base -DCMAKE_BUILD_TYPE=Release \
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=base -DCMAKE_BUILD_TYPE=Release \
 	-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
 
 .PHONY: debug
 debug:
-	cmake -B build/$@ -S . -G $(GENERATOR) --preset=dev -DCMAKE_BUILD_TYPE=Debug
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=dev -DCMAKE_BUILD_TYPE=Debug
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
 
 .PHONY: debug-clang
 debug-clang:
-	cmake -B build/$@ -S . -G $(GENERATOR) --preset=dev -DCMAKE_BUILD_TYPE=Debug \
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=dev -DCMAKE_BUILD_TYPE=Debug \
 	-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
 
 .PHONY: coverage
 coverage:
-	cmake -B build/$@ -S . -G $(GENERATOR) --preset=dev-coverage -DCMAKE_BUILD_TYPE=Coverage
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=dev-coverage -DCMAKE_BUILD_TYPE=Coverage
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
 	cmake --build build/$@ --target coverage
 
 .PHONY: sanitize
 sanitize:
-	cmake -B build/$@ -S . -G $(GENERATOR) --preset=ci-sanitize
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=ci-sanitize
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
 
 sanitize-clang:
-	cmake -B build/$@ -S . -G $(GENERATOR) --preset=ci-sanitize \
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=ci-sanitize \
 	-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
 
 .PHONY: minsizerel
 minsizerel:
-	cmake -B build/$@ -S . -G $(GENERATOR) --preset=dev -DCMAKE_BUILD_TYPE=MinSizeRel
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=dev -DCMAKE_BUILD_TYPE=MinSizeRel
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
 
 .PHONY: relwithdebinfo
 relwithdebinfo:
-	cmake -B build/$@ -S . -G $(GENERATOR) --preset=dev -DCMAKE_BUILD_TYPE=RelWithDebInfo
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=dev -DCMAKE_BUILD_TYPE=RelWithDebInfo
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
 
@@ -114,19 +115,19 @@ gprof:
 
 .PHONY: graph
 graph:
-	cmake -B build/$@ -S . -G $(GENERATOR) --graphviz=build/$@/graph.dot
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --graphviz=build/$@/graph.dot
 	cmake --build build/base
 	dot -Tpng -o build/$@/graph.png build/$@/graph.dot
 
 .PHONY: valgrind
 valgrind:
-	cmake -B build/$@ -S . -G $(GENERATOR) --preset=dev -DCMAKE_BUILD_TYPE=Debug
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=debugger
 	cmake --build build/$@
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=build/$@/valgrind.log build/$@/bin/$(PROJECT_NAME)
 
 .PHONY: gdb
 gdb:
-	cmake -B build/$@ -S . -G $(GENERATOR) --preset=dev -DCMAKE_BUILD_TYPE=Debug
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=debugger
 	cmake --build build/$@
 	gdb build/$@/bin/$(PROJECT_NAME)
 

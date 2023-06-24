@@ -15,29 +15,28 @@
 #include "game_class.hpp"
 #include "game_context.hpp"
 
-class player : public game_class
-{
-    public:
-        player(game_context& game_context_ref);
+class player : public game_class {
+public:
+  player(game_context &game_context_ref);
 
-        ~player();
+  ~player();
 
-        void update() override;
-        void draw2d() override;
-        void draw3d() override;
+  void update() override;
+  void draw2d() override;
+  void draw3d() override;
 
-        Vector3 get_position() const;
+  Vector3 get_position() const;
 
-        Camera camera;
+  Camera camera;
 
-        // Ray collision
-        Ray ray;
-        std::vector<std::pair<block*, RayCollision>> collisions;
-        RayCollision closest_collision = {false, 0, {0, 0, 0}, {0, 0, 0}};
-        block* closest_block = nullptr;
-        
-    private:
-        game_context& _game_context_ref;
+  // Ray collision
+  Ray ray;
+  std::vector<std::pair<block *, RayCollision>> collisions;
+  RayCollision closest_collision = {false, 0, {0, 0, 0}, {0, 0, 0}};
+  block *closest_block = nullptr;
+
+private:
+  game_context &_game_context_ref;
 };
 
-#endif  // WORLD_OF_CUBE_WORLD_HPP
+#endif // WORLD_OF_CUBE_WORLD_HPP
