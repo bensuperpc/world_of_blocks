@@ -5,7 +5,6 @@
 #include <omp.h>
 
 #include "raylib.h"
-#include "raymath.h"
 
 // Cube lib
 #include "block.hpp"

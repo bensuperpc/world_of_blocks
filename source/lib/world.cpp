@@ -18,7 +18,7 @@ void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bo
 {
     // Generate the chunk
     auto start = std::chrono::high_resolution_clock::now();
-    std::unique_ptr<chunk> chunk_new = std::move(genv2.generate_chunk(x, y, z, true));
+    std::unique_ptr<chunk> chunk_new = genv2.generate_chunk(x, y, z, true);
     auto end = std::chrono::high_resolution_clock::now();
 
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);

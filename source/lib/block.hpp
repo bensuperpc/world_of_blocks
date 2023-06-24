@@ -9,8 +9,8 @@
 class block
 {
     public:
-        explicit block(block_type::block_t block_type)
-            : block_type(block_type)
+        explicit block(block_type::block_t _block_type)
+            : block_type(_block_type)
         {
         }
 

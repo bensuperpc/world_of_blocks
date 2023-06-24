@@ -9,7 +9,6 @@
 
 // Raylib
 #include "raylib.h"
-#include "raymath.h"
 
 // World of blocks
 #include "chunk.hpp"

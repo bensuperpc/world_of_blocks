@@ -10,7 +10,6 @@
 
 // Raylib
 #include "raylib.h"
-#include "raymath.h"
 
 #include "vector.hpp"
 #include "game_class.hpp"

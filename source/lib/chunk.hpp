@@ -4,6 +4,9 @@
 #include <memory>
 #include <vector>
 #include <iostream>
+#include <string>
+#include <utility>
+#include <cmath>
 
 // Cube lib
 #include "block.hpp"
@@ -15,11 +18,11 @@ class chunk
 {
     public:
         chunk() {}
-        chunk(std::vector<block> blocks, int chunk_x, int chunk_y, int chunk_z)
-            : blocks(std::move(blocks))
-            , chunk_x(chunk_x)
-            , chunk_y(chunk_y)
-            , chunk_z(chunk_z)
+        chunk(std::vector<block> _blocks, int _chunk_x, int _chunk_y, int _chunk_z)
+            : blocks(std::move(_blocks))
+            , chunk_x(_chunk_x)
+            , chunk_y(_chunk_y)
+            , chunk_z(_chunk_z)
         {
         }
 
@@ -36,22 +39,18 @@ class chunk
 
         inline void set_blocks(std::vector<block>& blocks) { this->blocks = std::move(blocks); }
 
-        [[nodiscard]] inline std::vector<block>::size_type size() const { return blocks.size(); }
+        [[nodiscard]] inline std::vector<block>::size_type size() const noexcept { return blocks.size(); }
 
-        [[nodiscard]] inline Vector3i chunk_size() const { return {chunk_size_x, chunk_size_y, chunk_size_z}; }
+        [[nodiscard]] inline Vector3i chunk_size() const noexcept { return {chunk_size_x, chunk_size_y, chunk_size_z}; }
 
-        [[nodiscard]] inline Vector3i get_position() const { return {chunk_x, chunk_y, chunk_z}; }
+        [[nodiscard]] inline Vector3i get_position() const noexcept { return {chunk_x, chunk_y, chunk_z}; }
 
-        inline void set_chuck_pos(const int x, const int y, const int z)
+        inline void set_chuck_pos(const int x, const int y, const int z) noexcept
         {
             chunk_x = x;
             chunk_y = y;
             chunk_z = z;
         }
-
-        static constexpr int chunk_size_x = 32;
-        static constexpr int chunk_size_y = 32;
-        static constexpr int chunk_size_z = 32;
 
         // From chunk position to real position
         [[nodiscard]] static inline Vector3 get_real_position(const chunk& chunk)
@@ -79,6 +78,10 @@ class chunk
         }
 
         std::unique_ptr<Model> model;
+
+        static constexpr int chunk_size_x = 32;
+        static constexpr int chunk_size_y = 32;
+        static constexpr int chunk_size_z = 32;
 
     protected:
         std::vector<block> blocks;

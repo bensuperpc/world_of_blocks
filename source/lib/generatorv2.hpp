@@ -266,7 +266,7 @@ class generatorv2 final : public generator
 
             std::vector<block> blocks = std::vector<block>(size_x * size_y * size_z, block());
 
-            std::vector<uint32_t> heightmap = std::move(generate_3d_heightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z));
+            std::vector<uint32_t> heightmap = generate_3d_heightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z);
 
             if constexpr (debug) {
                 std::cout << "Generating blocks..." << std::endl;
@@ -296,7 +296,7 @@ class generatorv2 final : public generator
 
     private:
         // default seed
-        int32_t seed = 2647393077u;
+        int32_t seed = 404;
         FastNoise::SmartNode<FastNoise::Perlin> fnSimplex;
         FastNoise::SmartNode<FastNoise::FractalFBm> fnFractal;
         float persistence = 0.05f;
