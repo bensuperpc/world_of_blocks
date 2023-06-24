@@ -2,22 +2,14 @@
 
 game_context::game_context(std::vector<std::shared_ptr<game_class>>& _game_classes, nlohmann::json& _config_json) 
     : game_classes(_game_classes), config_json(_config_json) {
-    screen_width = _config_json["screen_width"];
-    screen_height = _config_json["screen_height"];
-    target_fps = _config_json["target_fps"];
+    screen_width = _config_json["display"].value("screen_width", 1920);
+    screen_height = _config_json["display"].value("screen_height", 1080);
+    target_fps = _config_json["display"].value("target_fps", 240);
 }
 
 game_context::~game_context() {}
 
 void game_context::update() {
-    vectices_on_world_count = 0;
-    triangles_on_world_count = 0;
-    display_block_count = 0;
-    display_chunk_count = 0;
-
-    chunks_on_screen_count = 0;
-    triangles_on_screen_count = 0;
-    vectices_on_screen_count = 0;
 
     mouse_position = GetMousePosition();
     screen_middle = Vector2({static_cast<float>(screen_height / 2), static_cast<float>(screen_width / 2)});

@@ -1,48 +1,17 @@
 #include "world.hpp"
 
-world::world(game_context& game_context_ref): _game_context_ref(game_context_ref)
+world::world(game_context& game_context_ref, nlohmann::json& _config_json)
+    : _game_context_ref(game_context_ref),
+        config_json(_config_json)
 {
+    render_distance = config_json["world"].value("render_distance", 4);
+    view_distance = config_json["world"].value("view_distance", 8);
+    generate_world_thread = std::thread(&world::generate_world_thread_func, this);
 }
 
-world::~world() {}
-
-void world::generate_world()
-{
-    std::cout << "Generating world" << std::endl;
-    // Clear the chunks
-    chunks.clear();
-    chunks.shrink_to_fit();
-
-    // Generate new perlin noise
-    genv2.reseed(this->seed);
-
-    // Generate the world
-    auto start = std::chrono::high_resolution_clock::now();
-
-    for (int32_t x = world_chunk_start_x; x < world_chunk_start_x + world_chunk_size_x; x++) {
-        for (int32_t y = world_chunk_start_y; y < world_chunk_start_y + world_chunk_size_y; y++) {
-            for (int32_t z = world_chunk_start_z; z < world_chunk_start_z + world_chunk_size_z; z++) {
-                std::cout << "Generating chunk " << x << " " << y << " " << z << std::endl;
-                generate_chunk(x, y, z, false);
-            }
-        }
-    }
-
-    auto end = std::chrono::high_resolution_clock::now();
-
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "World generation took " << duration.count() << "ms" << std::endl;
-}
-
-void world::generate_world_models()
-{
-    // Free the models
-    for (auto& chunk : chunks) {
-        chunk->model = std::move(world_md.generate_chunk_model(*chunk.get()));
-        chunk->model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = _game_context_ref._texture;
-    }
-
-    //std::cout << "Generating world models" << std::endl;
+world::~world() {
+    generate_world_thread_running = false;
+    generate_world_thread.join();
 }
 
 void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model)
@@ -57,23 +26,22 @@ void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bo
 
     // Add the chunk to the world
     if (generate_model) {
-        chunk_new = generate_chunk_models(std::move(chunk_new));
+        generate_chunk_models(*chunk_new.get());
     }
     chunks.push_back(std::move(chunk_new));
 }
 
-std::unique_ptr<chunk> world::generate_chunk_models(std::unique_ptr<chunk> chunk_new)
+void world::generate_chunk_models(chunk& chunk_new)
 {
     auto start = std::chrono::high_resolution_clock::now();
     // Generate the model (TODO: Separate the model generation from the chunk generation)
-    std::unique_ptr<Model> chunk_model = world_md.generate_chunk_model(*chunk_new.get());
+    std::unique_ptr<Model> chunk_model = world_md.generate_chunk_model(chunk_new);
     chunk_model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = _game_context_ref._texture;
-    chunk_new->model = std::move(chunk_model);
+    chunk_new.model = std::move(chunk_model);
 
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     std::cout << "Chunk model generation took " << duration.count() << "ms" << std::endl;
-    return chunk_new;
 }
 
 bool world::is_chunk_exist(const int32_t x, const int32_t y, const int32_t z)
@@ -93,16 +61,15 @@ void world::clear()
 {
     // Clear the chunks
     chunks.clear();
-    chunks.shrink_to_fit();
 }
 
 void world::update()
 {
     if (IsKeyPressed(KEY_R)) {
         seed = std::random_device()();
+        genv1.reseed(this->seed);
+        genv2.reseed(this->seed);
         std::cout << "seed: " << seed << std::endl;
-        generate_world();
-        generate_world_models();
     }
 
     if (IsKeyPressed(KEY_F3)) {
@@ -112,42 +79,39 @@ void world::update()
     if (IsKeyPressed(KEY_C)) {
         clear();
     }
-
-    if (_game_context_ref.frame_count % 20 == 0) {
-        // TODO: make render distance configurable on x, y and z axis, and -x, -y and -z axis
-        for (int32_t x = -render_distance; x <= render_distance; x++) {
-            for (int32_t y = -render_distance; y <= render_distance; y++) {
-                for (int32_t z = -render_distance; z <= render_distance; z++) {
-                    if (!is_chunk_exist(_game_context_ref.player_chunk_pos.x + x, _game_context_ref.player_chunk_pos.y + y, _game_context_ref.player_chunk_pos.z + z)) {
-                        generate_chunk(_game_context_ref.player_chunk_pos.x + x, _game_context_ref.player_chunk_pos.y + y, _game_context_ref.player_chunk_pos.z + z, true);
-                    }
-                }
-            }
-        }
-    }
 }
 
 void world::draw3d()
 {
-    for (decltype(chunks.size()) ci = 0; ci < chunks.size(); ci++) {
-        chunk& current_chunk = *chunks[ci].get();
+    for (auto const& _chunk : chunks) {
+        chunk& current_chunk = *_chunk.get();
         auto chunk_coor = current_chunk.get_position();
         auto& blocks = current_chunk.get_blocks();
 
-        if (current_chunk.model.get() == nullptr) {
-            spdlog::error("Chunk model is null");
+        auto& player1_pose = _game_context_ref.player_chunk_pos;
+
+        // If chunk is too far away, don't render it
+        if (std::abs(chunk_coor.x - player1_pose.x) > view_distance || std::abs(chunk_coor.y - player1_pose.y) > view_distance
+            || std::abs(chunk_coor.z - player1_pose.z) > view_distance)
+        {
             continue;
+        }
+
+        if (current_chunk.model.get() == nullptr) {
+            generate_chunk_models(current_chunk);
         }
 
         Model& current_model = *current_chunk.model.get();
 
-        auto&& chunk_pos = chunk::get_real_position(current_chunk);
+        auto chunk_pos = chunk::get_real_position(current_chunk);
 
         Vector3 chunk_pos_center = {static_cast<float>(chunk_coor.x * chunk::chunk_size_x + chunk::chunk_size_x / 2.0f),
                                     static_cast<float>(chunk_coor.y * chunk::chunk_size_y + chunk::chunk_size_y / 2.0f),
                                     static_cast<float>(chunk_coor.z * chunk::chunk_size_z + chunk::chunk_size_z / 2.0f)};
         
-        if (true) {
+
+        // For debug menu
+        if (display_debug_menu) {
             _game_context_ref.vectices_on_world_count += current_model.meshes->vertexCount;
             _game_context_ref.triangles_on_world_count += current_model.meshes->triangleCount;
             _game_context_ref.display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
@@ -186,4 +150,21 @@ void world::draw3d()
 
 void world::draw2d()
 {
+}
+
+
+void world::generate_world_thread_func()
+{
+    while(generate_world_thread_running) {
+        for (int32_t x = -render_distance; x <= render_distance; x++) {
+            for (int32_t y = -render_distance; y <= render_distance; y++) {
+                for (int32_t z = -render_distance; z <= render_distance; z++) {
+                    if (!is_chunk_exist(_game_context_ref.player_chunk_pos.x + x, _game_context_ref.player_chunk_pos.y + y, _game_context_ref.player_chunk_pos.z + z)) {
+                        generate_chunk(_game_context_ref.player_chunk_pos.x + x, _game_context_ref.player_chunk_pos.y + y, _game_context_ref.player_chunk_pos.z + z, false);
+                    }
+                }
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
 }

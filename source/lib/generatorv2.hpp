@@ -12,14 +12,14 @@
 #include <vector>
 
 #include <omp.h>
+
 #include "FastNoise/FastNoise.h"
 
 // Cube lib
 #include "block.hpp"
 #include "chunk.hpp"
-#include "math.hpp"
-
 #include "generator.hpp"
+#include "math.hpp"
 class generatorv2 final : public generator
 {
     public:
@@ -35,7 +35,8 @@ class generatorv2 final : public generator
             fnFractal->SetLacunarity(lacunarity);
         }
 
-        generatorv2() {
+        generatorv2()
+        {
             fnSimplex = FastNoise::New<FastNoise::Perlin>();
             fnFractal = FastNoise::New<FastNoise::FractalFBm>();
 
@@ -47,10 +48,7 @@ class generatorv2 final : public generator
 
         ~generatorv2() {}
 
-        void reseed(uint32_t seed)
-        {
-            this->seed = seed;
-        }
+        void reseed(uint32_t _seed) { this->seed = _seed; }
 
         uint32_t randomize_seed()
         {
@@ -64,40 +62,43 @@ class generatorv2 final : public generator
 
         uint32_t get_seed() const { return seed; }
 
-        void set_octaves(uint32_t octaves) { this->octaves = octaves; }
+        void set_octaves(uint32_t _octaves) { this->octaves = _octaves; }
 
         uint32_t get_octaves() const { return octaves; }
 
-        void set_persistence(double persistence) { this->persistence = persistence; }
+        void set_persistence(float _persistence) { this->persistence = _persistence; }
 
         double get_persistence() const { return persistence; }
 
-        void set_lacunarity(double lacunarity) { this->lacunarity = lacunarity; }
+        void set_lacunarity(double _lacunarity) { this->lacunarity = _lacunarity; }
 
         double get_lacunarity() const { return lacunarity; }
 
-        std::vector<uint32_t> generate_2d_heightmap(
-            const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y, const uint32_t size_z) override
+        std::vector<uint32_t> generate_2d_heightmap(const int32_t begin_x,
+                                                    [[maybe_unused]] const int32_t begin_y,
+                                                    const int32_t begin_z,
+                                                    const uint32_t size_x,
+                                                    [[maybe_unused]] const uint32_t size_y,
+                                                    const uint32_t size_z) override
         {
-
             constexpr bool debug = false;
-    
+
             std::vector<uint32_t> heightmap(size_x * size_z);
-            
-            std::vector<float> noiseOutput(size_x * size_z);
+
+            std::vector<float> noise_output(size_x * size_z);
 
             if (fnFractal == nullptr) {
                 std::cout << "fnFractal is nullptr" << std::endl;
                 return heightmap;
             }
 
-            fnFractal->GenUniformGrid2D(noiseOutput.data(), begin_x, begin_z, size_x, size_z, frequency, seed);
+            fnFractal->GenUniformGrid2D(noise_output.data(), begin_x, begin_z, size_x, size_z, frequency, seed);
 
-            // Convert noiseOutput to heightmap
+            // Convert noise_output to heightmap
             for (uint32_t i = 0; i < size_x * size_z; i++) {
-                heightmap[i] = static_cast<uint32_t>((noiseOutput[i] + 1.0) * 128.0);
+                heightmap[i] = static_cast<uint32_t>((noise_output[i] + 1.0) * 128.0);
                 if constexpr (debug) {
-                    std::cout << "i: " << i << ", value: " << noiseOutput[i] << ", heightmap: " << heightmap[i] << std::endl;
+                    std::cout << "i: " << i << ", value: " << noise_output[i] << ", heightmap: " << heightmap[i] << std::endl;
                 }
             }
 
@@ -106,31 +107,35 @@ class generatorv2 final : public generator
                 auto minmax = std::minmax_element(heightmap.begin(), heightmap.end());
                 std::cout << "min: " << static_cast<int32_t>(*minmax.first) << std::endl;
                 std::cout << "max: " << static_cast<int32_t>(*minmax.second) << std::endl;
-            }            
+            }
             return heightmap;
         }
 
-        std::vector<uint32_t> generate_3d_heightmap(
-            const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y, const uint32_t size_z) override
+        std::vector<uint32_t> generate_3d_heightmap(const int32_t begin_x,
+                                                    const int32_t begin_y,
+                                                    const int32_t begin_z,
+                                                    const uint32_t size_x,
+                                                    const uint32_t size_y,
+                                                    const uint32_t size_z) override
         {
             constexpr bool debug = false;
-    
+
             std::vector<uint32_t> heightmap(size_x * size_y * size_z);
-            
-            std::vector<float> noiseOutput(size_x * size_y * size_z);
+
+            std::vector<float> noise_output(size_x * size_y * size_z);
 
             if (fnFractal == nullptr) {
                 std::cout << "fnFractal is nullptr" << std::endl;
                 return heightmap;
             }
 
-            fnFractal->GenUniformGrid3D(noiseOutput.data(), begin_x, begin_y, begin_z, size_x, size_y, size_z, frequency, seed);
+            fnFractal->GenUniformGrid3D(noise_output.data(), begin_x, begin_y, begin_z, size_x, size_y, size_z, frequency, seed);
 
-            // Convert noiseOutput to heightmap
+            // Convert noise_output to heightmap
             for (uint32_t i = 0; i < size_x * size_y * size_z; i++) {
-                heightmap[i] = static_cast<uint32_t>((noiseOutput[i] + 1.0) * 128.0);
+                heightmap[i] = static_cast<uint32_t>((noise_output[i] + 1.0) * 128.0);
                 if constexpr (debug) {
-                    std::cout << "i: " << i << ", value: " << noiseOutput[i] << ", heightmap: " << heightmap[i] << std::endl;
+                    std::cout << "i: " << i << ", noise_output: " << noise_output[i] << ", heightmap: " << heightmap[i] << std::endl;
                 }
             }
 
@@ -139,12 +144,15 @@ class generatorv2 final : public generator
                 auto minmax = std::minmax_element(heightmap.begin(), heightmap.end());
                 std::cout << "min: " << static_cast<int32_t>(*minmax.first) << std::endl;
                 std::cout << "max: " << static_cast<int32_t>(*minmax.second) << std::endl;
-            }         
+            }
 
             return heightmap;
         }
 
-        std::unique_ptr<chunk> generate_chunk(const int32_t chunk_x, const int32_t chunk_y, const int32_t chunk_z, const bool generate_3d_terrain) override
+        std::unique_ptr<chunk> generate_chunk(const int32_t chunk_x,
+                                              const int32_t chunk_y,
+                                              const int32_t chunk_z,
+                                              const bool generate_3d_terrain) override
         {
             const int32_t real_x = chunk_x * chunk::chunk_size_x;
             const int32_t real_y = chunk_y * chunk::chunk_size_y;
@@ -166,30 +174,32 @@ class generatorv2 final : public generator
             return _chunk;
         }
 
-        std::vector<std::unique_ptr<chunk>> generate_chunks(const int32_t begin_chunk_x,
-                                         const int32_t begin_chunk_y,
-                                         const int32_t begin_chunk_z,
-                                         const uint32_t chunk_x,
-                                         const uint32_t chunk_y,
-                                         const uint32_t chunk_z,
-                                         const bool generate_3d_terrain) override
+        [[nodiscard]] std::vector<std::unique_ptr<chunk>> generate_chunks(const int32_t begin_chunk_x,
+                                                                          const int32_t begin_chunk_y,
+                                                                          const int32_t begin_chunk_z,
+                                                                          const uint32_t size_x,
+                                                                          const uint32_t size_y,
+                                                                          const uint32_t size_z,
+                                                                          const bool generate_3d_terrain) override
         {
             constexpr bool debug = false;
 
-            std::vector<std::unique_ptr<chunk>> chunks(chunk_x * chunk_y * chunk_z);
-
-            if (chunks.size() < chunk_x * chunk_y * chunk_z) {
-                spdlog::error("Chunks size is not equal or bigger than chunk_x * chunk_y * chunk_z!");
+            std::vector<std::unique_ptr<chunk>> chunks;
+            chunks.reserve(size_x * size_y * size_z);
+            /*
+            if (chunks.size() < size_x * size_y * size_z) {
+                spdlog::error("Chunks size is not equal or bigger than size_x * size_y * size_z!");
                 exit(1);
             }
+            */
 
-// Generate each 16x64x16 chunk
 #pragma omp parallel for collapse(3) schedule(auto)
-            for (uint32_t x = 0; x < chunk_x; x++) {
-                for (uint32_t z = 0; z < chunk_z; z++) {
-                    for (uint32_t y = 0; y < chunk_y; y++) {
-                        // #pragma omp critical
-                        chunks[math::convert_to_1d(x, y, z, chunk_x, chunk_y, chunk_z)] = std::move(generate_chunk(x, y, z, generate_3d_terrain));
+            for (int32_t x = begin_chunk_x; x < begin_chunk_x + size_x; x++) {
+                for (int32_t z = begin_chunk_y; z < begin_chunk_y + size_z; z++) {
+                    for (int32_t y = begin_chunk_z; y < begin_chunk_z + size_y; y++) {
+                        auto gen_chunk = generate_chunk(x, y, z, generate_3d_terrain);
+#pragma omp critical
+                        chunks.emplace_back(std::move(gen_chunk));
                     }
                 }
             }
@@ -197,8 +207,12 @@ class generatorv2 final : public generator
             return chunks;
         }
 
-        std::vector<block> generate_2d(
-            const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y, const uint32_t size_z) override
+        std::vector<block> generate_2d(const int32_t begin_x,
+                                       const int32_t begin_y,
+                                       const int32_t begin_z,
+                                       const uint32_t size_x,
+                                       const uint32_t size_y,
+                                       const uint32_t size_z) override
         {
             constexpr bool debug = false;
 
@@ -241,8 +255,12 @@ class generatorv2 final : public generator
             return blocks;
         }
 
-        std::vector<block> generate_3d(
-            const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y, const uint32_t size_z) override
+        std::vector<block> generate_3d(const int32_t begin_x,
+                                       const int32_t begin_y,
+                                       const int32_t begin_z,
+                                       const uint32_t size_x,
+                                       const uint32_t size_y,
+                                       const uint32_t size_z) override
         {
             constexpr bool debug = false;
 
@@ -286,7 +304,6 @@ class generatorv2 final : public generator
         float lacunarity = 0.5f;
         float gain = 3.5f;
         float frequency = 0.4f;
-        
 };
 
 #endif  // WORLD_OF_CUBE_GENERATOR_HPP

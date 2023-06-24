@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include <omp.h>
 
@@ -26,10 +27,10 @@ class debug_menu: public game_class
         void draw2d() override;
         void draw3d() override;
 
-        // Menu
-        bool display_debug_menu = true;
-
         game_context& _game_context_ref;
+    
+        // Debug
+        bool block_grid = true;
 };
 
 #endif  // WORLD_OF_CUBE_WORLD_HPP

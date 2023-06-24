@@ -22,9 +22,11 @@ auto main(int argc, char* argv[]) -> int
     // Create json if not exist
     if (!std::filesystem::exists("config.json")) {
         spdlog::info("Config file not found, creating one...");
-        config_json["screen_width"] = 1920;
-        config_json["screen_height"] = 1080;
-        config_json["target_fps"] = 240;
+        config_json["display"]["screen_width"] = 1920;
+        config_json["display"]["screen_height"] = 1080;
+        config_json["display"]["target_fps"] = 240;
+        config_json["world"]["render_distance"] = 4;
+        config_json["world"]["view_distance"] = 8;
 
         std::ofstream config_file("config.json");
         config_file << config_json;

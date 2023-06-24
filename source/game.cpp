@@ -1,7 +1,8 @@
 #include "game.hpp"
 
-game::game(nlohmann::json& _config_json): config_json(_config_json) {
-
+game::game(nlohmann::json& _config_json)
+    : config_json(_config_json)
+{
 }
 
 game::~game() {}
@@ -14,7 +15,7 @@ void game::init()
     game_context1 = std::make_shared<game_context>(game_classes, config_json);
     game_classes.push_back(game_context1);
 
-    world_new = std::make_shared<world>(*game_context1.get());
+    world_new = std::make_shared<world>(*game_context1.get(), config_json);
     game_classes.push_back(world_new);
 
     debug_menu1 = std::make_shared<debug_menu>(*game_context1.get());
@@ -23,11 +24,11 @@ void game::init()
 
 void game::run()
 {
+    auxillary_thread = std::thread(&game::auxillary_thread_func, this);
+
     InitWindow(game_context1->screen_width, game_context1->screen_height, "World of blocks");
 
     game_context1->load_texture();
-
-    auto generate_world_async = std::async(std::launch::async, [&]() { world_new->generate_world(); });
 
     // Play intro animation
     SetTargetFPS(60);
@@ -38,27 +39,17 @@ void game::run()
     play_intro_raylib_cpp(game_context1->screen_width, game_context1->screen_height);
     play_intro_benlib(game_context1->screen_width, game_context1->screen_height);
 
-    generate_world_async.wait();
-    world_new->generate_world_models();
-
     SetTargetFPS(game_context1->target_fps);
 
     // Player init after window is created
     player1 = std::make_shared<player>(*game_context1.get());
     game_classes.push_back(player1);
 
-    while (!WindowShouldClose()) {
-        if (IsWindowMinimized() || !IsWindowFocused()) {
+    while (game_running) {
+        game_running = !WindowShouldClose();
+        // !IsWindowFocused()
+        if (IsWindowMinimized()) {
             continue;
-        }
-
-        if (IsKeyPressed(KEY_G)) {
-            block_grid = !block_grid;
-        }
-
-        if (IsKeyPressed(KEY_F5)) {
-            // Take screenshot
-            TakeScreenshot("screenshot.png");
         }
 
         /*
@@ -90,20 +81,11 @@ void game::run()
             block_info_index = 0;
         }
         */
-
-        for (auto& item : game_classes) {
-            item->update();
-        }
-
         BeginDrawing();
-        
+
         ClearBackground(RAYWHITE);
 
         BeginMode3D(player1->camera);
-
-        if (block_grid) {
-            DrawGrid(256, 1.0f);
-        }
 
         /*
         if (closest_collision.hit) {
@@ -126,8 +108,34 @@ void game::run()
         for (auto& item : game_classes) {
             item->draw2d();
         }
-        
+
         EndDrawing();
         game_context1->frame_count++;
+    }
+
+    auxillary_thread.join();
+}
+
+void game::auxillary_thread_func()
+{
+    while (game_running) {
+        auto start_time = std::chrono::high_resolution_clock::now();
+        for (auto& item : game_classes) {
+            // Skip inactive items
+            if (!item->is_active) {
+                continue;
+            }
+
+            // Avoid multiple keypresses with a delay
+            if (std::chrono::steady_clock::now() - item->last_action_time < item->action_cooldown) {
+                continue;
+            }
+            item->update();
+        }
+        
+        auto end_time = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+        auto sleep_time = std::chrono::milliseconds(1000 / game_context1->target_fps) - duration;
+        std::this_thread::sleep_for(sleep_time);
     }
 }

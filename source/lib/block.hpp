@@ -9,7 +9,7 @@
 class block
 {
     public:
-        explicit block(uint16_t block_type)
+        explicit block(block_type::block_t block_type)
             : block_type(block_type)
         {
         }
@@ -18,9 +18,9 @@ class block
 
         ~block() {}
 
-        [[nodiscard]] inline uint16_t get_block_type() const { return block_type; }
+        [[nodiscard]] inline block_type::block_t get_block_type() const noexcept { return block_type; }
 
-        uint16_t block_type = 0;
+        block_type::block_t block_type = 0;
 
         // All aditional data
         // std::vector<data> data;

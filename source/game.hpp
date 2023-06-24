@@ -11,7 +11,11 @@
 #include <string>
 #include <string_view>
 #include <vector>
-
+#include <thread>
+#include <mutex>
+#include <future>
+#include <memory>
+#include <queue>
 #include <omp.h>
 
 // #include "PerlinNoise.hpp"
@@ -48,9 +52,9 @@ class game
         ~game();
         void run();
         void init();
-        Mesh cube_mesh(chunk& _chunk);
 
-        void draw_debug_menu();
+        void render_thread_func();
+        void auxillary_thread_func();
 
     private:
         std::shared_ptr<debug_menu> debug_menu1;
@@ -58,12 +62,13 @@ class game
         std::shared_ptr<world> world_new;
         std::shared_ptr<game_context> game_context1;
 
-        // Debug
-        bool block_grid = true;
-
         std::vector<std::shared_ptr<game_class>> game_classes;
 
         nlohmann::json& config_json;
+
+        std::thread auxillary_thread;
+
+        bool game_running = true;
 };
 
 #endif  // GAME_HPP

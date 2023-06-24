@@ -9,17 +9,21 @@
 
 namespace block_type
 {
-uint16_t constexpr air = 0;
-uint16_t constexpr grass = 1;
-uint16_t constexpr dirt = 2;
-uint16_t constexpr stone = 3;
-uint16_t constexpr sand = 4;
-uint16_t constexpr water = 5;
-uint16_t constexpr wood = 6;
-uint16_t constexpr leaves = 7;
-uint16_t constexpr unknown = std::numeric_limits<uint16_t>::max();
 
-[[nodiscard]] inline std::string get_name(uint16_t block_type)
+// Block variable type
+typedef uint8_t block_t;
+
+inline constexpr block_t air = 0;
+inline constexpr block_t grass = 1;
+inline constexpr block_t dirt = 2;
+inline constexpr block_t stone = 3;
+inline constexpr block_t sand = 4;
+inline constexpr block_t water = 5;
+inline constexpr block_t wood = 6;
+inline constexpr block_t leaves = 7;
+inline constexpr block_t unknown = std::numeric_limits<block_t>::max();
+
+inline constexpr std::string get_name(block_t block_type)
 {
     switch (block_type) {
         case air:

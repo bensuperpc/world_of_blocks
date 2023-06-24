@@ -48,7 +48,7 @@ static void fastnoise2_octave3d(benchmark::State& state)
 
     int seed = 264739307;
 
-    std::vector<float> noiseOutput(size_x * size_y * size_z);
+    std::vector<float> noise_output(size_x * size_y * size_z);
 
     auto fnSimplex = FastNoise::New<FastNoise::Simplex>();
     auto fnFractal = FastNoise::New<FastNoise::FractalFBm>();
@@ -60,7 +60,7 @@ static void fastnoise2_octave3d(benchmark::State& state)
     fnFractal->SetLacunarity(lacunarity);
 
     for (auto _ : state) {
-        benchmark::DoNotOptimize(fnFractal->GenUniformGrid3D(noiseOutput.data(), 0, 0, 0, size_x, size_y, size_z, 0.2f, seed));
+        benchmark::DoNotOptimize(fnFractal->GenUniformGrid3D(noise_output.data(), 0, 0, 0, size_x, size_y, size_z, 0.2f, seed));
         benchmark::ClobberMemory();
     }
     state.SetItemsProcessed(state.iterations() * size_x * size_y * size_z);

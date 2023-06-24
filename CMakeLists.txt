@@ -54,6 +54,11 @@ set_target_properties(world_of_blocks_exe
     PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
+# Download assets
+file(DOWNLOAD
+  https://github.com/pietmichal/raycraft/blob/master/resources/grass.png?raw=true
+  ${CMAKE_BINARY_DIR}/bin/grass.png)
+
 # ---- Install rules ----
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)

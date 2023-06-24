@@ -30,12 +30,16 @@ void player::update() {
 
     ray = GetMouseRay(_game_context_ref.screen_middle, camera);
 
-
     float player_speed = 0.5f;
     float zoom = GetMouseWheelMove() * 0.5f;
     Vector3 movement = { 0.0f, 0.0f, 0.0f };
     Vector3 rotation = { 0.0f, 0.0f, 0.0f };
 
+
+    if (IsKeyPressed(KEY_F5)) {
+        // Take screenshot
+        TakeScreenshot("screenshot.png");
+    }
 
     if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {
         movement.x = player_speed;

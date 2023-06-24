@@ -67,7 +67,7 @@ class generatorv1 final : public generator
         [[nodiscard]] double get_lacunarity() const { return lacunarity; }
 
         std::vector<uint32_t> generate_2d_heightmap(
-            const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y, const uint32_t size_z) override
+            const int32_t begin_x, [[maybe_unused]] const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, [[maybe_unused]] const uint32_t size_y, const uint32_t size_z) override
         {
             constexpr bool debug = false;
 
@@ -189,31 +189,32 @@ class generatorv1 final : public generator
             return _chunk;
         }
 
-        [[nodiscard]]
-        std::vector<std::unique_ptr<chunk>> generate_chunks(const int32_t begin_chunk_x,
-                                         const int32_t begin_chunk_y,
-                                         const int32_t begin_chunk_z,
-                                         const uint32_t chunk_x,
-                                         const uint32_t chunk_y,
-                                         const uint32_t chunk_z,
-                                         const bool generate_3d_terrain) override
+        [[nodiscard]] std::vector<std::unique_ptr<chunk>> generate_chunks(const int32_t begin_chunk_x,
+                                                                          const int32_t begin_chunk_y,
+                                                                          const int32_t begin_chunk_z,
+                                                                          const uint32_t size_x,
+                                                                          const uint32_t size_y,
+                                                                          const uint32_t size_z,
+                                                                          const bool generate_3d_terrain) override
         {
             constexpr bool debug = false;
 
-            std::vector<std::unique_ptr<chunk>> chunks(chunk_x * chunk_y * chunk_z);
-
-            if (chunks.size() < chunk_x * chunk_y * chunk_z) {
-                spdlog::error("Chunks size is not equal or bigger than chunk_x * chunk_y * chunk_z!");
+            std::vector<std::unique_ptr<chunk>> chunks;
+            chunks.reserve(size_x * size_y * size_z);
+            /*
+            if (chunks.size() < size_x * size_y * size_z) {
+                spdlog::error("Chunks size is not equal or bigger than size_x * size_y * size_z!");
                 exit(1);
             }
+            */
 
-// Generate each 16x64x16 chunk
 #pragma omp parallel for collapse(3) schedule(auto)
-            for (uint32_t x = 0; x < chunk_x; x++) {
-                for (uint32_t z = 0; z < chunk_z; z++) {
-                    for (uint32_t y = 0; y < chunk_y; y++) {
-                        // #pragma omp critical
-                        chunks[math::convert_to_1d(x, y, z, chunk_x, chunk_y, chunk_z)] = std::move(generate_chunk(x, y, z, generate_3d_terrain));
+            for (int32_t x = begin_chunk_x; x < begin_chunk_x + size_x; x++) {
+                for (int32_t z = begin_chunk_y; z < begin_chunk_y + size_z; z++) {
+                    for (int32_t y = begin_chunk_z; y < begin_chunk_z + size_y; y++) {
+                        auto gen_chunk = generate_chunk(x, y, z, generate_3d_terrain);
+#pragma omp critical
+                        chunks.emplace_back(std::move(gen_chunk));
                     }
                 }
             }

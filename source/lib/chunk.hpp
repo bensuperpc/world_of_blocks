@@ -56,7 +56,7 @@ class chunk
         // From chunk position to real position
         [[nodiscard]] static inline Vector3 get_real_position(const chunk& chunk)
         {
-            auto&& chunk_pos = chunk.get_position();
+            auto chunk_pos = chunk.get_position();
             return {static_cast<float>(chunk_pos.x * chunk::chunk_size_x), static_cast<float>(chunk_pos.y * chunk::chunk_size_y), static_cast<float>(chunk_pos.z * chunk::chunk_size_z)};
         }
 

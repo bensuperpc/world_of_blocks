@@ -12,13 +12,25 @@ debug_menu::~debug_menu() {}
 void debug_menu::update()
 {
     if (IsKeyPressed(KEY_F3)) {
-        display_debug_menu = !display_debug_menu;
+        last_action_time = std::chrono::steady_clock::now();
+        is_visible = !is_visible;
+    }
+    if (IsKeyPressed(KEY_G)) {
+        last_action_time = std::chrono::steady_clock::now();
+        block_grid = !block_grid;
+    }
+}
+
+
+void debug_menu::draw3d() {
+    if (block_grid) {
+        DrawGrid(256, 1.0f);
     }
 }
 
 void debug_menu::draw2d()
 {
-    if (!this->display_debug_menu) {
+    if (!this->is_visible) {
         return;
     }
 
@@ -64,6 +76,13 @@ void debug_menu::draw2d()
              BLACK);
      bool forceSquaredChecked = false;
     //GuiCheckBox((Rectangle){ 25, 108, 15, 15 }, "FORCE CHECK!", &forceSquaredChecked);
-}
 
-void debug_menu::draw3d() {}
+    _game_context_ref.vectices_on_world_count = 0;
+    _game_context_ref.triangles_on_world_count = 0;
+    _game_context_ref.display_block_count = 0;
+    _game_context_ref.display_chunk_count = 0;
+
+    _game_context_ref.chunks_on_screen_count = 0;
+    _game_context_ref.triangles_on_screen_count = 0;
+    _game_context_ref.vectices_on_screen_count = 0;
+}
