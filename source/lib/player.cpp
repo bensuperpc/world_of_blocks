@@ -1,6 +1,7 @@
 #include "player.hpp"
 
 player::player(game_context &game_context_ref) : _game_context_ref(game_context_ref) {
+  player_logger = std::make_unique<logger_decorator>("player", "player.log");
   Camera _camera = {0};
   _camera.position = (Vector3){48.0f, 48.0f, -48.0f};
   _camera.target = (Vector3){-28.0f, 48.0f, -28.0f};
@@ -36,7 +37,7 @@ void player::update() {
     std::stringstream ss;
     ss << std::put_time(std::localtime(&date), "%Y-%m-%d_%H-%M-%S");
     std::string filename = ss.str();
-    spdlog::info("Taking screenshot: {}", filename);
+    player_logger->info("Taking screenshot: {}", filename);
     TakeScreenshot(("screenshot_" + filename + ".png").c_str());
   }
 

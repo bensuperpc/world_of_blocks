@@ -20,7 +20,12 @@
 #include <omp.h>
 
 #include "nlohmann/json.hpp"
-#include "spdlog/spdlog.h"
+
+// spdlog
+#include <spdlog/spdlog.h>
+#include <spdlog/async.h>
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/rotating_file_sink.h"
 
 #include "raylib.h"
 
@@ -32,6 +37,8 @@
 #include "generatorv1.hpp"
 #include "generatorv2.hpp"
 #include "world_model.hpp"
+
+#include "logger_decorator.hpp"
 
 class world : public game_class {
 public:
@@ -66,13 +73,16 @@ public:
   int32_t render_distance = 4;
   int32_t view_distance = 8;
 
-  std::mutex world_mutex;
+  std::mutex world_generator_mutex;
   std::queue<std::tuple<int32_t, int32_t, int32_t>> world_queue;
   std::thread generate_world_thread;
   bool generate_world_thread_running = true;
 
   game_context &_game_context_ref;
   nlohmann::json &config_json;
+
+  // logger
+  std::unique_ptr<logger_decorator> world_logger;
 };
 
 #endif // WORLD_OF_CUBE_WORLD_HPP

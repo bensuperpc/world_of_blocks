@@ -6,7 +6,9 @@
 
 #include "nlohmann/json.hpp"
 #include "raylib.h"
-#include "spdlog/spdlog.h"
+
+#include "logger_decorator.hpp"
+
 
 #include "game.hpp"
 
@@ -14,9 +16,9 @@ auto main(int argc, char *argv[]) -> int {
   // Set log level for Raylib
   SetTraceLogLevel(LOG_WARNING);
 
-  spdlog::set_level(spdlog::level::debug);
-  spdlog::info("Welcome to world of blocks!");
-  spdlog::flush_every(std::chrono::seconds(5));
+  auto loggerer = logger_decorator("main", "main.log");
+
+  loggerer.info("Welcome to world of blocks!");
 
   nlohmann::json config_json;
   // Create json if not exist
@@ -44,6 +46,10 @@ auto main(int argc, char *argv[]) -> int {
 
   game current_game = game(config_json);
   current_game.init();
+  spdlog::info("Game initialized!");
+  spdlog::info("Starting game loop...");
   current_game.run();
+  spdlog::info("Game loop ended!");
+  spdlog::shutdown();
   return 0;
 }

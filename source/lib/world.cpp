@@ -3,7 +3,9 @@
 world::world(game_context &game_context_ref, nlohmann::json &_config_json) : _game_context_ref(game_context_ref), config_json(_config_json) {
   render_distance = config_json["world"].value("render_distance", 4);
   view_distance = config_json["world"].value("view_distance", 8);
+  world_logger = std::make_unique<logger_decorator>("world", "world.log");
   generate_world_thread = std::thread(&world::generate_world_thread_func, this);
+  generate_world_thread_running = true;
 }
 
 world::~world() {
@@ -13,12 +15,12 @@ world::~world() {
 
 void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model) {
   // Generate the chunk
-  auto start = std::chrono::high_resolution_clock::now();
+  //auto start = std::chrono::high_resolution_clock::now();
   std::unique_ptr<chunk> chunk_new = genv2.generate_chunk(x, y, z, true);
-  auto end = std::chrono::high_resolution_clock::now();
+  //auto end = std::chrono::high_resolution_clock::now();
 
-  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  spdlog::debug("Chunk generation took {}ms", duration.count());
+  //auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  //world_logger->debug("Chunk generation took {}ms", duration.count());
 
   // Add the chunk to the world
   if (generate_model) {
@@ -35,7 +37,8 @@ void world::generate_chunk_models(chunk &chunk_new) {
 
   auto end = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  spdlog::debug("Chunk model generation took {}ms", duration.count());
+  
+  world_logger->debug("Chunk model generation took {}ms", duration.count());
 }
 
 bool world::is_chunk_exist(const int32_t x, const int32_t y, const int32_t z) {
@@ -48,13 +51,13 @@ bool world::is_chunk_exist(const int32_t x, const int32_t y, const int32_t z) {
 }
 
 void world::clear() {
-  //std::lock_guard<std::mutex> lock(world_mutex);
   // Clear the chunks
   chunks.clear();
 }
 
 void world::update() {
   if (IsKeyPressed(KEY_R)) {
+    std::lock_guard<std::mutex> lock(world_generator_mutex);
     seed = std::random_device()();
     genv1.reseed(this->seed);
     genv2.reseed(this->seed);
@@ -63,6 +66,7 @@ void world::update() {
   }
 
   if (IsKeyPressed(KEY_C)) {
+    std::lock_guard<std::mutex> lock(world_generator_mutex);
     clear();
   }
 }
@@ -127,11 +131,12 @@ void world::draw3d() {
   }
 }
 
-void world::draw2d() {}
+void world::draw2d() {
+}
 
 void world::generate_world_thread_func() {
   while (generate_world_thread_running) {
-    std::lock_guard<std::mutex> lock(world_mutex);
+    std::lock_guard<std::mutex> lock(world_generator_mutex);
     for (int32_t x = -render_distance; x <= render_distance; x++) {
       for (int32_t y = -render_distance; y <= render_distance; y++) {
         for (int32_t z = -render_distance; z <= render_distance; z++) {
@@ -141,6 +146,6 @@ void world::generate_world_thread_func() {
         }
       }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
