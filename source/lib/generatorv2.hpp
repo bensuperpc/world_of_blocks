@@ -13,7 +13,16 @@
 
 #include <omp.h>
 
+#ifndef FASTNOISE_HPP_INCLUDED
+#define FASTNOISE_HPP_INCLUDED
+#ifdef __GNUC__
+#pragma GCC system_header
+#endif
+#ifdef __clang__
+#pragma clang system_header
+#endif
 #include "FastNoise/FastNoise.h"
+#endif
 
 // Cube lib
 #include "block.hpp"

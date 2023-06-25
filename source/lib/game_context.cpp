@@ -5,6 +5,10 @@ game_context::game_context(std::vector<std::shared_ptr<game_class>> &_game_class
   screen_width = _config_json["display"].value("screen_width", 1920);
   screen_height = _config_json["display"].value("screen_height", 1080);
   target_fps = _config_json["display"].value("target_fps", 240);
+
+  // Set address of display_debug_menu to avoid segfault if accessed before init
+  bool useless = true;
+  display_debug_menu = &useless;
 }
 
 game_context::~game_context() {}

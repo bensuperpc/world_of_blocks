@@ -10,6 +10,8 @@
 // Raylib
 #include "raylib.h"
 
+#include "spdlog/spdlog.h"
+
 // World of blocks
 #include "chunk.hpp"
 #include "game_class.hpp"

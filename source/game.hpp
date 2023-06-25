@@ -17,7 +17,6 @@
 #include <thread>
 #include <vector>
 
-// #include "PerlinNoise.hpp"
 //  Raylib
 #include "raylib.h"
 

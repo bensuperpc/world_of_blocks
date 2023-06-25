@@ -1,7 +1,16 @@
 #include <benchmark/benchmark.h>
 
+#ifndef FASTNOISE_PERLINNOISE_HPP_INCLUDED
+#define FASTNOISE_PERLINNOISE_HPP_INCLUDED
+#ifdef __GNUC__
+#pragma GCC system_header
+#endif
+#ifdef __clang__
+#pragma clang system_header
+#endif
 #include "FastNoise/FastNoise.h"
 #include "PerlinNoise.hpp"
+#endif
 
 static void perlin_noise_octave3d_01(benchmark::State &state) {
   auto size = state.range(0);

@@ -19,8 +19,9 @@
 
 #include <omp.h>
 
-#include "PerlinNoise.hpp"
 #include "nlohmann/json.hpp"
+#include "spdlog/spdlog.h"
+
 #include "raylib.h"
 
 // Cube lib
@@ -62,11 +63,10 @@ public:
 
   std::list<std::unique_ptr<chunk>> chunks;
 
-  bool display_debug_menu = true;
   int32_t render_distance = 4;
   int32_t view_distance = 8;
 
-  std::mutex world_queue_mutex;
+  std::mutex world_mutex;
   std::queue<std::tuple<int32_t, int32_t, int32_t>> world_queue;
   std::thread generate_world_thread;
   bool generate_world_thread_running = true;

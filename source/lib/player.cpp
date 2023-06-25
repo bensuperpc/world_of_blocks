@@ -32,8 +32,12 @@ void player::update() {
   Vector3 rotation = {0.0f, 0.0f, 0.0f};
 
   if (IsKeyPressed(KEY_F5)) {
-    // Take screenshot
-    TakeScreenshot("screenshot.png");
+    auto date = std::time(nullptr);
+    std::stringstream ss;
+    ss << std::put_time(std::localtime(&date), "%Y-%m-%d_%H-%M-%S");
+    std::string filename = ss.str();
+    spdlog::info("Taking screenshot: {}", filename);
+    TakeScreenshot(("screenshot_" + filename + ".png").c_str());
   }
 
   if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {

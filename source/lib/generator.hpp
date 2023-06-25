@@ -13,8 +13,6 @@
 
 #include <omp.h>
 
-#include "FastNoise/FastNoise.h"
-#include "PerlinNoise.hpp"
 #include "spdlog/spdlog.h"
 
 // Cube lib

@@ -13,7 +13,16 @@
 
 #include <omp.h>
 
+#ifndef PERLINNOISE_HPP_INCLUDED
+#define PERLINNOISE_HPP_INCLUDED
+#ifdef __GNUC__
+#pragma GCC system_header
+#endif
+#ifdef __clang__
+#pragma clang system_header
+#endif
 #include "PerlinNoise.hpp"
+#endif
 
 // Cube lib
 #include "block.hpp"

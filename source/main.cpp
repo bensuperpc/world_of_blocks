@@ -16,6 +16,7 @@ auto main(int argc, char *argv[]) -> int {
 
   spdlog::set_level(spdlog::level::debug);
   spdlog::info("Welcome to world of blocks!");
+  spdlog::flush_every(std::chrono::seconds(5));
 
   nlohmann::json config_json;
   // Create json if not exist

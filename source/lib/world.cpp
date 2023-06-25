@@ -29,7 +29,6 @@ void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bo
 
 void world::generate_chunk_models(chunk &chunk_new) {
   auto start = std::chrono::high_resolution_clock::now();
-  // Generate the model (TODO: Separate the model generation from the chunk generation)
   std::unique_ptr<Model> chunk_model = world_md.generate_chunk_model(chunk_new);
   chunk_model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = _game_context_ref._texture;
   chunk_new.model = std::move(chunk_model);
@@ -49,6 +48,7 @@ bool world::is_chunk_exist(const int32_t x, const int32_t y, const int32_t z) {
 }
 
 void world::clear() {
+  //std::lock_guard<std::mutex> lock(world_mutex);
   // Clear the chunks
   chunks.clear();
 }
@@ -58,11 +58,8 @@ void world::update() {
     seed = std::random_device()();
     genv1.reseed(this->seed);
     genv2.reseed(this->seed);
+    clear();
     spdlog::info("seed: {}", seed);
-  }
-
-  if (IsKeyPressed(KEY_F3)) {
-    display_debug_menu = !display_debug_menu;
   }
 
   if (IsKeyPressed(KEY_C)) {
@@ -97,7 +94,7 @@ void world::draw3d() {
                                 static_cast<float>(chunk_coor.z * chunk::chunk_size_z + chunk::chunk_size_z / 2.0f)};
 
     // For debug menu
-    if (display_debug_menu) {
+    if (*_game_context_ref.display_debug_menu) {
       _game_context_ref.vectices_on_world_count += current_model.meshes->vertexCount;
       _game_context_ref.triangles_on_world_count += current_model.meshes->triangleCount;
       _game_context_ref.display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
@@ -116,7 +113,7 @@ void world::draw3d() {
 
     DrawModelEx(current_model, chunk_pos, {0, 0, 0}, 1.0f, {1, 1, 1}, WHITE);
 
-    if (display_debug_menu) {
+    if (*_game_context_ref.display_debug_menu) {
       _game_context_ref.chunks_on_screen_count++;
       _game_context_ref.vectices_on_screen_count += current_model.meshes->vertexCount;
       _game_context_ref.triangles_on_screen_count += current_model.meshes->triangleCount;
@@ -134,6 +131,7 @@ void world::draw2d() {}
 
 void world::generate_world_thread_func() {
   while (generate_world_thread_running) {
+    std::lock_guard<std::mutex> lock(world_mutex);
     for (int32_t x = -render_distance; x <= render_distance; x++) {
       for (int32_t y = -render_distance; y <= render_distance; y++) {
         for (int32_t z = -render_distance; z <= render_distance; z++) {
