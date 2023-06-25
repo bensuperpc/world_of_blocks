@@ -64,7 +64,7 @@ public:
   std::vector<std::shared_ptr<game_class>> &game_classes;
 
   // Debug menu
-  bool* display_debug_menu = nullptr;
+  bool *display_debug_menu = nullptr;
 };
 
 #endif // WORLD_OF_CUBE_WORLD_HPP

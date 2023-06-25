@@ -2,8 +2,12 @@
 
 #include "world_model.hpp"
 
+world_model::world_model() { world_model_logger = std::make_unique<logger_decorator>("world_model_logger", "world_model_logger.log"); }
+
+world_model::~world_model() {}
+
 inline void world_model::add_vertex(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &vertex, const Vector3 &offset, const Vector3 &normal,
-                                    const Vector2 &texcoords) {
+                                    const Vector2 &texcoords) noexcept {
   size_t index = triangle_index * 12 + vert_index * 3;
 
   index = triangle_index * 6 + vert_index * 2;
@@ -27,7 +31,7 @@ inline void world_model::add_vertex(Mesh &mesh, size_t &triangle_index, size_t &
   }
 }
 
-inline void world_model::add_cube(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &position, bool faces[6], int block) {
+inline void world_model::add_cube(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &position, bool faces[6], int block) noexcept {
   Rectangle texcoords_rect = Rectangle{0.25f, 0, 0.5f, 1};
   // z-
   if (faces[north_face]) {
@@ -161,7 +165,7 @@ std::unique_ptr<Model> world_model::generate_chunk_model(chunk &chunks) {
   return model;
 }
 
-inline bool world_model::block_is_solid(int x, int y, int z, chunk &_chunk) {
+inline bool world_model::block_is_solid(int x, int y, int z, chunk &_chunk) noexcept {
   // Check out of bounds
   if (x < 0 || x >= chunk::chunk_size_x) {
     return false;
@@ -178,7 +182,7 @@ inline bool world_model::block_is_solid(int x, int y, int z, chunk &_chunk) {
 }
 
 // Count the number of solid blocks around a block (excluding diagonals and corners)
-inline int world_model::count_neighbours(int x, int y, int z, chunk &_chunk) {
+inline int world_model::count_neighbours(int x, int y, int z, chunk &_chunk) noexcept {
   int count = 0;
   if (block_is_solid(x - 1, y, z, _chunk))
     count++;
@@ -195,7 +199,7 @@ inline int world_model::count_neighbours(int x, int y, int z, chunk &_chunk) {
   return count;
 }
 
-int world_model::count_border(int x, int y, int z, chunk &_chunk) {
+int world_model::count_border(int x, int y, int z, chunk &_chunk) noexcept {
   int count = 0;
   if (x == 0)
     count++;
@@ -212,7 +216,7 @@ int world_model::count_border(int x, int y, int z, chunk &_chunk) {
   return count;
 }
 
-int world_model::face_count(chunk &_chunk) {
+int world_model::face_count(chunk &_chunk) noexcept {
   int count = 0;
   auto &blocks = _chunk.get_blocks();
 
@@ -253,7 +257,7 @@ int world_model::face_count(chunk &_chunk) {
   return count;
 }
 
-Mesh world_model::chunk_mesh(chunk &chunk) {
+Mesh world_model::chunk_mesh(chunk &chunk) noexcept {
   Mesh mesh = {0};
   int faces_count = face_count(chunk);
   mesh.vertexCount = faces_count * 6;

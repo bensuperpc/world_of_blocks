@@ -9,7 +9,6 @@
 
 #include "logger_decorator.hpp"
 
-
 #include "game.hpp"
 
 auto main(int argc, char *argv[]) -> int {

@@ -1,7 +1,6 @@
 #include "game.hpp"
 
-game::game(nlohmann::json &_config_json) : config_json(_config_json) {
-}
+game::game(nlohmann::json &_config_json) : config_json(_config_json) {}
 
 game::~game() {}
 
@@ -17,7 +16,6 @@ void game::init() {
 
   debug_menu1 = std::make_shared<debug_menu>(*game_context1.get());
   game_classes.push_back(debug_menu1);
-  
 }
 
 void game::run() {

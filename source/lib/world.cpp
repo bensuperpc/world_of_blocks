@@ -15,12 +15,12 @@ world::~world() {
 
 void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model) {
   // Generate the chunk
-  //auto start = std::chrono::high_resolution_clock::now();
+  // auto start = std::chrono::high_resolution_clock::now();
   std::unique_ptr<chunk> chunk_new = genv2.generate_chunk(x, y, z, true);
-  //auto end = std::chrono::high_resolution_clock::now();
+  // auto end = std::chrono::high_resolution_clock::now();
 
-  //auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  //world_logger->debug("Chunk generation took {}ms", duration.count());
+  // auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  // world_logger->debug("Chunk generation took {}ms", duration.count());
 
   // Add the chunk to the world
   if (generate_model) {
@@ -37,7 +37,7 @@ void world::generate_chunk_models(chunk &chunk_new) {
 
   auto end = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  
+
   world_logger->debug("Chunk model generation took {}ms", duration.count());
 }
 
@@ -131,8 +131,7 @@ void world::draw3d() {
   }
 }
 
-void world::draw2d() {
-}
+void world::draw2d() {}
 
 void world::generate_world_thread_func() {
   while (generate_world_thread_running) {

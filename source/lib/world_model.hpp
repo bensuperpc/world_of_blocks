@@ -11,11 +11,14 @@
 #include "chunk.hpp"
 #include "math.hpp"
 
+// spdlog
+#include "logger_decorator.hpp"
+
 class world_model {
 public:
-  world_model() {}
+  world_model();
 
-  ~world_model() {}
+  ~world_model();
 
   static constexpr size_t south_face = 0;
   static constexpr size_t north_face = 1;
@@ -25,22 +28,25 @@ public:
   static constexpr size_t down_face = 5;
 
   inline void add_vertex(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &vertex, const Vector3 &offset, const Vector3 &normal,
-                         const Vector2 &texcoords);
+                         const Vector2 &texcoords) noexcept;
 
-  void add_cube(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &position, bool faces[6], int block);
+  inline void add_cube(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &position, bool faces[6], int block) noexcept;
 
   std::vector<std::unique_ptr<Model>> generate_world_models(std::vector<chunk> &chunk);
   std::unique_ptr<Model> generate_chunk_model(chunk &chunks);
 
-  inline bool block_is_solid(int x, int y, int z, chunk &_chunk);
+  inline bool block_is_solid(int x, int y, int z, chunk &_chunk) noexcept;
 
-  inline int count_neighbours(int x, int y, int z, chunk &_chunk);
+  inline int count_neighbours(int x, int y, int z, chunk &_chunk) noexcept;
 
-  inline int count_border(int x, int y, int z, chunk &_chunk);
+  inline int count_border(int x, int y, int z, chunk &_chunk) noexcept;
 
-  int face_count(chunk &_chunk);
+  int face_count(chunk &_chunk) noexcept;
 
-  Mesh chunk_mesh(chunk &chunk);
+  Mesh chunk_mesh(chunk &chunk) noexcept;
+
+  // logger
+  std::unique_ptr<logger_decorator> world_model_logger;
 };
 
 #endif // WORLD_OF_CUBE_WORLD_HPP

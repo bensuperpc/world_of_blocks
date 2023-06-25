@@ -10,9 +10,9 @@
 
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/stopwatch.h"
 #include <spdlog/async.h>
 #include <spdlog/spdlog.h>
-#include "spdlog/stopwatch.h"
 
 class logger_decorator {
 public:
@@ -25,21 +25,21 @@ public:
     _sinks.push_back(stdout_sink);
     _sinks.push_back(stderr_sink);
     _sinks.push_back(rotating_sink);
-    
+
     _logger = std::make_shared<spdlog::async_logger>(name, _sinks.begin(), _sinks.end(), spdlog::thread_pool(), spdlog::async_overflow_policy::overrun_oldest);
 
     _logger->set_level(spdlog::level::trace);
     _logger->flush_on(spdlog::level::trace);
     //_logger->set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
-    //spdlog::flush_every(std::chrono::seconds(3));
+    // spdlog::flush_every(std::chrono::seconds(3));
     spdlog::register_logger(_logger);
 
     debug("Logger {} started", name);
     // spdlog::set_default_logger(_logger);
 
-    //spdlog::stopwatch sw;    
-    //world_logger->debug("Elapsed {}", sw);
-    //world_logger->debug("Elapsed {:.3}", sw);
+    // spdlog::stopwatch sw;
+    // world_logger->debug("Elapsed {}", sw);
+    // world_logger->debug("Elapsed {:.3}", sw);
   }
 
   template <typename... Args> void trace(spdlog::format_string_t<Args...> fmt, Args &&...args) { _logger->trace(fmt, std::forward<Args>(args)...); }

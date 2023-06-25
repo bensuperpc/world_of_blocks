@@ -2,9 +2,7 @@
 
 #include "raygui_cpp.hpp"
 
-debug_menu::debug_menu(game_context &game_context_ref) : _game_context_ref(game_context_ref) {
-  game_context_ref.display_debug_menu = &this->is_visible;
-}
+debug_menu::debug_menu(game_context &game_context_ref) : _game_context_ref(game_context_ref) { game_context_ref.display_debug_menu = &this->is_visible; }
 
 debug_menu::~debug_menu() {}
 
