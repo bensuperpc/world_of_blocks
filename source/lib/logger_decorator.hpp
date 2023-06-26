@@ -40,12 +40,7 @@ public:
     _logger->set_level(spdlog::level::trace);
     _logger->flush_on(spdlog::level::trace);
 
-    //_logger->set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
-
     debug("Logger {} started", name);
-    // spdlog::stopwatch sw;
-    // world_logger->debug("Elapsed {}", sw);
-    // world_logger->debug("Elapsed {:.3}", sw);
   }
 
   template <typename... Args> void trace(spdlog::format_string_t<Args...> fmt, Args &&...args) { _logger->trace(fmt, std::forward<Args>(args)...); }

@@ -19,12 +19,12 @@ world::~world() {
 
 void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model) {
   // Generate the chunk
-  // auto start = std::chrono::high_resolution_clock::now();
+  auto start = std::chrono::high_resolution_clock::now();
   std::unique_ptr<chunk> chunk_new = genv2.generate_chunk(x, y, z, true);
-  // auto end = std::chrono::high_resolution_clock::now();
+  auto end = std::chrono::high_resolution_clock::now();
 
-  // auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  // world_logger->debug("Chunk generation took {}ms", duration.count());
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  world_logger->debug("Chunk generation (x: {}, y: {}, z: {}) took {}ms", x, y, z, duration.count());
 
   // Add the chunk to the world
   if (generate_model) {
@@ -42,12 +42,13 @@ void world::generate_chunk_models(chunk &chunk_new) {
   auto end = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-  world_logger->debug("Chunk model generation took {}ms", duration.count());
+  world_logger->debug("Chunk model (x: {}, y: {}, z: {}) generation took {}ms", chunk_new.get_position().x, chunk_new.get_position().y,
+                      chunk_new.get_position().z, duration.count());
 }
 
-bool world::is_chunk_exist(const int32_t x, const int32_t y, const int32_t z) {
+bool world::is_chunk_exist(const int32_t x, const int32_t y, const int32_t z) const noexcept {
   auto it = std::find_if(chunks.begin(), chunks.end(), [&](const auto &chunk) {
-    const auto chunk_pos = chunk->get_position();
+    auto chunk_pos = chunk->get_position();
     return chunk_pos.x == x && chunk_pos.y == y && chunk_pos.z == z;
   });
 
@@ -66,7 +67,7 @@ void world::update() {
     genv1.reseed(this->seed);
     genv2.reseed(this->seed);
     clear();
-    spdlog::info("seed: {}", seed);
+    world_logger->info("seed: {}", seed);
   }
 
   if (IsKeyPressed(KEY_C)) {

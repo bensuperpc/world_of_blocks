@@ -51,7 +51,7 @@ public:
 
   void generate_chunk(const int32_t, const int32_t, const int32_t, bool);
   void generate_chunk_models(chunk &);
-  bool is_chunk_exist(const int32_t, const int32_t, const int32_t);
+  bool is_chunk_exist(const int32_t, const int32_t, const int32_t) const noexcept;
 
   void generate_world_thread_func();
 
