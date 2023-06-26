@@ -1,5 +1,5 @@
-#ifndef WORLD_OF_CUBE_LOGGER_HPP
-#define WORLD_OF_CUBE_LOGGER_HPP
+#ifndef WORLD_OF_CUBE_LOGGER_DECORATOR_HPP
+#define WORLD_OF_CUBE_LOGGER_DECORATOR_HPP
 
 #include <filesystem>
 #include <iostream>
@@ -17,21 +17,28 @@
 class logger_decorator {
 public:
   explicit logger_decorator(const std::string name, std::filesystem::path path) {
-    spdlog::init_thread_pool(16384, 8);
+    if (_thread_pool == nullptr) {
+      spdlog::init_thread_pool(16384, 8);
+      _thread_pool = spdlog::thread_pool();
+    }
+
+    std::vector<spdlog::sink_ptr> _sinks;
+
     auto stdout_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    auto stderr_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();
-    auto rotating_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(path, 1024 * 1024 * 20, 5);
+    auto specific_file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(path, 1024 * 1024 * 20, 5);
+
+    stdout_sink->set_level(spdlog::level::debug);
+    specific_file_sink->set_level(spdlog::level::trace);
 
     _sinks.push_back(stdout_sink);
-    _sinks.push_back(stderr_sink);
-    _sinks.push_back(rotating_sink);
+    _sinks.push_back(specific_file_sink);
 
-    _logger = std::make_shared<spdlog::async_logger>(name, _sinks.begin(), _sinks.end(), spdlog::thread_pool(), spdlog::async_overflow_policy::overrun_oldest);
+    _logger = std::make_shared<spdlog::async_logger>(name, _sinks.begin(), _sinks.end(), _thread_pool, spdlog::async_overflow_policy::overrun_oldest);
 
     _logger->set_level(spdlog::level::trace);
     _logger->flush_on(spdlog::level::trace);
     //_logger->set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
-    // spdlog::flush_every(std::chrono::seconds(3));
+    spdlog::flush_every(std::chrono::seconds(5));
     spdlog::register_logger(_logger);
 
     debug("Logger {} started", name);
@@ -56,6 +63,8 @@ public:
 
   void flush() { _logger->flush(); }
 
+  void set_pattern(std::string &pattern, spdlog::pattern_time_type time_type = spdlog::pattern_time_type::local) { _logger->set_pattern(pattern, time_type); }
+
   void set_level(spdlog::level::level_enum lvl) { _logger->set_level(lvl); }
 
   void set_flush_level(spdlog::level::level_enum lvl) { _logger->flush_on(lvl); }
@@ -64,7 +73,10 @@ public:
 
   spdlog::level::level_enum get_flush_level() { return _logger->flush_level(); }
 
-  ~logger_decorator() {}
+  virtual ~logger_decorator() {
+    debug("Logger {} stopped", _logger->name());
+    flush();
+  }
 
   spdlog::async_logger &get_logger() { return *_logger; }
 
@@ -74,8 +86,9 @@ public:
   static void flush_every(std::chrono::seconds interval) { spdlog::flush_every(interval); }
 
 private:
-  std::vector<spdlog::sink_ptr> _sinks;
   std::shared_ptr<spdlog::async_logger> _logger;
+  // Ensure thread pool is deleted at end of program after all loggers
+  static inline std::shared_ptr<spdlog::details::thread_pool> _thread_pool = nullptr;
 };
 
-#endif // WORLD_OF_CUBE_WORLD_HPP
+#endif // WORLD_OF_CUBE_SODLOG_LOGGER_HPP

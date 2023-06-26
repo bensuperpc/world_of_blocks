@@ -1,16 +1,20 @@
 #include "world.hpp"
 
 world::world(game_context &game_context_ref, nlohmann::json &_config_json) : _game_context_ref(game_context_ref), config_json(_config_json) {
+  world_logger = std::make_unique<logger_decorator>("world", "world.log");
+  
   render_distance = config_json["world"].value("render_distance", 4);
   view_distance = config_json["world"].value("view_distance", 8);
-  world_logger = std::make_unique<logger_decorator>("world", "world.log");
+
   generate_world_thread = std::thread(&world::generate_world_thread_func, this);
   generate_world_thread_running = true;
 }
 
 world::~world() {
   generate_world_thread_running = false;
-  generate_world_thread.join();
+  if (generate_world_thread.joinable()) {
+    generate_world_thread.join();
+  }
 }
 
 void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model) {
