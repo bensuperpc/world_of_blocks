@@ -14,6 +14,6 @@ typedef struct Vector2i {
   int x;
   int y;
 } Vector2i;
-} // namespace
+} // namespace benlib
 
 #endif // WORLD_OF_CUBE_VECTOR_HPP

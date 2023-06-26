@@ -31,7 +31,8 @@ inline void world_model::add_vertex(Mesh &mesh, size_t &triangle_index, size_t &
   }
 }
 
-inline void world_model::add_cube(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &position, bool faces[6], [[maybe_unused]] block &current_block) noexcept {
+inline void world_model::add_cube(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &position, bool faces[6],
+                                  [[maybe_unused]] block &current_block) noexcept {
   Rectangle texcoords_rect = Rectangle{0.25f, 0, 0.5f, 1};
   // z-
   if (faces[north_face]) {
@@ -269,7 +270,7 @@ Mesh world_model::chunk_mesh(chunk &chunk) noexcept {
 
   size_t triangle_index = 0;
   size_t vert_index = 0;
-  
+
   //[[maybe_unused]] auto &blocks = chunk.get_blocks();
   for (int x = 0; x < chunk::chunk_size_x; x++) {
     for (int y = 0; y < chunk::chunk_size_y; y++) {

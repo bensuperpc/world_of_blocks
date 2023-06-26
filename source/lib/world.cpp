@@ -2,7 +2,7 @@
 
 world::world(game_context &game_context_ref, nlohmann::json &_config_json) : _game_context_ref(game_context_ref), config_json(_config_json) {
   world_logger = std::make_unique<logger_decorator>("world", "world.log");
-  
+
   render_distance = config_json["world"].value("render_distance", 4);
   view_distance = config_json["world"].value("view_distance", 8);
 

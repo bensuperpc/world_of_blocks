@@ -16,7 +16,7 @@
 
 class logger_decorator {
 public:
-  explicit logger_decorator(const std::string& name, std::filesystem::path path) {
+  explicit logger_decorator(const std::string &name, std::filesystem::path path) {
     {
       std::lock_guard<std::mutex> lock(_mutex);
       if (_thread_pool == nullptr) {
@@ -36,7 +36,7 @@ public:
     _sinks.push_back(specific_file_sink);
 
     _logger = std::make_shared<spdlog::async_logger>(name, _sinks.begin(), _sinks.end(), _thread_pool, spdlog::async_overflow_policy::block);
-    
+
     _logger->set_level(spdlog::level::trace);
     _logger->flush_on(spdlog::level::trace);
 
