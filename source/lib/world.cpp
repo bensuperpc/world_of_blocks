@@ -79,7 +79,7 @@ void world::draw3d() {
   for (auto const &_chunk : chunks) {
     chunk &current_chunk = *_chunk.get();
     auto chunk_coor = current_chunk.get_position();
-    auto &blocks = current_chunk.get_blocks();
+    [[maybe_unused]] auto &blocks = current_chunk.get_blocks();
 
     auto &player1_pose = _game_context_ref.player_chunk_pos;
 
@@ -103,8 +103,8 @@ void world::draw3d() {
 
     // For debug menu
     if (*_game_context_ref.display_debug_menu) {
-      _game_context_ref.vectices_on_world_count += current_model.meshes->vertexCount;
-      _game_context_ref.triangles_on_world_count += current_model.meshes->triangleCount;
+      _game_context_ref.vectices_on_world_count += static_cast<size_t>(current_model.meshes->vertexCount);
+      _game_context_ref.triangles_on_world_count += static_cast<size_t>(current_model.meshes->triangleCount);
       _game_context_ref.display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
       _game_context_ref.display_chunk_count++;
     }

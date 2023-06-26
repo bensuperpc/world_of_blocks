@@ -11,7 +11,7 @@
 
 #include "game.hpp"
 
-auto main(int argc, char *argv[]) -> int {
+auto main(int [[maybe_unused]] argc, [[maybe_unused]] char *argv[]) -> int {
   // Set log level for Raylib
   SetTraceLogLevel(LOG_WARNING);
 
@@ -22,11 +22,10 @@ auto main(int argc, char *argv[]) -> int {
     std::filesystem::remove("config.json");
   }
 
-
   nlohmann::json config_json;
   // Create json if not exist
   if (!std::filesystem::exists("config.json")) {
-    spdlog::info("Config file not found, creating one...");
+    loggerer.info("Config file not found, creating one...");
     config_json["display"]["screen_width"] = 1920;
     config_json["display"]["screen_height"] = 1080;
     config_json["display"]["target_fps"] = 240;
@@ -41,7 +40,7 @@ auto main(int argc, char *argv[]) -> int {
   // Load json
   std::ifstream config_file("config.json");
   if (!config_file.is_open()) {
-    spdlog::error("Failed to open config file!");
+    loggerer.error("Failed to open config file!");
     return 1;
   }
 
@@ -49,10 +48,9 @@ auto main(int argc, char *argv[]) -> int {
 
   game current_game = game(config_json);
   current_game.init();
-  spdlog::info("Game initialized!");
-  spdlog::info("Starting game loop...");
+  loggerer.info("Game initialized!");
+  loggerer.info("Starting game loop...");
   current_game.run();
-  spdlog::info("Game loop ended!");
-  spdlog::shutdown();
+  loggerer.info("Game loop ended!");
   return 0;
 }

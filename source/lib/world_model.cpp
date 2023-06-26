@@ -31,7 +31,7 @@ inline void world_model::add_vertex(Mesh &mesh, size_t &triangle_index, size_t &
   }
 }
 
-inline void world_model::add_cube(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &position, bool faces[6], int block) noexcept {
+inline void world_model::add_cube(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &position, bool faces[6], [[maybe_unused]] block &current_block) noexcept {
   Rectangle texcoords_rect = Rectangle{0.25f, 0, 0.5f, 1};
   // z-
   if (faces[north_face]) {
@@ -199,7 +199,7 @@ inline int world_model::count_neighbours(int x, int y, int z, chunk &_chunk) noe
   return count;
 }
 
-int world_model::count_border(int x, int y, int z, chunk &_chunk) noexcept {
+int world_model::count_border(int x, int y, int z, [[maybe_unused]] chunk &_chunk) noexcept {
   int count = 0;
   if (x == 0)
     count++;
@@ -269,8 +269,8 @@ Mesh world_model::chunk_mesh(chunk &chunk) noexcept {
 
   size_t triangle_index = 0;
   size_t vert_index = 0;
-
-  auto &blocks = chunk.get_blocks();
+  
+  //[[maybe_unused]] auto &blocks = chunk.get_blocks();
   for (int x = 0; x < chunk::chunk_size_x; x++) {
     for (int y = 0; y < chunk::chunk_size_y; y++) {
       for (int z = 0; z < chunk::chunk_size_z; z++) {
@@ -308,7 +308,7 @@ Mesh world_model::chunk_mesh(chunk &chunk) noexcept {
 
         faces[world_model::north_face] = !block_is_solid(x, y, z - 1, chunk);
 
-        add_cube(mesh, triangle_index, vert_index, {(float)x, (float)y, (float)z}, faces, 1);
+        add_cube(mesh, triangle_index, vert_index, {static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)}, faces, current_block);
       }
     }
   }

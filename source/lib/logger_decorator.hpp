@@ -16,10 +16,12 @@
 
 class logger_decorator {
 public:
-  explicit logger_decorator(const std::string name, std::filesystem::path path) {
-    if (_thread_pool == nullptr) {
-      spdlog::init_thread_pool(16384, 8);
-      _thread_pool = spdlog::thread_pool();
+  explicit logger_decorator(const std::string& name, std::filesystem::path path) {
+    {
+      std::lock_guard<std::mutex> lock(_mutex);
+      if (_thread_pool == nullptr) {
+        _thread_pool = std::make_shared<spdlog::details::thread_pool>(32768, 16);
+      }
     }
 
     std::vector<spdlog::sink_ptr> _sinks;
@@ -33,17 +35,14 @@ public:
     _sinks.push_back(stdout_sink);
     _sinks.push_back(specific_file_sink);
 
-    _logger = std::make_shared<spdlog::async_logger>(name, _sinks.begin(), _sinks.end(), _thread_pool, spdlog::async_overflow_policy::overrun_oldest);
-
+    _logger = std::make_shared<spdlog::async_logger>(name, _sinks.begin(), _sinks.end(), _thread_pool, spdlog::async_overflow_policy::block);
+    
     _logger->set_level(spdlog::level::trace);
     _logger->flush_on(spdlog::level::trace);
+
     //_logger->set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
-    spdlog::flush_every(std::chrono::seconds(5));
-    spdlog::register_logger(_logger);
 
     debug("Logger {} started", name);
-    // spdlog::set_default_logger(_logger);
-
     // spdlog::stopwatch sw;
     // world_logger->debug("Elapsed {}", sw);
     // world_logger->debug("Elapsed {:.3}", sw);
@@ -78,17 +77,15 @@ public:
     flush();
   }
 
-  spdlog::async_logger &get_logger() { return *_logger; }
+  std::shared_ptr<spdlog::async_logger> get_logger() { return _logger; }
 
-  std::shared_ptr<spdlog::async_logger> get_logger_ptr() { return _logger; }
-
-  static void shutdown() { spdlog::shutdown(); }
-  static void flush_every(std::chrono::seconds interval) { spdlog::flush_every(interval); }
+  std::shared_ptr<spdlog::details::thread_pool> get_thread_pool() { return _thread_pool; }
 
 private:
   std::shared_ptr<spdlog::async_logger> _logger;
   // Ensure thread pool is deleted at end of program after all loggers
   static inline std::shared_ptr<spdlog::details::thread_pool> _thread_pool = nullptr;
+  static inline std::mutex _mutex;
 };
 
 #endif // WORLD_OF_CUBE_SODLOG_LOGGER_HPP

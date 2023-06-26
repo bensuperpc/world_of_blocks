@@ -20,7 +20,6 @@ inline constexpr block_t sand = 4;
 inline constexpr block_t water = 5;
 inline constexpr block_t wood = 6;
 inline constexpr block_t leaves = 7;
-inline constexpr block_t cobblestone = 8;
 inline constexpr block_t unknown = std::numeric_limits<block_t>::max();
 
 inline constexpr std::string get_name(block_t block_type) {

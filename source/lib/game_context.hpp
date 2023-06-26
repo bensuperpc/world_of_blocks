@@ -43,9 +43,9 @@ public:
   Vector2 screen_middle = {0, 0};
 
   Vector3 player_pos = {0, 0, 0};
-  Vector3i player_chunk_pos = {0, 0, 0};
+  benlib::Vector3i player_chunk_pos = {0, 0, 0};
 
-  Vector3i block_info_pos = {0, 0, 0};
+  benlib::Vector3i block_info_pos = {0, 0, 0};
   size_t block_info_index = 0;
   Texture2D _texture;
 

@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace {
+namespace benlib {
 typedef struct Vector3i {
   int x;
   int y;

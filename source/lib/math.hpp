@@ -11,7 +11,7 @@ template <typename T = size_t> [[nodiscard]] inline constexpr T convert_to_1d(co
 
 /*
 template<typename T = size_t>
-Vector3i convert_to_3d(const T index, const T max_x, const T max_y, const T max_z) noexcept
+benlib::Vector3i convert_to_3d(const T index, const T max_x, const T max_y, const T max_z) noexcept
 {
     int z = i / (max_x * max_y);
     const int tmp = i - (z * max_x * max_y);

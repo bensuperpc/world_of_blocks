@@ -49,6 +49,7 @@ add_library(${PROJECT_NAME} ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC raylib raylib_cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC FastNoise2 nlohmann_json::nlohmann_json)
+target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_C OpenMP::OpenMP_CXX)
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 

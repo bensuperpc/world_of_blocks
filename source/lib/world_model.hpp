@@ -30,7 +30,7 @@ public:
   inline void add_vertex(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &vertex, const Vector3 &offset, const Vector3 &normal,
                          const Vector2 &texcoords) noexcept;
 
-  inline void add_cube(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &position, bool faces[6], int block) noexcept;
+  inline void add_cube(Mesh &mesh, size_t &triangle_index, size_t &vert_index, const Vector3 &position, bool faces[6], block &current_block) noexcept;
 
   std::vector<std::unique_ptr<Model>> generate_world_models(std::vector<chunk> &chunk);
   std::unique_ptr<Model> generate_chunk_model(chunk &chunks);
