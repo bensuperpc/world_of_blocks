@@ -49,7 +49,7 @@ public:
   void init();
 
   void render_thread_func();
-  void auxillary_thread_func();
+  void auxillary_thread_game_logic();
 
 private:
   std::shared_ptr<debug_menu> debug_menu1;

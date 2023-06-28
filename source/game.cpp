@@ -19,7 +19,7 @@ void game::init() {
 }
 
 void game::run() {
-  auxillary_thread = std::thread(&game::auxillary_thread_func, this);
+  auxillary_thread = std::thread(&game::auxillary_thread_game_logic, this);
 
   InitWindow(game_context1->screen_width, game_context1->screen_height, "World of blocks");
 
@@ -107,11 +107,13 @@ void game::run() {
     EndDrawing();
     game_context1->frame_count++;
   }
+  CloseWindow();
 
   auxillary_thread.join();
 }
 
-void game::auxillary_thread_func() {
+// Update game logic and input
+void game::auxillary_thread_game_logic() {
   while (game_running) {
     auto start_time = std::chrono::high_resolution_clock::now();
     for (auto &item : game_classes) {

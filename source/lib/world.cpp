@@ -62,22 +62,33 @@ void world::clear() {
 
 void world::update() {
   if (IsKeyPressed(KEY_R)) {
-    std::lock_guard<std::mutex> lock(world_generator_mutex);
     seed = std::random_device()();
     genv1.reseed(this->seed);
     genv2.reseed(this->seed);
-    clear();
+    free_world = true;
     world_logger->info("seed: {}", seed);
   }
 
   if (IsKeyPressed(KEY_C)) {
-    std::lock_guard<std::mutex> lock(world_generator_mutex);
-    clear();
+    free_world = true;
   }
 }
 
 void world::draw3d() {
+  std::lock_guard<std::mutex> lock(world_generator_mutex);
+
+  if (free_world) {
+    clear();
+    free_world = false;
+  }
+
+
   for (auto const &_chunk : chunks) {
+
+    if (_chunk.get() == nullptr) {
+      continue;
+    }
+
     chunk &current_chunk = *_chunk.get();
     auto chunk_coor = current_chunk.get_position();
     [[maybe_unused]] auto &blocks = current_chunk.get_blocks();
@@ -92,6 +103,10 @@ void world::draw3d() {
 
     if (current_chunk.model.get() == nullptr) {
       generate_chunk_models(current_chunk);
+    }
+
+    if (current_chunk.model.get() == nullptr) {
+      continue;
     }
 
     Model &current_model = *current_chunk.model.get();
@@ -140,11 +155,11 @@ void world::draw2d() {}
 
 void world::generate_world_thread_func() {
   while (generate_world_thread_running) {
-    std::lock_guard<std::mutex> lock(world_generator_mutex);
     for (int32_t x = -render_distance; x <= render_distance; x++) {
       for (int32_t y = -render_distance; y <= render_distance; y++) {
         for (int32_t z = -render_distance; z <= render_distance; z++) {
           if (!is_chunk_exist(_game_context_ref.player_chunk_pos.x + x, _game_context_ref.player_chunk_pos.y + y, _game_context_ref.player_chunk_pos.z + z)) {
+            std::lock_guard<std::mutex> lock(world_generator_mutex);
             generate_chunk(_game_context_ref.player_chunk_pos.x + x, _game_context_ref.player_chunk_pos.y + y, _game_context_ref.player_chunk_pos.z + z, false);
           }
         }

@@ -11,7 +11,9 @@ game_context::game_context(std::vector<std::shared_ptr<game_class>> &_game_class
   display_debug_menu = &useless;
 }
 
-game_context::~game_context() {}
+game_context::~game_context() {
+  UnloadTexture(_texture);
+}
 
 void game_context::update() {
 

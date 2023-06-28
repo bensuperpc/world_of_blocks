@@ -68,15 +68,16 @@ public:
 
   world_model world_md = world_model();
 
-  std::list<std::unique_ptr<chunk>> chunks;
+  std::vector<std::unique_ptr<chunk>> chunks;
 
   int32_t render_distance = 4;
   int32_t view_distance = 8;
 
   std::mutex world_generator_mutex;
-  std::queue<std::tuple<int32_t, int32_t, int32_t>> world_queue;
   std::thread generate_world_thread;
   bool generate_world_thread_running = true;
+
+  bool free_world = false;
 
   game_context &_game_context_ref;
   nlohmann::json &config_json;

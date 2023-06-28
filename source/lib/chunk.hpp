@@ -66,7 +66,7 @@ public:
     UnloadModel(*model);
   }
 
-  std::unique_ptr<Model> model;
+  std::unique_ptr<Model> model = nullptr;
 
   static constexpr int chunk_size_x = 32;
   static constexpr int chunk_size_y = 32;
