@@ -218,14 +218,10 @@ public:
 
     heightmap = std::move(generate_2d_heightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z));
 
-    if constexpr (debug) {
-      std::cout << "Generating blocks..." << std::endl;
-    }
     // Generate blocks
     for (uint32_t x = 0; x < size_x; x++) {
       for (uint32_t z = 0; z < size_z; z++) {
         // Noise value is divided by 4 to make it smaller and it is used as the height of the block (z)
-        // std::vector<block>::size_type vec_index = z * size_x + x;
         std::vector<block>::size_type vec_index = math::convert_to_1d(x, z, size_x, size_z);
 
         uint32_t noise_value = heightmap[vec_index] / 4;
@@ -263,15 +259,12 @@ public:
 
     std::vector<uint32_t> heightmap = generate_3d_heightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z);
 
-    if constexpr (debug) {
-      std::cout << "Generating blocks..." << std::endl;
-    }
     // Generate blocks
     for (uint32_t x = 0; x < size_x; x++) {
       for (uint32_t z = 0; z < size_z; z++) {
         for (uint32_t y = 0; y < size_y; y++) {
           size_t vec_index = math::convert_to_1d(x, y, z, size_x, size_y, size_z);
-          const auto noise_value = heightmap[vec_index];
+          const uint32_t& noise_value = heightmap[vec_index];
           auto &current_block = blocks[vec_index];
 
           if constexpr (debug) {

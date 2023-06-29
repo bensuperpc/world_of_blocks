@@ -15,15 +15,22 @@ game_context::~game_context() {
   UnloadTexture(_texture);
 }
 
-void game_context::update() {
+void game_context::update_game_input() {
 
   mouse_position = GetMousePosition();
   screen_middle = Vector2({static_cast<float>(screen_height / 2), static_cast<float>(screen_width / 2)});
 }
 
-void game_context::draw2d() { return; }
+void game_context::update_game_logic() {
+}
 
-void game_context::draw3d() { return; }
+void game_context::update_opengl() {
+
+}
+
+void game_context::update_draw2d() { return; }
+
+void game_context::update_draw3d() { return; }
 
 void game_context::load_texture() {
   _texture = LoadTexture("grass.png");

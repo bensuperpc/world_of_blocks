@@ -6,7 +6,7 @@ debug_menu::debug_menu(game_context &game_context_ref) : _game_context_ref(game_
 
 debug_menu::~debug_menu() {}
 
-void debug_menu::update() {
+void debug_menu::update_game_input() {
   if (IsKeyPressed(KEY_F3)) {
     last_action_time = std::chrono::steady_clock::now();
     is_visible = !is_visible;
@@ -17,13 +17,19 @@ void debug_menu::update() {
   }
 }
 
-void debug_menu::draw3d() {
+void debug_menu::update_game_logic() {
+}
+
+void debug_menu::update_opengl() {
+}
+
+void debug_menu::update_draw3d() {
   if (block_grid) {
     DrawGrid(256, 1.0f);
   }
 }
 
-void debug_menu::draw2d() {
+void debug_menu::update_draw2d() {
   if (!this->is_visible) {
     return;
   }

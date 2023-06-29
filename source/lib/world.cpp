@@ -60,7 +60,7 @@ void world::clear() {
   chunks.clear();
 }
 
-void world::update() {
+void world::update_game_input() {
   if (IsKeyPressed(KEY_R)) {
     seed = std::random_device()();
     genv1.reseed(this->seed);
@@ -74,8 +74,58 @@ void world::update() {
   }
 }
 
-void world::draw3d() {
+void world::update_game_logic() {
+}
+
+void world::update_opengl() {
+}
+
+void world::update_draw3d() {
   std::lock_guard<std::mutex> lock(world_generator_mutex);
+
+    /*
+    // TODO: optimize to check only the blocks around the player
+    for (size_t ci = 0; ci < world_new->chunks.size(); ci++) {
+        auto& current_chunk = world_new->chunks[ci];
+        auto& blocks = current_chdebug_menu1Box box = block_utils::get_bounding_box(current_block, 1.0f);
+
+                RayCollision box_hit_info = GetRayCollisionBox(ray, box);
+                if (box_hit_info.hit) {
+#pragma omp critical
+                    collisions.push_back({&current_block, box_hit_info});
+                }
+            }
+        }
+    }
+
+    if (!collisions.empty()) {
+        // sort by distance and get the closest collision
+        std::sort(collisions.begin(), collisions.end(), [](const auto& a, const auto& b) { return a.second.distance < b.second.distance; });
+        closest_collision = collisions[0].second;
+        closest_block = collisions[0].first;
+
+        block_info_pos = closest_block->get_position();
+        // block_info_index = closest_block->x + closest_block->z * 16 + closest_block->y * 16 * 16;
+        block_info_index = 0;
+    } else {
+        block_info_pos = {0, 0, 0};
+        block_info_index = 0;
+    }
+    */
+
+       /*
+    if (closest_collision.hit) {
+        DrawCube(closest_collision.point, 0.3f, 0.3f, 0.3f, YELLOW);
+        DrawCubeWires(closest_collision.point, 0.3f, 0.3f, 0.3f, BLACK);
+
+        Vector3 normalEnd;
+        normalEnd.x = closest_collision.point.x + closest_collision.normal.x;
+        normalEnd.y = closest_collision.point.y + closest_collision.normal.y;
+        normalEnd.z = closest_collision.point.z + closest_collision.normal.z;
+
+        DrawLine3D(closest_collision.point, normalEnd, BLUE);
+    }
+    */
 
   if (free_world) {
     clear();
@@ -151,7 +201,7 @@ void world::draw3d() {
   }
 }
 
-void world::draw2d() {}
+void world::update_draw2d() {}
 
 void world::generate_world_thread_func() {
   while (generate_world_thread_running) {

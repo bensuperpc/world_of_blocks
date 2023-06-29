@@ -16,7 +16,7 @@ public:
 
   [[nodiscard]] inline block_type::block_t get_block_type() const noexcept { return block_type; }
 
-  block_type::block_t block_type = 0;
+  block_type::block_t block_type = block_type::air;
 
   // All aditional data
   // std::vector<data> data;

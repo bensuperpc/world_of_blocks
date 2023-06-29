@@ -24,9 +24,12 @@ public:
 
   ~player();
 
-  void update() override;
-  void draw2d() override;
-  void draw3d() override;
+  void update_game_input() override;
+  void update_game_logic() override;
+
+  void update_opengl() override;
+  void update_draw2d() override;
+  void update_draw3d() override;
 
   Vector3 get_position() const;
 
