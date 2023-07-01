@@ -30,6 +30,7 @@ include(cmake/lib/perlin_noise.cmake)
 include(cmake/lib/fast_noise2.cmake)
 include(cmake/lib/spdlog.cmake)
 include(cmake/lib/json.cmake)
+include(cmake/utile/ccache.cmake)
 
 
 # ---- Declare executable ----

@@ -12,7 +12,6 @@ game_context::game_context(std::vector<std::shared_ptr<game_class>> &_game_class
 }
 
 game_context::~game_context() {
-  UnloadTexture(_texture);
 }
 
 void game_context::update_game_input() {
@@ -31,6 +30,10 @@ void game_context::update_opengl() {
 void game_context::update_draw2d() { return; }
 
 void game_context::update_draw3d() { return; }
+
+void game_context::unload_texture() {
+  UnloadTexture(_texture);
+}
 
 void game_context::load_texture() {
   _texture = LoadTexture("grass.png");

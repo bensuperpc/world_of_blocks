@@ -15,6 +15,8 @@ world::~world() {
   if (generate_world_thread.joinable()) {
     generate_world_thread.join();
   }
+
+  clear();
 }
 
 void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model) {
@@ -37,7 +39,8 @@ void world::generate_chunk_models(chunk &chunk_new) {
   auto start = std::chrono::high_resolution_clock::now();
   std::unique_ptr<Model> chunk_model = world_md.generate_chunk_model(chunk_new);
   chunk_model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = _game_context_ref._texture;
-  chunk_new.model = std::move(chunk_model);
+
+  chunk_new.set_model(std::move(chunk_model));
 
   auto end = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
@@ -56,8 +59,11 @@ bool world::is_chunk_exist(const int32_t x, const int32_t y, const int32_t z) co
 }
 
 void world::clear() {
+  std::lock_guard<std::mutex> lock(world_generator_mutex);
   // Clear the chunks
+  world_logger->debug("Clearing {} chunks...", chunks.size());
   chunks.clear();
+  world_logger->debug("All chunks have been cleared");
 }
 
 void world::update_game_input() {
@@ -81,8 +87,6 @@ void world::update_opengl() {
 }
 
 void world::update_draw3d() {
-  std::lock_guard<std::mutex> lock(world_generator_mutex);
-
     /*
     // TODO: optimize to check only the blocks around the player
     for (size_t ci = 0; ci < world_new->chunks.size(); ci++) {
@@ -126,12 +130,11 @@ void world::update_draw3d() {
         DrawLine3D(closest_collision.point, normalEnd, BLUE);
     }
     */
-
+  std::lock_guard<std::mutex> lock(world_generator_mutex);
   if (free_world) {
     clear();
     free_world = false;
   }
-
 
   for (auto const &_chunk : chunks) {
 
@@ -151,15 +154,15 @@ void world::update_draw3d() {
       continue;
     }
 
-    if (current_chunk.model.get() == nullptr) {
+    if (!current_chunk.has_model()) {
       generate_chunk_models(current_chunk);
     }
 
-    if (current_chunk.model.get() == nullptr) {
+    if (!current_chunk.has_model()) {
       continue;
     }
 
-    Model &current_model = *current_chunk.model.get();
+    Model &current_model = *current_chunk.get_model();
 
     auto chunk_pos = chunk::get_real_position(current_chunk);
 
@@ -217,4 +220,6 @@ void world::generate_world_thread_func() {
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
+
+  std::cout << "auxillary_thread_game_logic() exiting" << std::endl;
 }

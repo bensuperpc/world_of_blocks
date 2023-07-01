@@ -23,6 +23,14 @@ public:
 
   ~chunk() { unload_model(); }
 
+  void unload_model() noexcept {
+    if (model == nullptr) {
+      return;
+    }
+    UnloadModel(*model);
+    model = nullptr;
+  }
+
   [[nodiscard]] inline std::vector<block> &get_blocks() { return blocks; }
 
   [[nodiscard]] inline block &get_block(const int x, const int y, const int z) {
@@ -59,14 +67,39 @@ public:
 
   [[nodiscard]] static inline benlib::Vector3i get_chunk_position(const Vector3 &pos) { return get_chunk_position(pos.x, pos.y, pos.z); }
 
-  void unload_model() {
-    if (model == nullptr) {
-      return;
-    }
-    UnloadModel(*model);
+  void set_model(std::unique_ptr<Model> _model) { model = std::move(_model); }
+
+  [[nodiscard]] inline Model *get_model() const { return model.get(); }
+
+  [[nodiscard]] inline bool has_model() const { return model != nullptr; }
+
+  [[nodiscard]] inline bool is_empty() const { return blocks.empty(); }
+
+  [[nodiscard]] inline bool is_full() const { return blocks.size() == chunk_size_x * chunk_size_y * chunk_size_z; }
+
+  [[nodiscard]] inline bool is_in_chunk(const int x, const int y, const int z) const {
+    return x >= 0 && x < chunk_size_x && y >= 0 && y < chunk_size_y && z >= 0 && z < chunk_size_z;
   }
 
-  std::unique_ptr<Model> model = nullptr;
+  [[nodiscard]] inline bool is_in_chunk(const benlib::Vector3i &pos) const { return is_in_chunk(pos.x, pos.y, pos.z); }
+
+  [[nodiscard]] inline bool is_in_chunk(const Vector3 &pos) const { return is_in_chunk(pos.x, pos.y, pos.z); }
+
+  [[nodiscard]] inline bool is_in_chunk(const Vector3 &pos, const benlib::Vector3i &chunk_pos) const {
+    return is_in_chunk(pos.x - chunk_pos.x * chunk_size_x, pos.y - chunk_pos.y * chunk_size_y, pos.z - chunk_pos.z * chunk_size_z);
+  }
+
+  [[nodiscard]] inline bool is_in_chunk(const benlib::Vector3i &pos, const benlib::Vector3i &chunk_pos) const {
+    return is_in_chunk(pos.x - chunk_pos.x * chunk_size_x, pos.y - chunk_pos.y * chunk_size_y, pos.z - chunk_pos.z * chunk_size_z);
+  }
+
+  [[nodiscard]] inline bool is_in_chunk(const int x, const int y, const int z, const benlib::Vector3i &chunk_pos) const {
+    return is_in_chunk(x - chunk_pos.x * chunk_size_x, y - chunk_pos.y * chunk_size_y, z - chunk_pos.z * chunk_size_z);
+  }
+
+  [[nodiscard]] inline bool is_in_chunk(const int x, const int y, const int z, const int chunk_x, const int chunk_y, const int chunk_z) const {
+    return is_in_chunk(x - chunk_x * chunk_size_x, y - chunk_y * chunk_size_y, z - chunk_z * chunk_size_z);
+  }
 
   static constexpr int chunk_size_x = 32;
   static constexpr int chunk_size_y = 32;
@@ -74,6 +107,7 @@ public:
 
 protected:
   std::vector<block> blocks;
+  std::unique_ptr<Model> model = nullptr;
 
   // Chunk coordinates
   int chunk_x = 0;

@@ -33,6 +33,7 @@ public:
   void update_draw3d() override;
 
   void load_texture();
+  void unload_texture();
 
   // Game settings and window
   int screen_width = 1920;

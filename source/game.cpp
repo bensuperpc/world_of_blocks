@@ -40,6 +40,7 @@ void game::run() {
   player1 = std::make_shared<player>(*game_context1.get());
   game_classes.push_back(player1);
 
+
   while (game_running) {
     game_running = !WindowShouldClose();
     // !IsWindowFocused()
@@ -47,29 +48,34 @@ void game::run() {
       continue;
     }
 
-    
     for (auto &item : game_classes) {
       item->update_opengl();
     }
-    
+
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
 
+    
     BeginMode3D(player1->camera);
-
+    
     for (auto &item : game_classes) {
       item->update_draw3d();
     }
+  
     EndMode3D();
 
     for (auto &item : game_classes) {
       item->update_draw2d();
     }
-
+    
     EndDrawing();
     game_context1->frame_count++;
   }
+
+  world_new->clear();
+  game_context1->unload_texture();
+
   CloseWindow();
 
   auxillary_thread.join();
@@ -98,4 +104,6 @@ void game::auxillary_thread_game_logic() {
     auto sleep_time = std::chrono::milliseconds(1000 / game_context1->target_fps) - duration;
     std::this_thread::sleep_for(sleep_time);
   }
+
+  std::cout << "auxillary_thread_game_logic() exiting" << std::endl;
 }

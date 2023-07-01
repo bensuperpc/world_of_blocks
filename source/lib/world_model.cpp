@@ -162,7 +162,7 @@ std::vector<std::unique_ptr<Model>> world_model::generate_world_models(std::vect
 std::unique_ptr<Model> world_model::generate_chunk_model(chunk &chunks) {
   Mesh mesh = chunk_mesh(chunks);
   UploadMesh(&mesh, false);
-  std::unique_ptr<Model> model = std::make_unique<Model>(LoadModelFromMesh(mesh));
+  std::unique_ptr<Model> model = std::make_unique<Model>(std::move(LoadModelFromMesh(mesh)));
   return model;
 }
 

@@ -98,8 +98,8 @@
       "name": "flags-debugger",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "-Og -g3 -ggdb3 -Wall -Wextra -Wpedantic -pg",
-        "CMAKE_C_FLAGS": "-Og -g3 -ggdb3 -Wall -Wextra -Wpedantic -pg"
+        "CMAKE_CXX_FLAGS": "-O0 -g3 -ggdb3 -Wall -Wextra -Wpedantic -pg",
+        "CMAKE_C_FLAGS": "-O0 -g3 -ggdb3 -Wall -Wextra -Wpedantic -pg"
       }
     },
     {
@@ -151,7 +151,7 @@
       "cacheVariables": {
         "ENABLE_COVERAGE": "ON",
         "CMAKE_BUILD_TYPE": "Coverage",
-        "CMAKE_CXX_FLAGS_COVERAGE": "-Og -g3 --coverage -fkeep-inline-functions -fkeep-static-functions",
+        "CMAKE_CXX_FLAGS_COVERAGE": "-O0 -g3 --coverage -fkeep-inline-functions -fkeep-static-functions",
         "CMAKE_EXE_LINKER_FLAGS_COVERAGE": "--coverage",
         "CMAKE_SHARED_LINKER_FLAGS_COVERAGE": "--coverage"
       }
@@ -169,8 +169,8 @@
       "inherits": ["ci-linux", "dev-mode"],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Sanitize",
-        "CMAKE_CXX_FLAGS_SANITIZE": "-Og -g3 -fsanitize=address,undefined,leak -fno-omit-frame-pointer -fno-common",
-        "CMAKE_C_FLAGS_SANITIZE": "-Og -g3"
+        "CMAKE_CXX_FLAGS_SANITIZE": "-O0 -g3 -fsanitize=address,undefined,leak -fno-omit-frame-pointer -fno-common",
+        "CMAKE_C_FLAGS_SANITIZE": "-O0 -g3"
       },
       "environment": {
         "ASAN_OPTIONS": "strict_string_checks=1 detect_stack_use_after_return=1 check_initialization_order=1 strict_init_order=1 detect_leaks=1",
