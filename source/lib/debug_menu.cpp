@@ -20,7 +20,7 @@ void debug_menu::update_game_input() {
 void debug_menu::update_game_logic() {
 }
 
-void debug_menu::update_opengl() {
+void debug_menu::update_opengl_logic() {
 }
 
 void debug_menu::update_draw3d() {

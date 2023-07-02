@@ -14,7 +14,7 @@ public:
   virtual void update_game_input() = 0;
   virtual void update_game_logic() = 0;
   
-  virtual void update_opengl() = 0;
+  virtual void update_opengl_logic() = 0;
   virtual void update_draw3d() = 0;
   virtual void update_draw2d() = 0;
 

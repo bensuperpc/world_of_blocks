@@ -23,7 +23,7 @@ void game_context::update_game_input() {
 void game_context::update_game_logic() {
 }
 
-void game_context::update_opengl() {
+void game_context::update_opengl_logic() {
 
 }
 

@@ -1,7 +1,7 @@
 #include "world.hpp"
 
 world::world(game_context &game_context_ref, nlohmann::json &_config_json) : _game_context_ref(game_context_ref), config_json(_config_json) {
-  world_logger = std::make_unique<logger_decorator>("world", "world.log");
+  logger = std::make_unique<logger_decorator>("world", "world.log");
 
   render_distance = config_json["world"].value("render_distance", 4);
   view_distance = config_json["world"].value("view_distance", 8);
@@ -26,7 +26,7 @@ void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bo
   auto end = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  world_logger->debug("Chunk generation (x: {}, y: {}, z: {}) took {}ms", x, y, z, duration.count());
+  logger->debug("Chunk generation (x: {}, y: {}, z: {}) took {}ms", x, y, z, duration.count());
 
   // Add the chunk to the world
   if (generate_model) {
@@ -45,7 +45,7 @@ void world::generate_chunk_models(chunk &chunk_new) {
   auto end = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-  world_logger->debug("Chunk model (x: {}, y: {}, z: {}) generation took {}ms", chunk_new.get_position().x, chunk_new.get_position().y,
+  logger->debug("Chunk model (x: {}, y: {}, z: {}) generation took {}ms", chunk_new.get_position().x, chunk_new.get_position().y,
                       chunk_new.get_position().z, duration.count());
 }
 
@@ -61,9 +61,9 @@ bool world::is_chunk_exist(const int32_t x, const int32_t y, const int32_t z) co
 void world::clear() {
   std::lock_guard<std::mutex> lock(world_generator_mutex);
   // Clear the chunks
-  world_logger->debug("Clearing {} chunks...", chunks.size());
+  logger->debug("Clearing {} chunks...", chunks.size());
   chunks.clear();
-  world_logger->debug("All chunks have been cleared");
+  logger->debug("All chunks have been cleared");
 }
 
 void world::update_game_input() {
@@ -72,7 +72,7 @@ void world::update_game_input() {
     genv1.reseed(this->seed);
     genv2.reseed(this->seed);
     free_world = true;
-    world_logger->info("seed: {}", seed);
+    logger->info("seed: {}", seed);
   }
 
   if (IsKeyPressed(KEY_C)) {
@@ -83,7 +83,27 @@ void world::update_game_input() {
 void world::update_game_logic() {
 }
 
-void world::update_opengl() {
+void world::update_opengl_logic() {
+  if (free_world) {
+    clear();
+    free_world = false;
+    return;
+  }
+  std::lock_guard<std::mutex> lock(world_generator_mutex);
+
+  // Check if each chunk are outsite the unload distance, it yes, free it
+  for (auto it = chunks.begin(); it != chunks.end();) {
+    auto current_chunk = (*it).get();
+    auto chunk_coor = current_chunk->get_position();
+    auto &player1_pose = _game_context_ref.player_chunk_pos;
+    // If chunk is too far away, free it
+    if (std::abs(chunk_coor.x - player1_pose.x) > unload_distance || std::abs(chunk_coor.y - player1_pose.y) > unload_distance ||
+        std::abs(chunk_coor.z - player1_pose.z) > unload_distance) {
+      it = chunks.erase(it);
+    } else {
+      ++it;
+    }
+  }
 }
 
 void world::update_draw3d() {
@@ -131,13 +151,7 @@ void world::update_draw3d() {
     }
     */
   std::lock_guard<std::mutex> lock(world_generator_mutex);
-  if (free_world) {
-    clear();
-    free_world = false;
-  }
-
   for (auto const &_chunk : chunks) {
-
     if (_chunk.get() == nullptr) {
       continue;
     }
@@ -221,5 +235,5 @@ void world::generate_world_thread_func() {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 
-  std::cout << "auxillary_thread_game_logic() exiting" << std::endl;
+  logger->info("World generation thread stopped");
 }

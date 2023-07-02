@@ -147,7 +147,7 @@ std::vector<std::unique_ptr<Model>> world_model::generate_world_models(std::vect
 // Generate meshes on multiple threads
 #pragma omp for ordered schedule(static, 1)
   for (size_t i = 0; i < chunks.size(); i++) {
-    Mesh mesh = chunk_mesh(chunks[i]);
+    Mesh mesh = generate_chunk_mesh(chunks[i]);
 #pragma omp ordered
     meshes.push_back(std::move(mesh));
   }
@@ -160,7 +160,7 @@ std::vector<std::unique_ptr<Model>> world_model::generate_world_models(std::vect
 }
 
 std::unique_ptr<Model> world_model::generate_chunk_model(chunk &chunks) {
-  Mesh mesh = chunk_mesh(chunks);
+  Mesh mesh = generate_chunk_mesh(chunks);
   UploadMesh(&mesh, false);
   std::unique_ptr<Model> model = std::make_unique<Model>(std::move(LoadModelFromMesh(mesh)));
   return model;
@@ -200,7 +200,7 @@ inline int world_model::count_neighbours(int x, int y, int z, chunk &_chunk) noe
   return count;
 }
 
-int world_model::count_border(int x, int y, int z, [[maybe_unused]] chunk &_chunk) noexcept {
+int world_model::block_count_border(int x, int y, int z, [[maybe_unused]] chunk &_chunk) noexcept {
   int count = 0;
   if (x == 0)
     count++;
@@ -217,9 +217,9 @@ int world_model::count_border(int x, int y, int z, [[maybe_unused]] chunk &_chun
   return count;
 }
 
-int world_model::face_count(chunk &_chunk) noexcept {
+int world_model::chunk_face_count(chunk &_chunk) noexcept {
   int count = 0;
-  auto &blocks = _chunk.get_blocks();
+  //std::vector<block> &blocks = _chunk.get_blocks();
 
   for (int x = 0; x < chunk::chunk_size_x; x++) {
     for (int y = 0; y < chunk::chunk_size_y; y++) {
@@ -228,10 +228,10 @@ int world_model::face_count(chunk &_chunk) noexcept {
         if (current_block.block_type == block_type::air)
           continue;
 
-        int border_count = count_border(x, y, z, _chunk);
+        int border_count = block_count_border(x, y, z, _chunk);
         int neighbour_count = count_neighbours(x, y, z, _chunk);
 
-        if (current_block.block_type == block_type::air || neighbour_count + border_count == 6) {
+        if (neighbour_count + border_count == 6) {
           continue;
         }
 
@@ -258,9 +258,9 @@ int world_model::face_count(chunk &_chunk) noexcept {
   return count;
 }
 
-Mesh world_model::chunk_mesh(chunk &chunk) noexcept {
+Mesh world_model::generate_chunk_mesh(chunk &chunk) noexcept {
   Mesh mesh = {0};
-  int faces_count = face_count(chunk);
+  int faces_count = chunk_face_count(chunk);
   mesh.vertexCount = faces_count * 6;
   mesh.triangleCount = faces_count * 2;
 
@@ -280,16 +280,8 @@ Mesh world_model::chunk_mesh(chunk &chunk) noexcept {
           continue;
         }
 
-        int border_count = count_border(x, y, z, chunk);
+        int border_count = block_count_border(x, y, z, chunk);
         int neighbour_count = count_neighbours(x, y, z, chunk);
-
-        /*
-        if (current_block.x == 48 && current_block.y == 36 && current_block.z == 50) {
-            std::cout << "Block: " << current_block.x << ", " << current_block.y << ", " << current_block.z << std::endl;
-            std::cout << "Neighbours: " << neighbour_count << std::endl;
-            std::cout << "Borders: " << border_count << std::endl;
-        }
-        */
 
         if (neighbour_count + border_count == 6) {
           continue;

@@ -73,7 +73,7 @@ void player::update_game_input() {
 void player::update_game_logic() {
 }
 
-void player::update_opengl() {
+void player::update_opengl_logic() {
 }
 
 void player::update_draw2d() {

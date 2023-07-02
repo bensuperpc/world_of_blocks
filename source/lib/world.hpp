@@ -38,7 +38,7 @@
 #include "generatorv2.hpp"
 #include "world_model.hpp"
 
-#include "logger_decorator.hpp"
+#include "logger_base.hpp"
 
 class world : public game_class {
 public:
@@ -60,7 +60,7 @@ public:
   void update_game_input() override;
   void update_game_logic() override;
 
-  void update_opengl() override;
+  void update_opengl_logic() override;
   void update_draw2d() override;
   void update_draw3d() override;
 
@@ -71,10 +71,11 @@ public:
 
   world_model world_md = world_model();
 
-  std::vector<std::unique_ptr<chunk>> chunks;
+  std::list<std::unique_ptr<chunk>> chunks;
 
   int32_t render_distance = 4;
-  int32_t view_distance = 8;
+  int32_t view_distance = 6;
+  int32_t unload_distance = 8;
 
   std::mutex world_generator_mutex;
   std::thread generate_world_thread;
@@ -86,7 +87,7 @@ public:
   nlohmann::json &config_json;
 
   // logger
-  std::unique_ptr<logger_decorator> world_logger;
+  std::unique_ptr<logger_decorator> logger;
 };
 
 #endif // WORLD_OF_CUBE_WORLD_HPP

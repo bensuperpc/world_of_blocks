@@ -14,7 +14,7 @@
 #include <spdlog/async.h>
 #include <spdlog/spdlog.h>
 
-class logger_decorator {
+class logger_decorator final {
 public:
   explicit logger_decorator(const std::string &name, std::filesystem::path path) {
     {
@@ -67,7 +67,7 @@ public:
 
   spdlog::level::level_enum get_flush_level() { return _logger->flush_level(); }
 
-  virtual ~logger_decorator() {
+  ~logger_decorator() {
     debug("Logger {} stopped", _logger->name());
     flush();
   }

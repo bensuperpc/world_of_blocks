@@ -27,7 +27,7 @@ public:
   void update_game_input() override;
   void update_game_logic() override;
 
-  void update_opengl() override;
+  void update_opengl_logic() override;
   void update_draw2d() override;
   void update_draw3d() override;
 

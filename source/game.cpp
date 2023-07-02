@@ -49,7 +49,7 @@ void game::run() {
     }
 
     for (auto &item : game_classes) {
-      item->update_opengl();
+      item->update_opengl_logic();
     }
 
     BeginDrawing();
@@ -73,6 +73,7 @@ void game::run() {
     game_context1->frame_count++;
   }
 
+  // Unload chunks and textures before ending openGL !
   world_new->clear();
   game_context1->unload_texture();
 

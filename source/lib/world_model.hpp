@@ -39,11 +39,11 @@ public:
 
   inline int count_neighbours(int x, int y, int z, chunk &_chunk) noexcept;
 
-  inline int count_border(int x, int y, int z, chunk &_chunk) noexcept;
+  inline int block_count_border(int x, int y, int z, chunk &_chunk) noexcept;
 
-  int face_count(chunk &_chunk) noexcept;
+  int chunk_face_count(chunk &_chunk) noexcept;
 
-  Mesh chunk_mesh(chunk &chunk) noexcept;
+  Mesh generate_chunk_mesh(chunk &chunk) noexcept;
 
   // logger
   std::unique_ptr<logger_decorator> world_model_logger;
