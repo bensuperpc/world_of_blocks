@@ -73,13 +73,18 @@ void game::run() {
     game_context1->frame_count++;
   }
 
+  auxillary_thread.join();
+
   // Unload chunks and textures before ending openGL !
-  world_new->clear();
-  game_context1->unload_texture();
+
+  game_classes.clear();
+
+  world_new.reset();
+  player1.reset();
+  debug_menu1.reset();
+  game_context1.reset();
 
   CloseWindow();
-
-  auxillary_thread.join();
 }
 
 // Update game logic and input

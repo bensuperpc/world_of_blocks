@@ -12,6 +12,7 @@ world::world(game_context &game_context_ref, nlohmann::json &_config_json) : _ga
 
 world::~world() {
   generate_world_thread_running = false;
+  
   if (generate_world_thread.joinable()) {
     generate_world_thread.join();
   }
@@ -26,7 +27,7 @@ void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bo
   auto end = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  logger->debug("Chunk generation (x: {}, y: {}, z: {}) took {}ms", x, y, z, duration.count());
+  logger->trace("Chunk generation (x: {}, y: {}, z: {}) took {}ms", x, y, z, duration.count());
 
   // Add the chunk to the world
   if (generate_model) {
@@ -45,7 +46,7 @@ void world::generate_chunk_models(chunk &chunk_new) {
   auto end = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-  logger->debug("Chunk model (x: {}, y: {}, z: {}) generation took {}ms", chunk_new.get_position().x, chunk_new.get_position().y,
+  logger->trace("Chunk model (x: {}, y: {}, z: {}) generation took {}ms", chunk_new.get_position().x, chunk_new.get_position().y,
                       chunk_new.get_position().z, duration.count());
 }
 
@@ -92,16 +93,28 @@ void world::update_opengl_logic() {
   std::lock_guard<std::mutex> lock(world_generator_mutex);
 
   // Check if each chunk are outsite the unload distance, it yes, free it
-  for (auto it = chunks.begin(); it != chunks.end();) {
+  for (auto it = chunks.begin(); it != chunks.end(); ++it) {
     auto current_chunk = (*it).get();
+
+    if (!current_chunk->is_active_chunk()) {
+      continue;
+    }
+    
     auto chunk_coor = current_chunk->get_position();
-    auto &player1_pose = _game_context_ref.player_chunk_pos;
+    auto player1_pose = _game_context_ref.player_chunk_pos;
+
     // If chunk is too far away, free it
     if (std::abs(chunk_coor.x - player1_pose.x) > unload_distance || std::abs(chunk_coor.y - player1_pose.y) > unload_distance ||
         std::abs(chunk_coor.z - player1_pose.z) > unload_distance) {
       it = chunks.erase(it);
-    } else {
-      ++it;
+      continue;
+    }
+
+    // If chunk is too far away, don't render it
+    if (std::abs(chunk_coor.x - player1_pose.x) > view_distance || std::abs(chunk_coor.y - player1_pose.y) > view_distance ||
+        std::abs(chunk_coor.z - player1_pose.z) > view_distance) {
+      current_chunk->set_visible_chunk(false);
+      continue;
     }
   }
 }
@@ -156,17 +169,15 @@ void world::update_draw3d() {
       continue;
     }
 
+    if (!_chunk->is_visible_chunk()) {
+      continue;
+    }
+
     chunk &current_chunk = *_chunk.get();
     auto chunk_coor = current_chunk.get_position();
     [[maybe_unused]] auto &blocks = current_chunk.get_blocks();
 
     auto &player1_pose = _game_context_ref.player_chunk_pos;
-
-    // If chunk is too far away, don't render it
-    if (std::abs(chunk_coor.x - player1_pose.x) > view_distance || std::abs(chunk_coor.y - player1_pose.y) > view_distance ||
-        std::abs(chunk_coor.z - player1_pose.z) > view_distance) {
-      continue;
-    }
 
     if (!current_chunk.has_model()) {
       generate_chunk_models(current_chunk);
@@ -232,7 +243,7 @@ void world::generate_world_thread_func() {
         }
       }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
   }
 
   logger->info("World generation thread stopped");

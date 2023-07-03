@@ -9,13 +9,11 @@
 class logger_base {
 protected:
   explicit logger_base(const std::string &name, std::filesystem::path path) {
-    logger = std::make_unique<logger_decorator>("world", "world.log");
+    logger = std::make_unique<logger_decorator>(name, path);
   }
   logger_base() = delete;
 
   virtual ~logger_base() {
-    logger->flush();
-    logger.reset();
   }
   std::unique_ptr<logger_decorator> logger;
 };
