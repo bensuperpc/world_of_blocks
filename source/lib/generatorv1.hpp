@@ -264,7 +264,7 @@ public:
       for (uint32_t z = 0; z < size_z; z++) {
         for (uint32_t y = 0; y < size_y; y++) {
           size_t vec_index = math::convert_to_1d(x, y, z, size_x, size_y, size_z);
-          const uint32_t& noise_value = heightmap[vec_index];
+          const uint32_t &noise_value = heightmap[vec_index];
           auto &current_block = blocks[vec_index];
 
           if constexpr (debug) {

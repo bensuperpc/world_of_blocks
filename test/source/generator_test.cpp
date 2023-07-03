@@ -28,7 +28,7 @@ TEST(world_of_blocks, basic_generation_1) {
     }
   }
   world_model world_md = world_model();
-  
+
   std::vector<Mesh> meshes;
 
   for (auto &chunk : chunks) {
@@ -60,7 +60,7 @@ TEST(world_of_blocks, basic_generation_2) {
   }
 
   world_model world_md = world_model();
-  
+
   std::vector<Mesh> meshes;
 
   for (auto &chunk : chunks) {

@@ -40,7 +40,6 @@ void game::run() {
   player1 = std::make_shared<player>(*game_context1.get());
   game_classes.push_back(player1);
 
-
   while (game_running) {
     game_running = !WindowShouldClose();
     // !IsWindowFocused()
@@ -56,19 +55,18 @@ void game::run() {
 
     ClearBackground(RAYWHITE);
 
-    
     BeginMode3D(player1->camera);
-    
+
     for (auto &item : game_classes) {
       item->update_draw3d();
     }
-  
+
     EndMode3D();
 
     for (auto &item : game_classes) {
       item->update_draw2d();
     }
-    
+
     EndDrawing();
     game_context1->frame_count++;
   }

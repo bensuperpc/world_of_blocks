@@ -33,9 +33,7 @@ public:
 
   inline std::vector<block> &get_blocks() { return blocks; }
 
-  inline block &get_block(const int x, const int y, const int z) {
-    return blocks[math::convert_to_1d(x, y, z, chunk_size_x, chunk_size_y, chunk_size_z)];
-  }
+  inline block &get_block(const int x, const int y, const int z) { return blocks[math::convert_to_1d(x, y, z, chunk_size_x, chunk_size_y, chunk_size_z)]; }
 
   inline void set_blocks(std::vector<block> &_blocks) { this->blocks = std::move(_blocks); }
 
@@ -100,7 +98,6 @@ public:
   inline bool is_in_chunk(const int x, const int y, const int z, const int chunk_x, const int chunk_y, const int chunk_z) const {
     return is_in_chunk(x - chunk_x * chunk_size_x, y - chunk_y * chunk_size_y, z - chunk_z * chunk_size_z);
   }
-
 
   inline bool is_active_chunk() const noexcept { return is_active; }
   inline void set_active_chunk(const bool active) noexcept { is_active = active; }

@@ -70,11 +70,9 @@ void player::update_game_input() {
   _game_context_ref.player_pos = std::move(camera.position);
 }
 
-void player::update_game_logic() {
-}
+void player::update_game_logic() {}
 
-void player::update_opengl_logic() {
-}
+void player::update_opengl_logic() {}
 
 void player::update_draw2d() {
   // Draw crosshair in the middle of the screen

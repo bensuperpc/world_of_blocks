@@ -219,7 +219,7 @@ int world_model::block_count_border(int x, int y, int z, [[maybe_unused]] chunk 
 
 int world_model::chunk_face_count(chunk &_chunk) noexcept {
   int count = 0;
-  //std::vector<block> &blocks = _chunk.get_blocks();
+  // std::vector<block> &blocks = _chunk.get_blocks();
 
   for (int x = 0; x < chunk::chunk_size_x; x++) {
     for (int y = 0; y < chunk::chunk_size_y; y++) {

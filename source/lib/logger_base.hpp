@@ -8,13 +8,10 @@
 
 class logger_base {
 protected:
-  explicit logger_base(const std::string &name, std::filesystem::path path) {
-    logger = std::make_unique<logger_decorator>(name, path);
-  }
+  explicit logger_base(const std::string &name, std::filesystem::path path) { logger = std::make_unique<logger_decorator>(name, path); }
   logger_base() = delete;
 
-  virtual ~logger_base() {
-  }
+  virtual ~logger_base() {}
   std::unique_ptr<logger_decorator> logger;
 };
 

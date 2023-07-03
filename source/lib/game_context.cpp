@@ -11,8 +11,7 @@ game_context::game_context(std::vector<std::shared_ptr<game_class>> &_game_class
   display_debug_menu = &useless;
 }
 
-game_context::~game_context() {
-}
+game_context::~game_context() {}
 
 void game_context::update_game_input() {
 
@@ -20,20 +19,15 @@ void game_context::update_game_input() {
   screen_middle = Vector2({static_cast<float>(screen_height / 2), static_cast<float>(screen_width / 2)});
 }
 
-void game_context::update_game_logic() {
-}
+void game_context::update_game_logic() {}
 
-void game_context::update_opengl_logic() {
-
-}
+void game_context::update_opengl_logic() {}
 
 void game_context::update_draw2d() { return; }
 
 void game_context::update_draw3d() { return; }
 
-void game_context::unload_texture() {
-  UnloadTexture(_texture);
-}
+void game_context::unload_texture() { UnloadTexture(_texture); }
 
 void game_context::load_texture() {
   _texture = LoadTexture("grass.png");
