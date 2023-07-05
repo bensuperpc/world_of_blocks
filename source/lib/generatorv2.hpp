@@ -39,6 +39,7 @@ public:
     fnFractal->SetOctaveCount(octaves);
     fnFractal->SetGain(gain);
     fnFractal->SetLacunarity(lacunarity);
+    fnFractal->SetWeightedStrength(weighted_strength);
   }
 
   generatorv2() {
@@ -49,16 +50,17 @@ public:
     fnFractal->SetOctaveCount(octaves);
     fnFractal->SetGain(gain);
     fnFractal->SetLacunarity(lacunarity);
+    fnFractal->SetWeightedStrength(weighted_strength);
   }
 
   ~generatorv2() {}
 
-  void reseed(uint32_t _seed) { this->seed = _seed; }
+  void reseed(int32_t _seed) { this->seed = _seed; }
 
-  uint32_t randomize_seed() {
+  int32_t randomize_seed() {
     std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<uint32_t> dis(0, std::numeric_limits<uint32_t>::max());
+    std::mt19937_64 gen(rd());
+    std::uniform_int_distribution<uint32_t> dis(0, std::numeric_limits<int32_t>::max());
     this->seed = dis(gen);
 
     return seed;
@@ -66,17 +68,47 @@ public:
 
   uint32_t get_seed() const { return seed; }
 
-  void set_octaves(uint32_t _octaves) { this->octaves = _octaves; }
+  void set_octaves(uint32_t _octaves) {
+    this->octaves = _octaves;
+    fnFractal->SetOctaveCount(octaves);
+  }
 
   uint32_t get_octaves() const { return octaves; }
 
-  void set_persistence(float _persistence) { this->persistence = _persistence; }
+  void set_lacunarity(float _lacunarity) {
+    this->lacunarity = _lacunarity;
+    fnFractal->SetLacunarity(lacunarity);
+  }
 
-  double get_persistence() const { return persistence; }
+  float get_lacunarity() const { return lacunarity; }
 
-  void set_lacunarity(double _lacunarity) { this->lacunarity = _lacunarity; }
+  void set_gain(float _gain) {
+    this->gain = _gain;
+    fnFractal->SetGain(gain);
+  }
 
-  double get_lacunarity() const { return lacunarity; }
+  float get_gain() const { return gain; }
+
+
+  void set_frequency(float _frequency) {
+    this->frequency = _frequency;
+  }
+
+  float get_frequency() const { return frequency; }
+
+  void set_weighted_strength(float _weighted_strength) {
+    this->weighted_strength = _weighted_strength;
+    fnFractal->SetWeightedStrength(weighted_strength);
+  }
+
+  float get_weighted_strength() const { return weighted_strength; }
+
+
+  void set_multiplier(uint32_t _multiplier) {
+    this->multiplier = _multiplier;
+  }
+
+  uint32_t get_multiplier() const { return multiplier; }
 
   std::vector<uint32_t> generate_2d_heightmap(const int32_t begin_x, [[maybe_unused]] const int32_t begin_y, const int32_t begin_z, const uint32_t size_x,
                                               [[maybe_unused]] const uint32_t size_y, const uint32_t size_z) override {
@@ -95,7 +127,7 @@ public:
 
     // Convert noise_output to heightmap
     for (uint32_t i = 0; i < size_x * size_z; i++) {
-      heightmap[i] = static_cast<uint32_t>((noise_output[i] + 1.0) * 128.0);
+      heightmap[i] = static_cast<uint32_t>((noise_output[i] + 1.0) * multiplier);
       if constexpr (debug) {
         std::cout << "i: " << i << ", value: " << noise_output[i] << ", heightmap: " << heightmap[i] << std::endl;
       }
@@ -127,7 +159,7 @@ public:
 
     // Convert noise_output to heightmap
     for (uint32_t i = 0; i < size_x * size_y * size_z; i++) {
-      heightmap[i] = static_cast<uint32_t>((noise_output[i] + 1.0) * 128.0);
+      heightmap[i] = static_cast<uint32_t>((noise_output[i] + 1.0) * multiplier);
       if constexpr (debug) {
         std::cout << "i: " << i << ", noise_output: " << noise_output[i] << ", heightmap: " << heightmap[i] << std::endl;
       }
@@ -243,7 +275,7 @@ public:
       for (uint32_t z = 0; z < size_z; z++) {
         for (uint32_t y = 0; y < size_y; y++) {
           size_t vec_index = math::convert_to_1d(x, y, z, size_x, size_y, size_z);
-          const uint32_t &noise_value = heightmap[vec_index];
+          const uint32_t noise_value = heightmap[vec_index];
           auto &current_block = blocks[vec_index];
 
           if constexpr (debug) {
@@ -265,11 +297,13 @@ private:
   int32_t seed = 404;
   FastNoise::SmartNode<FastNoise::Perlin> fnSimplex;
   FastNoise::SmartNode<FastNoise::FractalFBm> fnFractal;
-  float persistence = 0.05f;
+
   int32_t octaves = 6;
   float lacunarity = 0.5f;
   float gain = 3.5f;
   float frequency = 0.4f;
+  float weighted_strength = 0.0f;
+  uint32_t multiplier = 128;
 };
 
 #endif // WORLD_OF_CUBE_GENERATOR_HPP

@@ -18,4 +18,4 @@ FetchContent_Declare(raygui
     #SOURCE_DIR     ${RAYGUI_DIR}
 )
 FetchContent_MakeAvailable(raygui)
-include_directories(${raygui_SOURCE_DIR}/src)
+include_directories(${raygui_SOURCE_DIR})

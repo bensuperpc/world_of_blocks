@@ -4,7 +4,7 @@
 #if defined(__cplusplus)
 extern "C" {
 #define RAYGUI_IMPLEMENTATION
-#include "raygui.h"
+#include "src/raygui.h"
 #undef RAYGUI_IMPLEMENTATION
 }
 #endif

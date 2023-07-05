@@ -67,6 +67,31 @@ function(add_bench_fn BENCH_NAME)
   #target_compile_features("${TEST_NAME}" PRIVATE cxx_std_20)
 endfunction()
 
+function(add_exp_fn EXP_NAME)
+  add_executable("${EXP_NAME}" "source/${EXP_NAME}.cpp")
+
+  target_link_libraries("${EXP_NAME}" PRIVATE world_of_blocks_lib benlib_intro)
+  target_link_libraries("${EXP_NAME}" PRIVATE raylib raylib_cpp)
+  target_link_libraries("${EXP_NAME}" PRIVATE FastNoise2 OpenMP::OpenMP_CXX)
+  target_link_libraries("${EXP_NAME}" PRIVATE spdlog::spdlog nlohmann_json::nlohmann_json)
+
+  if (OpenMP_FOUND OR OpenMP_CXX_FOUND)
+    target_link_libraries("${EXP_NAME}" PRIVATE OpenMP::OpenMP_CXX)
+  endif()
+
+  if (CUDAToolkit_FOUND)
+    target_include_directories("${EXP_NAME}" PRIVATE ${CUDAToolkit_INCLUDE_DIRS})
+    target_link_libraries("${EXP_NAME}" PRIVATE CUDA::cudart)
+  endif()
+  set_target_properties("${EXP_NAME}"
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+  )
+endfunction()
+
 if(NOT WIN32)
   include(../cmake/lib/gtest.cmake)
   include(../cmake/lib/benchmark.cmake)
@@ -84,6 +109,8 @@ if(NOT WIN32)
   # Add bench
   #  add_bench_fn(generator_bench)
   #add_bench_fn(noise_bench)
+  # Add exp
+  add_exp_fn(2d_perlin_noise_exp)
   
 endif()
 
