@@ -20,6 +20,8 @@
 //  Raylib
 #include "raylib.h"
 
+//#include "raylib-cpp.hpp"
+
 // Cube lib
 
 extern "C" {
@@ -64,6 +66,8 @@ private:
   std::thread auxillary_thread;
 
   bool game_running = true;
+
+  //std::unique_ptr<raylib::Window> window;
 };
 
 #endif // GAME_HPP

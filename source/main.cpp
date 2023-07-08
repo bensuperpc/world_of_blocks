@@ -15,6 +15,8 @@ auto main(int [[maybe_unused]] argc, [[maybe_unused]] char *argv[]) -> int {
   // Set log level for Raylib
   SetTraceLogLevel(LOG_WARNING);
 
+  std::ios_base::sync_with_stdio(false);
+
   auto loggerer = logger_decorator("main", "main.log");
 
   loggerer.info("Welcome to world of blocks!");
@@ -29,9 +31,9 @@ auto main(int [[maybe_unused]] argc, [[maybe_unused]] char *argv[]) -> int {
     config_json["display"]["screen_width"] = 1920;
     config_json["display"]["screen_height"] = 1080;
     config_json["display"]["target_fps"] = 240;
-    config_json["world"]["render_distance"] = 4;
-    config_json["world"]["view_distance"] = 6;
-    config_json["world"]["unload_distance"] = 8;
+    config_json["world"]["render_distance"] = 2;
+    config_json["world"]["view_distance"] = 3;
+    config_json["world"]["unload_distance"] = 4;
 
     std::ofstream config_file("config.json");
     config_file << config_json;

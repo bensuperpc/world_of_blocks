@@ -60,7 +60,7 @@ public:
   int32_t randomize_seed() {
     std::random_device rd;
     std::mt19937_64 gen(rd());
-    std::uniform_int_distribution<uint32_t> dis(0, std::numeric_limits<int32_t>::max());
+    std::uniform_int_distribution<uint32_t> dis(std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max());
     this->seed = dis(gen);
 
     return seed;
@@ -118,7 +118,7 @@ public:
 
     std::vector<float> noise_output(size_x * size_z);
 
-    if (fnFractal == nullptr) {
+    if (fnFractal.get() == nullptr) {
       std::cout << "fnFractal is nullptr" << std::endl;
       return heightmap;
     }
@@ -150,7 +150,7 @@ public:
 
     std::vector<float> noise_output(size_x * size_y * size_z);
 
-    if (fnFractal == nullptr) {
+    if (fnFractal.get() == nullptr) {
       std::cout << "fnFractal is nullptr" << std::endl;
       return heightmap;
     }

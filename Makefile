@@ -30,6 +30,7 @@ CTEST_OPTIONS := --output-on-failure --timeout $(CTEST_TIMEOUT) --parallel $(PAR
 
 # LANG := en
 # LANG=$(LANG)
+# -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -Werror=float-equal
 
 .PHONY: build
 build: base

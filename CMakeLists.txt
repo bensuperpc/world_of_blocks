@@ -16,6 +16,19 @@ include(cmake/variables.cmake)
 # ---- Declare options ----
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
+
+##
+#add_library(
+#    world_of_blocks_lib OBJECT
+#    source/lib.cpp
+#)
+
+#target_include_directories(
+#    world_of_blocks_lib ${warning_guard}
+#    PUBLIC
+#    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>"
+#)
+
 # ---- Dependencies ----
 
 add_subdirectory(source/lib) # world_of_blocks_lib

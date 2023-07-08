@@ -16,6 +16,7 @@ world::~world() {
   if (generate_world_thread.joinable()) {
     generate_world_thread.join();
   }
+  std::lock_guard<std::mutex> lock(world_generator_mutex);
 
   clear();
 }
@@ -60,7 +61,6 @@ bool world::is_chunk_exist(const int32_t x, const int32_t y, const int32_t z) co
 }
 
 void world::clear() {
-  std::lock_guard<std::mutex> lock(world_generator_mutex);
   // Clear the chunks
   logger->debug("Clearing {} chunks...", chunks.size());
   chunks.clear();
@@ -84,41 +84,30 @@ void world::update_game_input() {
 void world::update_game_logic() {}
 
 void world::update_opengl_logic() {
+  std::lock_guard<std::mutex> lock(world_generator_mutex);
   if (free_world) {
     clear();
     free_world = false;
     return;
   }
-  std::lock_guard<std::mutex> lock(world_generator_mutex);
 
   // Check if each chunk are outsite the unload distance, it yes, free it
   for (auto it = chunks.begin(); it != chunks.end(); ++it) {
     auto current_chunk = (*it).get();
 
+    if (current_chunk == nullptr) {
+      logger->warn("Chunk is nullptr");
+      continue;
+    }
+
     if (!current_chunk->is_active_chunk()) {
-      continue;
-    }
-
-    auto chunk_coor = current_chunk->get_position();
-    auto player1_pose = _game_context_ref.player_chunk_pos;
-
-    // If chunk is too far away, free it
-    if (std::abs(chunk_coor.x - player1_pose.x) > unload_distance || std::abs(chunk_coor.y - player1_pose.y) > unload_distance ||
-        std::abs(chunk_coor.z - player1_pose.z) > unload_distance) {
       it = chunks.erase(it);
-      continue;
-    }
-
-    // If chunk is too far away, don't render it
-    if (std::abs(chunk_coor.x - player1_pose.x) > view_distance || std::abs(chunk_coor.y - player1_pose.y) > view_distance ||
-        std::abs(chunk_coor.z - player1_pose.z) > view_distance) {
-      current_chunk->set_visible_chunk(false);
-      continue;
     }
   }
 }
 
 void world::update_draw3d() {
+  std::lock_guard<std::mutex> lock(world_generator_mutex);
   /*
   // TODO: optimize to check only the blocks around the player
   for (size_t ci = 0; ci < world_new->chunks.size(); ci++) {
@@ -162,13 +151,13 @@ if (closest_collision.hit) {
    DrawLine3D(closest_collision.point, normalEnd, BLUE);
 }
 */
-  std::lock_guard<std::mutex> lock(world_generator_mutex);
   for (auto const &_chunk : chunks) {
     if (_chunk.get() == nullptr) {
+      logger->warn("Chunk is nullptr");
       continue;
     }
 
-    if (!_chunk->is_visible_chunk()) {
+    if (!_chunk->is_visible_chunk() || !_chunk->is_active_chunk()) {
       continue;
     }
 
@@ -235,13 +224,46 @@ void world::generate_world_thread_func() {
     for (int32_t x = -render_distance; x <= render_distance; x++) {
       for (int32_t y = -render_distance; y <= render_distance; y++) {
         for (int32_t z = -render_distance; z <= render_distance; z++) {
-          if (!is_chunk_exist(_game_context_ref.player_chunk_pos.x + x, _game_context_ref.player_chunk_pos.y + y, _game_context_ref.player_chunk_pos.z + z)) {
-            std::lock_guard<std::mutex> lock(world_generator_mutex);
-            generate_chunk(_game_context_ref.player_chunk_pos.x + x, _game_context_ref.player_chunk_pos.y + y, _game_context_ref.player_chunk_pos.z + z, false);
+          int32_t chunk_x = _game_context_ref.player_chunk_pos.x + x;
+          int32_t chunk_y = _game_context_ref.player_chunk_pos.y + y;
+          int32_t chunk_z = _game_context_ref.player_chunk_pos.z + z;
+
+          if (is_chunk_exist(chunk_x, chunk_y, chunk_z)) {
+            continue;
           }
+
+          std::lock_guard<std::mutex> lock(world_generator_mutex);
+          generate_chunk(chunk_x, chunk_y, chunk_z, false);
         }
       }
     }
+
+    // Check if each chunk are outsite the unload distance, it yes, free it
+    for (auto it = chunks.begin(); it != chunks.end(); ++it) {
+      auto current_chunk = (*it).get();
+      if (current_chunk == nullptr) {
+        logger->warn("Chunk is nullptr");
+        continue;
+      }
+      auto chunk_coor = current_chunk->get_position();
+      auto player_chunk_pos = _game_context_ref.player_chunk_pos;
+
+      // If chunk is too far away, free it
+      if (std::abs(chunk_coor.x - player_chunk_pos.x) > unload_distance || std::abs(chunk_coor.y - player_chunk_pos.y) > unload_distance ||
+          std::abs(chunk_coor.z - player_chunk_pos.z) > unload_distance) {
+        current_chunk->set_active_chunk(false);
+        continue;
+      }
+
+      // If chunk is too far away, don't render it
+      if (std::abs(chunk_coor.x - player_chunk_pos.x) > view_distance || std::abs(chunk_coor.y - player_chunk_pos.y) > view_distance ||
+          std::abs(chunk_coor.z - player_chunk_pos.z) > view_distance) {
+        current_chunk->set_visible_chunk(false);
+        continue;
+      }
+      current_chunk->set_visible_chunk(true);
+    }
+
     std::this_thread::sleep_for(std::chrono::milliseconds(5));
   }
 

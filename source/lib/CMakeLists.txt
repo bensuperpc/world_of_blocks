@@ -41,11 +41,41 @@ set(SOURCES
     player.cpp
     debug_menu.cpp
     game_context.cpp
-    generator.cpp
+)
+
+set(HEADERS
+    block_type.hpp
+    block_utils.hpp
+    world.hpp
+    world_model.hpp
+    player.hpp
+    debug_menu.hpp
+    game_context.hpp
+    generator.hpp
+    generatorv1.hpp
+    generatorv2.hpp
+    raygui_cpp.hpp
+)
+
+
+set(HEADERS
+    block_type.hpp
+    block_utils.hpp
+    world.hpp
+    world_model.hpp
+    player.hpp
+    debug_menu.hpp
+    game_context.hpp
+    chunk.hpp
+    generator.hpp
+    generatorv1.hpp
+    generatorv2.hpp
+    raygui_cpp.hpp
 )
 
 #add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME} ${SOURCES})
+#target_precompile_headers(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/generator.hpp>)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC raylib raylib_cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC FastNoise2 nlohmann_json::nlohmann_json)

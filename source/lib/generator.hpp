@@ -22,9 +22,9 @@
 
 class generator {
 protected:
-  explicit generator();
+  explicit generator() {}
 
-  virtual ~generator();
+  virtual ~generator() {}
 
   virtual std::vector<uint32_t> generate_2d_heightmap(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x,
                                                       const uint32_t size_y, const uint32_t size_z) = 0;

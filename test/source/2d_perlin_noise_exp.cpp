@@ -5,8 +5,12 @@
 #include <memory>   // std::unique_ptr
 #include <random>   // std::random_device, std::mt19937, std::uniform_int_distribution
 #include <vector>   // std::vector
+#include <cmath>    // std::abs
+#include <cstdint>  // std::uint32_t
 
 #include "generatorv2.hpp"
+
+#include "logger_decorator.hpp"
 
 #include "raylib.h"
 
@@ -18,24 +22,29 @@ extern "C" {
 #include "raylib-cpp.hpp"
 
 auto main() -> int {
+  // Set log level for Raylib
+  SetTraceLogLevel(LOG_WARNING);
+
+  auto logger = logger_decorator("2d_perlin_noise_exp", "2d_perlin_noise_exp.log");
+
   const int screenWidth = 1920;
   const int screenHeight = 1080;
 
-  const uint32_t targetFPS = 240;
+  const uint32_t targetFPS = 120;
 
-  const uint32_t ImageUpdatePerSecond = 10;
+  const uint32_t ImageUpdatePerSecond = 30;
 
   SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
 
-  raylib::Window window(screenWidth, screenHeight, "Perlin Noise by Bensuperpc");
+  raylib::Window window(screenWidth, screenHeight, "2D Perlin Noise by Bensuperpc");
 
   SetTargetFPS(targetFPS);
 
-  raylib::Image gridImage(screenWidth, screenHeight, RAYWHITE);
+  Image gridImage = GenImageColor(screenWidth, screenHeight, RAYWHITE);
 
-  Color *pixels = gridImage.LoadColors();
+  Color *pixels = LoadImageColors(gridImage);
 
-  raylib::Texture gridTexture(gridImage);
+  Texture gridTexture = LoadTextureFromImage(gridImage);
 
   float lacunarity = 0.5f;
   uint32_t octaves = 6;
@@ -60,7 +69,7 @@ auto main() -> int {
 
   uint64_t framesCounter = 0;
 
-  while (!WindowShouldClose()) {
+  while (!window.ShouldClose()) {
     framesCounter++;
     if (IsKeyPressed(KEY_S)) {
       const std::string filename = "screenshot_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".png";
@@ -69,9 +78,10 @@ auto main() -> int {
       img.Export(filename);
       img.FlipVertical();
       pixels = img.LoadColors();
+      logger.info("Screenshot saved: {}", filename);
     }
     if (IsKeyPressed(KEY_R)) {
-      std::cout << "New seed: " << generator_2.randomize_seed() << std::endl;
+      logger.info("New seed: {}", generator_2.randomize_seed());
     }
 
     if (framesCounter % (targetFPS / ImageUpdatePerSecond) == 0) {
@@ -85,19 +95,18 @@ auto main() -> int {
       blocks = generator_2.generate_2d_heightmap(0, 0, 0, screenWidth, 0, screenHeight);
       for (uint64_t x = 0; x < screenWidth; x++) {
         for (uint64_t y = 0; y < screenHeight; y++) {
-          const uint64_t index = x + y * screenWidth;
-          const uint8_t value = static_cast<uint8_t>(blocks[index]);
+          uint64_t index = x + y * screenWidth;
+          uint8_t value = static_cast<uint8_t>(blocks[index]);
           pixels[index] = {value, value, value, 255};
         }
       }
 
       // Update texture
-      gridTexture.Update(pixels);
+      UpdateTexture(gridTexture, pixels);
     }
 
-    BeginDrawing();
     ClearBackground(RAYWHITE);
-
+    BeginDrawing();
     DrawTexture(gridTexture, 0, 0, WHITE);
 
     // display FPS
@@ -115,7 +124,7 @@ auto main() -> int {
 
     EndDrawing();
   }
-  gridImage.UnloadColors(pixels);
+  UnloadImageColors(pixels);
 
   return 0;
 }

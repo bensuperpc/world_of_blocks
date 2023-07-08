@@ -2,10 +2,13 @@
 
 game::game(nlohmann::json &_config_json) : config_json(_config_json) {}
 
-game::~game() {}
+game::~game() {
+}
 
 void game::init() {
-  std::ios_base::sync_with_stdio(false);
+}
+
+void game::run() {
   SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
 
   game_context1 = std::make_shared<game_context>(game_classes, config_json);
@@ -16,13 +19,11 @@ void game::init() {
 
   debug_menu1 = std::make_shared<debug_menu>(*game_context1.get());
   game_classes.push_back(debug_menu1);
-}
 
-void game::run() {
   auxillary_thread = std::thread(&game::auxillary_thread_game_logic, this);
 
+  //window = std::make_unique<raylib::Window>(game_context1->screen_width, game_context1->screen_height, "World of blocks");
   InitWindow(game_context1->screen_width, game_context1->screen_height, "World of blocks");
-
   game_context1->load_texture();
 
   // Play intro animation
@@ -82,6 +83,7 @@ void game::run() {
   debug_menu1.reset();
   game_context1.reset();
 
+  //window.reset();
   CloseWindow();
 }
 
