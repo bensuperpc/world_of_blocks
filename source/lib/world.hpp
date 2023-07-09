@@ -38,7 +38,7 @@
 #include "generatorv2.hpp"
 #include "world_model.hpp"
 
-#include "logger_base.hpp"
+#include "logger/logger_base.hpp"
 
 class world : public game_class {
 public:

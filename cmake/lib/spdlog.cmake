@@ -5,7 +5,7 @@ include(FetchContent)
 FetchContent_Declare(
     spdlog
     GIT_REPOSITORY https://github.com/gabime/spdlog.git
-    GIT_TAG 5a6b6cafa8d4aee3e6d0dd16a2cae9169141c831) # 2023-06-11
+    GIT_TAG 7e635fca68d014934b4af8a1cf874f63989352b7) # 2023-07-09
 
 FetchContent_MakeAvailable(spdlog)
 include_directories("${spdlog_SOURCE_DIR}")

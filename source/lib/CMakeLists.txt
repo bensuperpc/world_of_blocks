@@ -29,11 +29,12 @@ project(
 
 include(../../cmake/lib/raygui.cmake)
 include(../../cmake/lib/raylib.cmake)
-include(../../cmake/lib/raylib-cpp.cmake)
 include(../../cmake/lib/openmp.cmake)
 include(../../cmake/lib/perlin_noise.cmake)
 include(../../cmake/lib/fast_noise2.cmake)
 include(../../cmake/lib/json.cmake)
+
+add_subdirectory(logger)
 
 set(SOURCES
     world.cpp
@@ -42,21 +43,6 @@ set(SOURCES
     debug_menu.cpp
     game_context.cpp
 )
-
-set(HEADERS
-    block_type.hpp
-    block_utils.hpp
-    world.hpp
-    world_model.hpp
-    player.hpp
-    debug_menu.hpp
-    game_context.hpp
-    generator.hpp
-    generatorv1.hpp
-    generatorv2.hpp
-    raygui_cpp.hpp
-)
-
 
 set(HEADERS
     block_type.hpp
@@ -77,9 +63,10 @@ set(HEADERS
 add_library(${PROJECT_NAME} ${SOURCES})
 #target_precompile_headers(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/generator.hpp>)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC raylib raylib_cpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC raylib)
 target_link_libraries(${PROJECT_NAME} PUBLIC FastNoise2 nlohmann_json::nlohmann_json)
 target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_C OpenMP::OpenMP_CXX)
+target_link_libraries(${PROJECT_NAME} PUBLIC logger::logger)
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 

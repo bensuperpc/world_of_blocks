@@ -16,7 +16,7 @@
 #include "game_context.hpp"
 
 // spdlog
-#include "logger_decorator.hpp"
+#include "logger/logger_facade.hpp"
 
 class player : public game_class {
 public:

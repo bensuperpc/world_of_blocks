@@ -20,8 +20,6 @@
 //  Raylib
 #include "raylib.h"
 
-//#include "raylib-cpp.hpp"
-
 // Cube lib
 
 extern "C" {

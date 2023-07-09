@@ -10,7 +10,7 @@
 
 #include "generatorv2.hpp"
 
-#include "logger_decorator.hpp"
+#include "logger/logger_facade.hpp"
 
 #include "raylib.h"
 
@@ -18,8 +18,6 @@
 extern "C" {
 #include "src/raygui.h"
 }
-
-#include "raylib-cpp.hpp"
 
 auto main() -> int {
   // Set log level for Raylib
@@ -35,8 +33,7 @@ auto main() -> int {
   const uint32_t ImageUpdatePerSecond = 30;
 
   SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
-
-  raylib::Window window(screenWidth, screenHeight, "2D Perlin Noise by Bensuperpc");
+  InitWindow(screenWidth, screenHeight, "2D Perlin Noise by Bensuperpc");
 
   SetTargetFPS(targetFPS);
 
@@ -53,7 +50,7 @@ auto main() -> int {
   float weighted_strength = 0.0f;
   uint32_t multiplier = 128;
 
-  generatorv2 generator_2(2510586073u);
+  generatorv2 generator_2(2510586073);
   generator_2.set_lacunarity(lacunarity);
   generator_2.set_octaves(octaves);
   generator_2.set_gain(gain);
@@ -69,15 +66,15 @@ auto main() -> int {
 
   uint64_t framesCounter = 0;
 
-  while (!window.ShouldClose()) {
+  logger.info("Starting game loop...");
+  while (!WindowShouldClose()) {
     framesCounter++;
+
     if (IsKeyPressed(KEY_S)) {
       const std::string filename = "screenshot_" + std::to_string(std::chrono::system_clock::now().time_since_epoch().count()) + ".png";
-      auto img = raylib::Image(pixels, screenWidth, screenHeight);
-      img.FlipVertical();
-      img.Export(filename);
-      img.FlipVertical();
-      pixels = img.LoadColors();
+      Image screenshot = {pixels, screenWidth, screenHeight, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8};
+      ExportImage(screenshot, filename.c_str());
+      pixels = LoadImageColors(screenshot);
       logger.info("Screenshot saved: {}", filename);
     }
     if (IsKeyPressed(KEY_R)) {
@@ -124,7 +121,10 @@ auto main() -> int {
 
     EndDrawing();
   }
+
   UnloadImageColors(pixels);
+  UnloadTexture(gridTexture);
+  CloseWindow();
 
   return 0;
 }

@@ -7,7 +7,7 @@
 #include "nlohmann/json.hpp"
 #include "raylib.h"
 
-#include "logger_decorator.hpp"
+#include "logger/logger_facade.hpp"
 
 #include "game.hpp"
 

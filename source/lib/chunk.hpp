@@ -19,7 +19,7 @@ class chunk {
 public:
   chunk() {}
   chunk(std::vector<block> _blocks, int _chunk_x, int _chunk_y, int _chunk_z)
-      : blocks(std::move(_blocks)), chunk_x(_chunk_x), chunk_y(_chunk_y), chunk_z(_chunk_z) {}
+      : blocks(std::move(_blocks)), chunk_coor_x(_chunk_x), chunk_coor_y(_chunk_y), chunk_coor_z(_chunk_z) {}
 
   ~chunk() { unload_model(); }
 
@@ -41,12 +41,12 @@ public:
 
   inline benlib::Vector3i chunk_size() const noexcept { return {chunk_size_x, chunk_size_y, chunk_size_z}; }
 
-  inline benlib::Vector3i get_position() const noexcept { return {chunk_x, chunk_y, chunk_z}; }
+  inline benlib::Vector3i get_position() const noexcept { return {chunk_coor_x, chunk_coor_y, chunk_coor_z}; }
 
   inline void set_chuck_pos(const int x, const int y, const int z) noexcept {
-    chunk_x = x;
-    chunk_y = y;
-    chunk_z = z;
+    chunk_coor_x = x;
+    chunk_coor_y = y;
+    chunk_coor_z = z;
   }
 
   // From chunk position to real position
@@ -114,9 +114,9 @@ protected:
   std::unique_ptr<Model> model = nullptr;
 
   // Chunk coordinates
-  int chunk_x = 0;
-  int chunk_y = 0;
-  int chunk_z = 0;
+  int chunk_coor_x = 0;
+  int chunk_coor_y = 0;
+  int chunk_coor_z = 0;
 
   bool is_active = true;
   bool is_visible = true;

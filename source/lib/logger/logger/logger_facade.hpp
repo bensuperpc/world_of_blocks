@@ -8,11 +8,26 @@
 #include <string_view>
 #include <vector>
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push 
+#pragma GCC system_header
+#endif
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang system_header
+#endif
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/stopwatch.h"
 #include <spdlog/async.h>
 #include <spdlog/spdlog.h>
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 class logger_decorator final {
 public:

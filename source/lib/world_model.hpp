@@ -12,7 +12,7 @@
 #include "math.hpp"
 
 // spdlog
-#include "logger_decorator.hpp"
+#include "logger/logger_facade.hpp"
 
 class world_model {
 public:

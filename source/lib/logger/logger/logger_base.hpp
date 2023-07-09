@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <string>
 
-#include "logger_decorator.hpp"
+#include "logger/logger_facade.hpp"
 
 class logger_base {
 protected:
