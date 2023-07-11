@@ -1,5 +1,3 @@
-#include "generatorv1.hpp"
-
 #include <benchmark/benchmark.h>
 
 #ifndef FASTNOISE_PERLINNOISE_HPP_INCLUDED
@@ -11,9 +9,9 @@
 #pragma clang system_header
 #endif
 #include "FastNoise/FastNoise.h"
-#include "PerlinNoise.hpp"
 #endif
 
+/*
 static void generate_3d_word(benchmark::State &state) {
   auto size = state.range(0);
   siv::PerlinNoise::seed_type seed = 2510586073u;
@@ -77,3 +75,4 @@ static void generate_2d_chunk(benchmark::State &state) {
   state.SetBytesProcessed(state.iterations() * sizeof(chunk));
 }
 BENCHMARK(generate_2d_chunk)->Name("generate_2d_chunk")->RangeMultiplier(2)->Range(1, 1)->ThreadRange(1, 1);
+*/

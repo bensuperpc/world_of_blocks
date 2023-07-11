@@ -102,6 +102,7 @@ if(NOT WIN32)
   include(../cmake/lib/fast_noise2.cmake)
   include(../cmake/lib/spdlog.cmake)
   include(../cmake/lib/json.cmake)
+  include(../cmake/utile/ccache.cmake)
 
   # Add tests
   add_test_fn(generator_test)

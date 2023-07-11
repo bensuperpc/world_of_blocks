@@ -1,4 +1,5 @@
 #include "game.hpp"
+#include "raylib.h"
 
 game::game(nlohmann::json &_config_json) : config_json(_config_json) {}
 
@@ -20,7 +21,7 @@ void game::run() {
   debug_menu1 = std::make_shared<debug_menu>(*game_context1.get());
   game_classes.push_back(debug_menu1);
 
-  auxillary_thread = std::thread(&game::auxillary_thread_game_logic, this);
+  auxillary_thread = std::async(std::launch::async, &game::auxillary_thread_game_logic, this);
 
   //window = std::make_unique<raylib::Window>(game_context1->screen_width, game_context1->screen_height, "World of blocks");
   InitWindow(game_context1->screen_width, game_context1->screen_height, "World of blocks");
@@ -72,7 +73,15 @@ void game::run() {
     game_context1->frame_count++;
   }
 
-  auxillary_thread.join();
+  //auxillary_thread.wait();
+  // wait 1500ms for auxillary thread to finish std::future_status::timeout
+
+  if (auxillary_thread.wait_for(std::chrono::milliseconds(1500)) == std::future_status::timeout) {
+    std::cout << "auxillary_thread.wait_for(std::chrono::milliseconds(1500)) == std::future_status::timeout" << std::endl;
+    auxillary_thread.wait();
+  }
+
+
 
   // Unload chunks and textures before ending openGL !
 

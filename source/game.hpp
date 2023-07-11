@@ -31,7 +31,6 @@ extern "C" {
 #include "block.hpp"
 #include "block_utils.hpp"
 #include "chunk.hpp"
-#include "generatorv1.hpp"
 #include "player.hpp"
 #include "world.hpp"
 #include "world_model.hpp"
@@ -60,8 +59,7 @@ private:
   std::vector<std::shared_ptr<game_class>> game_classes;
 
   nlohmann::json &config_json;
-
-  std::thread auxillary_thread;
+  std::future<void> auxillary_thread;
 
   bool game_running = true;
 

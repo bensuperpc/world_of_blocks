@@ -30,9 +30,9 @@ project(
 include(../../cmake/lib/raygui.cmake)
 include(../../cmake/lib/raylib.cmake)
 include(../../cmake/lib/openmp.cmake)
-include(../../cmake/lib/perlin_noise.cmake)
 include(../../cmake/lib/fast_noise2.cmake)
 include(../../cmake/lib/json.cmake)
+include(../../cmake/utile/ccache.cmake)
 
 add_subdirectory(logger)
 
@@ -54,8 +54,7 @@ set(HEADERS
     game_context.hpp
     chunk.hpp
     generator.hpp
-    generatorv1.hpp
-    generatorv2.hpp
+    generator.hpp
     raygui_cpp.hpp
 )
 

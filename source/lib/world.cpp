@@ -70,7 +70,6 @@ void world::clear() {
 void world::update_game_input() {
   if (IsKeyPressed(KEY_R)) {
     seed = std::random_device()();
-    genv1.reseed(this->seed);
     genv2.reseed(this->seed);
     free_world = true;
     logger->info("seed: {}", seed);
@@ -102,6 +101,12 @@ void world::update_opengl_logic() {
 
     if (!current_chunk->is_active_chunk()) {
       it = chunks.erase(it);
+      continue;
+    }
+
+    if (!current_chunk->has_model()) {
+      generate_chunk_models(*current_chunk);
+      continue;
     }
   }
 }
@@ -166,10 +171,6 @@ if (closest_collision.hit) {
     [[maybe_unused]] auto &blocks = current_chunk.get_blocks();
 
     auto &player1_pose = _game_context_ref.player_chunk_pos;
-
-    if (!current_chunk.has_model()) {
-      generate_chunk_models(current_chunk);
-    }
 
     if (!current_chunk.has_model()) {
       continue;

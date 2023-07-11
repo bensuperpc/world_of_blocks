@@ -34,8 +34,7 @@
 #include "chunk.hpp"
 #include "game_class.hpp"
 #include "game_context.hpp"
-#include "generatorv1.hpp"
-#include "generatorv2.hpp"
+#include "generator.hpp"
 #include "world_model.hpp"
 
 #include "logger/logger_base.hpp"
@@ -64,10 +63,9 @@ public:
   void update_draw2d() override;
   void update_draw3d() override;
 
-  siv::PerlinNoise::seed_type seed = 2510586073u;
+  int32_t seed = 251058607;
 
-  generatorv1 genv1 = generatorv1(this->seed);
-  generatorv2 genv2 = generatorv2(this->seed);
+  generator genv2 = generator(seed);
 
   world_model world_md = world_model();
 

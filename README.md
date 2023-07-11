@@ -1,10 +1,10 @@
 # world_of_blocks
 
-A voxel-based game engine written in C++20 and [Raylib](https://www.raylib.com/), inspired by [Minecraft](https://www.minecraft.net/).
+A voxel-based game engine written in C++20/C99 and [Raylib](https://www.raylib.com/), inspired by [Minecraft](https://www.minecraft.net/).
 
 ## About
 
-This game is in early development and many features are not yet implemented. (Like saves, multiplayer, etc.)
+This game is in very early development and many features are not yet implemented. (Like saves, multiplayer, etc.)
 
 ## Table of Contents
 
@@ -26,4 +26,15 @@ See the [BUILDING](BUILDING.md) document.
 
 See the [CONTRIBUTING](CONTRIBUTING.md) document.
 
+### Libraries
+
+- [Raylib](https://www.raylib.com/) 4.5.0 or later
+- [Raygui](https://www.raylib.com/)
+- [GLFW](https://www.glfw.org/) 3.3.4 or later
+- [FastNoise2](https://github.com/Auburn/FastNoise2)
+- [Google Test](https://github.com/google/googletest)
+- [Google Benchmark](https://github.com/google/benchmark)
+
 ## Licensing
+
+See the [MIT LICENSE](LICENSE) document.

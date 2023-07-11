@@ -9,7 +9,7 @@
 #                                                            #
 #  BenLib, 2021                                              #
 #  Created: 16, March, 2021                                  #
-#  Modified: 17, March, 2021                                 #
+#  Modified: 11, July, 2023                                  #
 #  file: CMakeLists.txt                                      #
 #  CMake                                                     #
 #  Source:                                                   #
@@ -29,10 +29,19 @@ project(
     LANGUAGES NONE
 )
 
+include(../../../cmake/lib/spdlog.cmake)
+
+#add_library(${PROJECT_NAME} INTERFACE ${HEADERS} ${SOURCES})
+#target_precompile_headers(${PROJECT_NAME} INTERFACE ${HEADERS})
+
+set(HEADERS
+    logger/logger_base.hpp
+    logger/logger_facade.hpp
+)
 
 # ---- Declare library ----
 
-add_library(logger_logger INTERFACE)
+add_library(logger_logger INTERFACE ${HEADERS})
 add_library(logger::logger ALIAS logger_logger)
 
 set_property(
@@ -47,3 +56,9 @@ target_include_directories(
 )
 
 target_compile_features(logger_logger INTERFACE cxx_std_20)
+
+target_link_libraries(
+    logger_logger ${warning_guard}
+    INTERFACE
+    spdlog::spdlog
+)
