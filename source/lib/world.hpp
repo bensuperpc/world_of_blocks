@@ -32,14 +32,14 @@
 // Cube lib
 #include "block.hpp"
 #include "chunk.hpp"
-#include "game_class.hpp"
+#include "gameElementHandler.hpp"
 #include "game_context.hpp"
 #include "generator.hpp"
 #include "world_model.hpp"
 
 #include "logger/logger_base.hpp"
 
-class world : public game_class {
+class world : public gameElementHandler {
 public:
   world(game_context &game_context_ref, nlohmann::json &_config_json);
 
@@ -56,12 +56,13 @@ public:
 
   void clear();
 
-  void update_game_input() override;
-  void update_game_logic() override;
+  void updateGameInput() override;
+  void updateGameLogic() override;
 
-  void update_opengl_logic() override;
-  void update_draw2d() override;
-  void update_draw3d() override;
+  void updateOpenglLogic() override;
+  void updateDraw2d() override;
+  void updateDraw3d() override;
+  void updateDrawInterface() override;
 
   int32_t seed = 251058607;
 

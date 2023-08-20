@@ -12,24 +12,25 @@
 
 // World of blocks
 #include "chunk.hpp"
-#include "game_class.hpp"
+#include "gameElementHandler.hpp"
 #include "game_context.hpp"
 
 // spdlog
 #include "logger/logger_facade.hpp"
 
-class player : public game_class {
+class player : public gameElementHandler {
 public:
   player(game_context &game_context_ref);
 
   ~player();
 
-  void update_game_input() override;
-  void update_game_logic() override;
+  void updateGameInput() override;
+  void updateGameLogic() override;
 
-  void update_opengl_logic() override;
-  void update_draw2d() override;
-  void update_draw3d() override;
+  void updateOpenglLogic() override;
+  void updateDraw2d() override;
+  void updateDraw3d() override;
+  void updateDrawInterface() override;
 
   Vector3 get_position() const;
 

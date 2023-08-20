@@ -6,28 +6,28 @@ debug_menu::debug_menu(game_context &game_context_ref) : _game_context_ref(game_
 
 debug_menu::~debug_menu() {}
 
-void debug_menu::update_game_input() {
+void debug_menu::updateGameInput() {
   if (IsKeyPressed(KEY_F3)) {
-    last_action_time = std::chrono::steady_clock::now();
+    _lastUpdateInput = std::chrono::steady_clock::now();
     is_visible = !is_visible;
   }
   if (IsKeyPressed(KEY_G)) {
-    last_action_time = std::chrono::steady_clock::now();
+    _lastUpdateInput = std::chrono::steady_clock::now();
     block_grid = !block_grid;
   }
 }
 
-void debug_menu::update_game_logic() {}
+void debug_menu::updateGameLogic() {}
 
-void debug_menu::update_opengl_logic() {}
+void debug_menu::updateOpenglLogic() {}
 
-void debug_menu::update_draw3d() {
+void debug_menu::updateDraw3d() {
   if (block_grid) {
     DrawGrid(256, 1.0f);
   }
 }
 
-void debug_menu::update_draw2d() {
+void debug_menu::updateDraw2d() {
   if (!this->is_visible) {
     return;
   }
@@ -77,3 +77,5 @@ void debug_menu::update_draw2d() {
   _game_context_ref.triangles_on_screen_count = 0;
   _game_context_ref.vectices_on_screen_count = 0;
 }
+
+void debug_menu::updateDrawInterface() {}

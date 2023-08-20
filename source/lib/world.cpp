@@ -67,7 +67,7 @@ void world::clear() {
   logger->debug("All chunks have been cleared");
 }
 
-void world::update_game_input() {
+void world::updateGameInput() {
   if (IsKeyPressed(KEY_R)) {
     seed = std::random_device()();
     genv2.reseed(this->seed);
@@ -80,9 +80,9 @@ void world::update_game_input() {
   }
 }
 
-void world::update_game_logic() {}
+void world::updateGameLogic() {}
 
-void world::update_opengl_logic() {
+void world::updateOpenglLogic() {
   std::lock_guard<std::mutex> lock(world_generator_mutex);
   if (free_world) {
     clear();
@@ -111,7 +111,7 @@ void world::update_opengl_logic() {
   }
 }
 
-void world::update_draw3d() {
+void world::updateDraw3d() {
   std::lock_guard<std::mutex> lock(world_generator_mutex);
   /*
   // TODO: optimize to check only the blocks around the player
@@ -218,7 +218,9 @@ if (closest_collision.hit) {
   }
 }
 
-void world::update_draw2d() {}
+void world::updateDraw2d() {}
+
+void world::updateDrawInterface() {}
 
 void world::generate_world_thread_func() {
   while (generate_world_thread_running) {
@@ -270,3 +272,4 @@ void world::generate_world_thread_func() {
 
   logger->info("World generation thread stopped");
 }
+

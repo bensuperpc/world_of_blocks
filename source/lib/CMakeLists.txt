@@ -42,6 +42,7 @@ set(SOURCES
     player.cpp
     debug_menu.cpp
     game_context.cpp
+    GameBase.cpp
 )
 
 set(HEADERS
@@ -56,6 +57,7 @@ set(HEADERS
     generator.hpp
     generator.hpp
     raygui_cpp.hpp
+    GameBase.hpp
 )
 
 #add_library(${PROJECT_NAME} INTERFACE)

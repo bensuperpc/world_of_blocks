@@ -36,7 +36,7 @@ extern "C" {
 #include "world_model.hpp"
 
 #include "debug_menu.hpp"
-#include "game_class.hpp"
+#include "gameElementHandler.hpp"
 #include "game_context.hpp"
 #include "nlohmann/json.hpp"
 
@@ -55,8 +55,9 @@ private:
   std::shared_ptr<player> player1;
   std::shared_ptr<world> world_new;
   std::shared_ptr<game_context> game_context1;
+  std::mutex _mutex;
 
-  std::vector<std::shared_ptr<game_class>> game_classes;
+  std::vector<std::shared_ptr<gameElementHandler>> game_classes;
 
   nlohmann::json &config_json;
   std::future<void> auxillary_thread;

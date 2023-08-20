@@ -11,26 +11,27 @@
 #include "raylib.h"
 
 // World of blocks
-#include "game_class.hpp"
+#include "gameElementHandler.hpp"
 #include "vector.hpp"
 
-#include "game_class.hpp"
+#include "gameElementHandler.hpp"
 #include "game_context.hpp"
 
 #include "nlohmann/json.hpp"
 
-class game_context : public game_class {
+class game_context : public gameElementHandler {
 public:
-  game_context(std::vector<std::shared_ptr<game_class>> &game_classes, nlohmann::json &_config_json);
+  game_context(std::vector<std::shared_ptr<gameElementHandler>> &game_classes, nlohmann::json &_config_json);
 
   ~game_context();
 
-  void update_game_input() override;
-  void update_game_logic() override;
+  void updateGameInput() override;
+  void updateGameLogic() override;
 
-  void update_opengl_logic() override;
-  void update_draw2d() override;
-  void update_draw3d() override;
+  void updateOpenglLogic() override;
+  void updateDraw2d() override;
+  void updateDraw3d() override;
+  void updateDrawInterface() override;
 
   void load_texture();
   void unload_texture();
@@ -65,7 +66,7 @@ public:
 
   nlohmann::json &config_json;
 
-  std::vector<std::shared_ptr<game_class>> &game_classes;
+  std::vector<std::shared_ptr<gameElementHandler>> &game_classes;
 
   // Debug menu
   bool *display_debug_menu = nullptr;

@@ -50,7 +50,7 @@ void game::run() {
     }
 
     for (auto &item : game_classes) {
-      item->update_opengl_logic();
+      item->updateOpenglLogic();
     }
 
     BeginDrawing();
@@ -58,15 +58,20 @@ void game::run() {
     ClearBackground(RAYWHITE);
 
     BeginMode3D(player1->camera);
-
+    _mutex.lock();
     for (auto &item : game_classes) {
-      item->update_draw3d();
+      item->updateDraw3d();
     }
+    _mutex.unlock();
 
     EndMode3D();
 
     for (auto &item : game_classes) {
-      item->update_draw2d();
+      item->updateDraw2d();
+    }
+
+    for (auto &item : game_classes) {
+      item->updateDrawInterface();
     }
 
     EndDrawing();
@@ -106,19 +111,43 @@ void game::auxillary_thread_game_logic() {
         continue;
       }
 
-      // Avoid multiple keypresses with a delay
-      if (std::chrono::steady_clock::now() - item->last_action_time < item->action_cooldown) {
+      // Update input
+      if (std::chrono::steady_clock::now() - item->_lastUpdateInput < item->_inputUpdateCooldown) {
         continue;
       }
-      item->update_game_input();
-      item->update_game_logic();
+      _mutex.lock();
+      item->updateGameInput();
+      _mutex.unlock();
+      item->_lastUpdateInput = std::chrono::steady_clock::now();
     }
 
+    for (auto &item : game_classes) {
+      // Skip inactive items
+      if (!item->is_active) {
+        continue;
+      }
+
+      // Update Game logic
+      if (std::chrono::steady_clock::now() - item->_lastUpdateLogic < item->_UpdateLogicCooldown) {
+        continue;
+      }
+      //_mutex.lock();
+      item->updateGameLogic();
+      //_mutex.unlock();
+      item->_lastUpdateLogic = std::chrono::steady_clock::now();
+    }
+
+    /*
+    // Ensure that the Game runs at the target fps
     auto end_time = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
     auto sleep_time = std::chrono::milliseconds(1000 / game_context1->target_fps) - duration;
-    std::this_thread::sleep_for(sleep_time);
-  }
 
+    if (sleep_time > std::chrono::milliseconds(2)) {
+      std::this_thread::sleep_for(sleep_time);
+    }
+    */
+  }
+  
   std::cout << "auxillary_thread_game_logic() exiting" << std::endl;
 }

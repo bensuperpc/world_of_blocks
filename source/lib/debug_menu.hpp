@@ -11,22 +11,23 @@
 // Raylib
 #include "raylib.h"
 
-#include "game_class.hpp"
+#include "gameElementHandler.hpp"
 #include "game_context.hpp"
 #include "vector.hpp"
 
-class debug_menu : public game_class {
+class debug_menu : public gameElementHandler {
 public:
   debug_menu(game_context &game_context_ref);
 
   ~debug_menu();
 
-  void update_game_input() override;
-  void update_game_logic() override;
+  void updateGameInput() override;
+  void updateGameLogic() override;
 
-  void update_opengl_logic() override;
-  void update_draw2d() override;
-  void update_draw3d() override;
+  void updateOpenglLogic() override;
+  void updateDraw2d() override;
+  void updateDraw3d() override;
+  void updateDrawInterface() override;
 
   game_context &_game_context_ref;
 

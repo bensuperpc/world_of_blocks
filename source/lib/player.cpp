@@ -17,7 +17,7 @@ Vector3 player::get_position() const { return this->camera.position; }
 
 player::~player() {}
 
-void player::update_game_input() {
+void player::updateGameInput() {
   closest_collision = {0};
   closest_collision.hit = false;
   closest_collision.distance = std::numeric_limits<float>::max();
@@ -70,11 +70,11 @@ void player::update_game_input() {
   _game_context_ref.player_pos = std::move(camera.position);
 }
 
-void player::update_game_logic() {}
+void player::updateGameLogic() {}
 
-void player::update_opengl_logic() {}
+void player::updateOpenglLogic() {}
 
-void player::update_draw2d() {
+void player::updateDraw2d() {
   // Draw crosshair in the middle of the screen
   DrawLine(_game_context_ref.screen_middle.x - 10, _game_context_ref.screen_middle.y, _game_context_ref.screen_middle.x + 10, _game_context_ref.screen_middle.y,
            SKYBLUE);
@@ -82,4 +82,6 @@ void player::update_draw2d() {
            SKYBLUE);
 }
 
-void player::update_draw3d() {}
+void player::updateDraw3d() {}
+
+void player::updateDrawInterface() {}
