@@ -53,7 +53,7 @@ set(HEADERS
     player.hpp
     debug_menu.hpp
     game_context.hpp
-    chunk.hpp
+    Chunk.hpp
     generator.hpp
     generator.hpp
     raygui_cpp.hpp

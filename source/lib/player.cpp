@@ -65,8 +65,8 @@ void player::updateGameInput() {
 
   UpdateCameraPro(&camera, movement, rotation, zoom);
 
-  // Update player chunk position in game context
-  _game_context_ref.player_chunk_pos = std::move(chunk::get_chunk_position(camera.position));
+  // Update player Chunk position in game context
+  _game_context_ref.player_chunk_pos = std::move(Chunk::get_chunk_position(camera.position));
   _game_context_ref.player_pos = std::move(camera.position);
 }
 

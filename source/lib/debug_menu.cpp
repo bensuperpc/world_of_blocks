@@ -38,7 +38,7 @@ void debug_menu::updateDraw2d() {
   // Draw FPS
   DrawFPS(8, 8);
 
-  // Draw block info
+  // Draw Block info
   /*
   std::string block_info ="XYZ: " + std::to_string(block_info_pos.x) + ", " + std::to_string(block_info_pos.y) + ", " +
   std::to_string(block_info_pos.z); DrawText(block_info.c_str(), 10, 30, 20, BLACK); DrawText(("Index: " +
@@ -61,7 +61,7 @@ void debug_menu::updateDraw2d() {
                .c_str(),
            10, 250, 20, BLACK);
 
-  DrawText(("Player chunk position: " + std::to_string(_game_context_ref.player_chunk_pos.x) + ", " + std::to_string(_game_context_ref.player_chunk_pos.y) +
+  DrawText(("Player Chunk position: " + std::to_string(_game_context_ref.player_chunk_pos.x) + ", " + std::to_string(_game_context_ref.player_chunk_pos.y) +
             ", " + std::to_string(_game_context_ref.player_chunk_pos.z))
                .c_str(),
            10, 270, 20, BLACK);

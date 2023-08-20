@@ -6,13 +6,13 @@
 
 #include "block_type.hpp"
 
-class block {
+class Block {
 public:
-  explicit block(block_type::block_t _block_type) : block_type(_block_type) {}
+  explicit Block(block_type::block_t _block_type) : block_type(_block_type) {}
 
-  block() {}
+  Block() {}
 
-  ~block() {}
+  ~Block() {}
 
   [[nodiscard]] inline block_type::block_t get_block_type() const noexcept { return block_type; }
 

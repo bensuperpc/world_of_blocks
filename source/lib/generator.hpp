@@ -25,8 +25,8 @@
 #endif
 
 // Cube lib
-#include "block.hpp"
-#include "chunk.hpp"
+#include "Block.hpp"
+#include "Chunk.hpp"
 #include "math.hpp"
 class generator {
 public:
@@ -174,19 +174,19 @@ public:
     return heightmap;
   }
 
-  std::unique_ptr<chunk> generate_chunk(const int32_t chunk_x, const int32_t chunk_y, const int32_t chunk_z, const bool generate_3d_terrain) {
-    const int32_t real_x = chunk_x * chunk::chunk_size_x;
-    const int32_t real_y = chunk_y * chunk::chunk_size_y;
-    const int32_t real_z = chunk_z * chunk::chunk_size_z;
+  std::unique_ptr<Chunk> generate_chunk(const int32_t chunk_x, const int32_t chunk_y, const int32_t chunk_z, const bool generate_3d_terrain) {
+    const int32_t real_x = chunk_x * Chunk::chunk_size_x;
+    const int32_t real_y = chunk_y * Chunk::chunk_size_y;
+    const int32_t real_z = chunk_z * Chunk::chunk_size_z;
 
-    std::vector<block> blocks;
+    std::vector<Block> blocks;
 
-    std::unique_ptr<chunk> _chunk = std::make_unique<chunk>();
+    std::unique_ptr<Chunk> _chunk = std::make_unique<Chunk>();
 
     if (generate_3d_terrain) {
-      blocks = std::move(generate_3d(real_x, real_y, real_z, chunk::chunk_size_x, chunk::chunk_size_y, chunk::chunk_size_z));
+      blocks = std::move(generate_3d(real_x, real_y, real_z, Chunk::chunk_size_x, Chunk::chunk_size_y, Chunk::chunk_size_z));
     } else {
-      blocks = std::move(generate_2d(real_x, real_y, real_z, chunk::chunk_size_x, chunk::chunk_size_y, chunk::chunk_size_z));
+      blocks = std::move(generate_2d(real_x, real_y, real_z, Chunk::chunk_size_x, Chunk::chunk_size_y, Chunk::chunk_size_z));
     }
 
     _chunk->set_blocks(blocks);
@@ -195,12 +195,12 @@ public:
     return _chunk;
   }
 
-  [[nodiscard]] std::vector<std::unique_ptr<chunk>> generate_chunks(const int32_t begin_chunk_x, const int32_t begin_chunk_y, const int32_t begin_chunk_z,
+  [[nodiscard]] std::vector<std::unique_ptr<Chunk>> generate_chunks(const int32_t begin_chunk_x, const int32_t begin_chunk_y, const int32_t begin_chunk_z,
                                                                     const uint32_t size_x, const uint32_t size_y, const uint32_t size_z,
                                                                     const bool generate_3d_terrain) {
     constexpr bool debug = false;
 
-    std::vector<std::unique_ptr<chunk>> chunks;
+    std::vector<std::unique_ptr<Chunk>> chunks;
     chunks.reserve(size_x * size_y * size_z);
     /*
     if (chunks.size() < size_x * size_y * size_z) {
@@ -223,20 +223,20 @@ public:
     return chunks;
   }
 
-  std::vector<block> generate_2d(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
+  std::vector<Block> generate_2d(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
                                  const uint32_t size_z) {
     constexpr bool debug = false;
 
     std::vector<uint32_t> heightmap;
-    std::vector<block> blocks = std::vector<block>(size_x * size_y * size_z, block());
+    std::vector<Block> blocks = std::vector<Block>(size_x * size_y * size_z, Block());
 
     heightmap = std::move(generate_2d_heightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z));
 
     // Generate blocks
     for (uint32_t x = 0; x < size_x; x++) {
       for (uint32_t z = 0; z < size_z; z++) {
-        // Noise value is divided by 4 to make it smaller and it is used as the height of the block (z)
-        std::vector<block>::size_type vec_index = math::convert_to_1d(x, z, size_x, size_z);
+        // Noise value is divided by 4 to make it smaller and it is used as the height of the Block (z)
+        std::vector<Block>::size_type vec_index = math::convert_to_1d(x, z, size_x, size_z);
 
         uint32_t noise_value = heightmap[vec_index] / 4;
 
@@ -248,9 +248,9 @@ public:
             std::cout << "x: " << x << ", z: " << z << ", y: " << y << " index: " << vec_index << ", noise: " << static_cast<int32_t>(noise_value) << std::endl;
           }
 
-          block &current_block = blocks[vec_index];
+          Block &current_block = blocks[vec_index];
 
-          // If the noise value is greater than the current block, make it air
+          // If the noise value is greater than the current Block, make it air
           if (noise_value > 120) {
             current_block.block_type = block_type::stone;
             continue;
@@ -261,11 +261,11 @@ public:
     return blocks;
   }
 
-  std::vector<block> generate_3d(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
+  std::vector<Block> generate_3d(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
                                  const uint32_t size_z) {
     constexpr bool debug = false;
 
-    std::vector<block> blocks = std::vector<block>(size_x * size_y * size_z, block());
+    std::vector<Block> blocks = std::vector<Block>(size_x * size_y * size_z, Block());
 
     std::vector<uint32_t> heightmap = generate_3d_heightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z);
 

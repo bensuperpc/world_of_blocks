@@ -11,7 +11,7 @@
 #include "raylib.h"
 
 // World of blocks
-#include "chunk.hpp"
+#include "Chunk.hpp"
 #include "gameElementHandler.hpp"
 #include "game_context.hpp"
 
@@ -38,9 +38,9 @@ public:
 
   // Ray collision
   Ray ray;
-  std::vector<std::pair<block *, RayCollision>> collisions;
+  std::vector<std::pair<Block *, RayCollision>> collisions;
   RayCollision closest_collision = {false, 0, {0, 0, 0}, {0, 0, 0}};
-  block *closest_block = nullptr;
+  Block *closest_block = nullptr;
 
 private:
   game_context &_game_context_ref;

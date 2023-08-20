@@ -30,8 +30,8 @@
 #include "raylib.h"
 
 // Cube lib
-#include "block.hpp"
-#include "chunk.hpp"
+#include "Block.hpp"
+#include "Chunk.hpp"
 #include "gameElementHandler.hpp"
 #include "game_context.hpp"
 #include "generator.hpp"
@@ -48,9 +48,9 @@ public:
   void generate_world();
   void generate_world_models();
 
-  std::unique_ptr<chunk> generate_chunk(const int32_t, const int32_t, const int32_t, bool);
-  void generate_chunk_models(chunk &);
-  bool is_chunk_exist(std::list<std::unique_ptr<chunk>>& _chunks, const int32_t, const int32_t, const int32_t) const noexcept;
+  std::unique_ptr<Chunk> generate_chunk(const int32_t, const int32_t, const int32_t, bool);
+  void generate_chunk_models(Chunk &);
+  bool is_chunk_exist(std::list<std::unique_ptr<Chunk>>& _chunks, const int32_t, const int32_t, const int32_t) const noexcept;
 
   void generate_world_thread_func();
 
@@ -70,8 +70,8 @@ public:
 
   world_model world_md = world_model();
 
-  std::list<std::unique_ptr<chunk>> chunks;
-  std::list<std::unique_ptr<chunk>> tmpChunks;
+  std::list<std::unique_ptr<Chunk>> chunks;
+  std::list<std::unique_ptr<Chunk>> tmpChunks;
 
   int32_t render_distance = 4;
   int32_t view_distance = 6;

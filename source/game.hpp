@@ -28,9 +28,9 @@ extern "C" {
 #include "raylib_intro.h"
 }
 
-#include "block.hpp"
+#include "Block.hpp"
 #include "block_utils.hpp"
-#include "chunk.hpp"
+#include "Chunk.hpp"
 #include "player.hpp"
 #include "world.hpp"
 #include "world_model.hpp"

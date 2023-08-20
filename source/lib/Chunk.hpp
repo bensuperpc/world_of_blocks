@@ -9,19 +9,19 @@
 #include <vector>
 
 // Cube lib
-#include "block.hpp"
+#include "Block.hpp"
 #include "math.hpp"
 
 // Raylib
 #include "raylib.h"
 
-class chunk {
+class Chunk {
 public:
-  chunk() {}
-  chunk(std::vector<block> _blocks, int _chunk_x, int _chunk_y, int _chunk_z)
+  Chunk() {}
+  Chunk(std::vector<Block> _blocks, int _chunk_x, int _chunk_y, int _chunk_z)
       : blocks(std::move(_blocks)), chunk_coor_x(_chunk_x), chunk_coor_y(_chunk_y), chunk_coor_z(_chunk_z) {}
 
-  ~chunk() { unload_model(); }
+  ~Chunk() { unload_model(); }
 
   void unload_model() noexcept {
     if (model == nullptr) {
@@ -31,13 +31,13 @@ public:
     model = nullptr;
   }
 
-  inline std::vector<block> &get_blocks() { return blocks; }
+  inline std::vector<Block> &get_blocks() { return blocks; }
 
-  inline block &get_block(const int x, const int y, const int z) { return blocks[math::convert_to_1d(x, y, z, chunk_size_x, chunk_size_y, chunk_size_z)]; }
+  inline Block &get_block(const int x, const int y, const int z) { return blocks[math::convert_to_1d(x, y, z, chunk_size_x, chunk_size_y, chunk_size_z)]; }
 
-  inline void set_blocks(std::vector<block> &_blocks) { this->blocks = std::move(_blocks); }
+  inline void set_blocks(std::vector<Block> &_blocks) { this->blocks = std::move(_blocks); }
 
-  inline std::vector<block>::size_type size() const noexcept { return blocks.size(); }
+  inline std::vector<Block>::size_type size() const noexcept { return blocks.size(); }
 
   inline benlib::Vector3i chunk_size() const noexcept { return {chunk_size_x, chunk_size_y, chunk_size_z}; }
 
@@ -49,14 +49,14 @@ public:
     chunk_coor_z = z;
   }
 
-  // From chunk position to real position
-  [[nodiscard]] static inline Vector3 get_real_position(const chunk &chunk) {
-    auto chunk_pos = chunk.get_position();
-    return {static_cast<float>(chunk_pos.x * chunk::chunk_size_x), static_cast<float>(chunk_pos.y * chunk::chunk_size_y),
-            static_cast<float>(chunk_pos.z * chunk::chunk_size_z)};
+  // From Chunk position to real position
+  [[nodiscard]] static inline Vector3 get_real_position(const Chunk &Chunk) {
+    auto chunk_pos = Chunk.get_position();
+    return {static_cast<float>(chunk_pos.x * Chunk::chunk_size_x), static_cast<float>(chunk_pos.y * Chunk::chunk_size_y),
+            static_cast<float>(chunk_pos.z * Chunk::chunk_size_z)};
   }
 
-  // From real position to chunk position
+  // From real position to Chunk position
   [[nodiscard]] static inline benlib::Vector3i get_chunk_position(const float x, const float y, const float z) {
     return {static_cast<int>((x < 0 ? std::floor(x / chunk_size_x) : x / chunk_size_x)),
             static_cast<int>((y < 0 ? std::floor(y / chunk_size_y) : y / chunk_size_y)),
@@ -110,7 +110,7 @@ public:
   static constexpr int chunk_size_z = 32;
 
 protected:
-  std::vector<block> blocks;
+  std::vector<Block> blocks;
   std::unique_ptr<Model> model = nullptr;
 
   // Chunk coordinates

@@ -21,16 +21,16 @@ world::~world() {
   clear();
 }
 
-std::unique_ptr<chunk> world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model) {
-  // Generate the chunk
+std::unique_ptr<Chunk> world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model) {
+  // Generate the Chunk
   auto start = std::chrono::high_resolution_clock::now();
-  std::unique_ptr<chunk> chunk_new = genv2.generate_chunk(x, y, z, true);
+  std::unique_ptr<Chunk> chunk_new = genv2.generate_chunk(x, y, z, true);
   auto end = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   logger->trace("Chunk generation (x: {}, y: {}, z: {}) took {}ms", x, y, z, duration.count());
 
-  // Add the chunk to the world
+  // Add the Chunk to the world
   if (generate_model) {
     generate_chunk_models(*chunk_new.get());
   }
@@ -38,7 +38,7 @@ std::unique_ptr<chunk> world::generate_chunk(const int32_t x, const int32_t y, c
   return chunk_new;
 }
 
-void world::generate_chunk_models(chunk &chunk_new) {
+void world::generate_chunk_models(Chunk &chunk_new) {
   auto start = std::chrono::high_resolution_clock::now();
   std::unique_ptr<Model> chunk_model = world_md.generate_chunk_model(chunk_new);
   chunk_model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = _game_context_ref._texture;
@@ -52,9 +52,9 @@ void world::generate_chunk_models(chunk &chunk_new) {
                 duration.count());
 }
 
-bool world::is_chunk_exist(std::list<std::unique_ptr<chunk>> &_chunks, const int32_t x, const int32_t y, const int32_t z) const noexcept {
-  auto it = std::find_if(_chunks.begin(), _chunks.end(), [&](const auto &chunk) {
-    auto chunk_pos = chunk->get_position();
+bool world::is_chunk_exist(std::list<std::unique_ptr<Chunk>> &_chunks, const int32_t x, const int32_t y, const int32_t z) const noexcept {
+  auto it = std::find_if(_chunks.begin(), _chunks.end(), [&](const auto &Chunk) {
+    auto chunk_pos = Chunk->get_position();
     return chunk_pos.x == x && chunk_pos.y == y && chunk_pos.z == z;
   });
 
@@ -92,7 +92,7 @@ void world::updateOpenglLogic() {
     return;
   }
 
-  // Check if each chunk are outsite the unload distance, it yes, free it
+  // Check if each Chunk are outsite the unload distance, it yes, free it
   for (auto it = chunks.begin(); it != chunks.end(); ++it) {
     auto current_chunk = (*it).get();
 
@@ -168,7 +168,7 @@ if (closest_collision.hit) {
       continue;
     }
 
-    chunk &current_chunk = *_chunk.get();
+    Chunk &current_chunk = *_chunk.get();
     auto chunk_coor = current_chunk.get_position();
     [[maybe_unused]] auto &blocks = current_chunk.get_blocks();
 
@@ -180,17 +180,17 @@ if (closest_collision.hit) {
 
     Model &current_model = *current_chunk.get_model();
 
-    auto chunk_pos = chunk::get_real_position(current_chunk);
+    auto chunk_pos = Chunk::get_real_position(current_chunk);
 
-    Vector3 chunk_pos_center = {static_cast<float>(chunk_coor.x * chunk::chunk_size_x + chunk::chunk_size_x / 2.0f),
-                                static_cast<float>(chunk_coor.y * chunk::chunk_size_y + chunk::chunk_size_y / 2.0f),
-                                static_cast<float>(chunk_coor.z * chunk::chunk_size_z + chunk::chunk_size_z / 2.0f)};
+    Vector3 chunk_pos_center = {static_cast<float>(chunk_coor.x * Chunk::chunk_size_x + Chunk::chunk_size_x / 2.0f),
+                                static_cast<float>(chunk_coor.y * Chunk::chunk_size_y + Chunk::chunk_size_y / 2.0f),
+                                static_cast<float>(chunk_coor.z * Chunk::chunk_size_z + Chunk::chunk_size_z / 2.0f)};
 
     // For debug menu
     if (*_game_context_ref.display_debug_menu) {
       _game_context_ref.vectices_on_world_count += static_cast<size_t>(current_model.meshes->vertexCount);
       _game_context_ref.triangles_on_world_count += static_cast<size_t>(current_model.meshes->triangleCount);
-      _game_context_ref.display_block_count += chunk::chunk_size_x * chunk::chunk_size_y * chunk::chunk_size_z;
+      _game_context_ref.display_block_count += Chunk::chunk_size_x * Chunk::chunk_size_y * Chunk::chunk_size_z;
       _game_context_ref.display_chunk_count++;
     }
 
@@ -211,11 +211,11 @@ if (closest_collision.hit) {
       _game_context_ref.vectices_on_screen_count += current_model.meshes->vertexCount;
       _game_context_ref.triangles_on_screen_count += current_model.meshes->triangleCount;
 
-      chunk_pos.x += static_cast<float>(chunk::chunk_size_x / 2.0f);
-      chunk_pos.y += static_cast<float>(chunk::chunk_size_y / 2.0f);
-      chunk_pos.z += static_cast<float>(chunk::chunk_size_z / 2.0f);
+      chunk_pos.x += static_cast<float>(Chunk::chunk_size_x / 2.0f);
+      chunk_pos.y += static_cast<float>(Chunk::chunk_size_y / 2.0f);
+      chunk_pos.z += static_cast<float>(Chunk::chunk_size_z / 2.0f);
 
-      DrawCubeWires(chunk_pos, static_cast<float>(chunk::chunk_size_x), static_cast<float>(chunk::chunk_size_y), static_cast<float>(chunk::chunk_size_z), RED);
+      DrawCubeWires(chunk_pos, static_cast<float>(Chunk::chunk_size_x), static_cast<float>(Chunk::chunk_size_y), static_cast<float>(Chunk::chunk_size_z), RED);
     }
   }
 }
@@ -251,7 +251,7 @@ void world::generate_world_thread_func() {
       chunks.splice(chunks.end(), tmpChunks);
     }
 
-    // Check if each chunk are outsite the unload distance, it yes, free it
+    // Check if each Chunk are outsite the unload distance, it yes, free it
     for (auto it = chunks.begin(); it != chunks.end(); ++it) {
       auto current_chunk = (*it).get();
       if (current_chunk == nullptr) {
@@ -261,14 +261,14 @@ void world::generate_world_thread_func() {
       auto chunk_coor = current_chunk->get_position();
       auto player_chunk_pos = _game_context_ref.player_chunk_pos;
 
-      // If chunk is too far away, free it
+      // If Chunk is too far away, free it
       if (std::abs(chunk_coor.x - player_chunk_pos.x) > unload_distance || std::abs(chunk_coor.y - player_chunk_pos.y) > unload_distance ||
           std::abs(chunk_coor.z - player_chunk_pos.z) > unload_distance) {
         current_chunk->set_active_chunk(false);
         continue;
       }
 
-      // If chunk is too far away, don't render it
+      // If Chunk is too far away, don't render it
       if (std::abs(chunk_coor.x - player_chunk_pos.x) > view_distance || std::abs(chunk_coor.y - player_chunk_pos.y) > view_distance ||
           std::abs(chunk_coor.z - player_chunk_pos.z) > view_distance) {
         current_chunk->set_visible_chunk(false);
