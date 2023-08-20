@@ -44,7 +44,7 @@ public:
     auto stdout_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     auto specific_file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(path, 1024 * 1024 * 20, 5);
 
-    stdout_sink->set_level(spdlog::level::debug);
+    stdout_sink->set_level(spdlog::level::trace);
     specific_file_sink->set_level(spdlog::level::trace);
 
     _sinks.push_back(stdout_sink);

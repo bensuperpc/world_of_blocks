@@ -131,6 +131,7 @@ void game::auxillary_thread_game_logic() {
       if (std::chrono::steady_clock::now() - item->_lastUpdateLogic < item->_UpdateLogicCooldown) {
         continue;
       }
+      
       //_mutex.lock();
       item->updateGameLogic();
       //_mutex.unlock();
@@ -148,6 +149,6 @@ void game::auxillary_thread_game_logic() {
     }
     */
   }
-  
+
   std::cout << "auxillary_thread_game_logic() exiting" << std::endl;
 }

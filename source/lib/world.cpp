@@ -16,12 +16,12 @@ world::~world() {
   if (generate_world_thread.joinable()) {
     generate_world_thread.join();
   }
-  std::lock_guard<std::mutex> lock(world_generator_mutex);
+  std::lock_guard<std::mutex> lock(_mutex);
 
   clear();
 }
 
-void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model) {
+std::unique_ptr<chunk> world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model) {
   // Generate the chunk
   auto start = std::chrono::high_resolution_clock::now();
   std::unique_ptr<chunk> chunk_new = genv2.generate_chunk(x, y, z, true);
@@ -34,7 +34,8 @@ void world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bo
   if (generate_model) {
     generate_chunk_models(*chunk_new.get());
   }
-  chunks.push_back(std::move(chunk_new));
+  // chunks.push_back(std::move(chunk_new));
+  return chunk_new;
 }
 
 void world::generate_chunk_models(chunk &chunk_new) {
@@ -51,19 +52,20 @@ void world::generate_chunk_models(chunk &chunk_new) {
                 duration.count());
 }
 
-bool world::is_chunk_exist(const int32_t x, const int32_t y, const int32_t z) const noexcept {
-  auto it = std::find_if(chunks.begin(), chunks.end(), [&](const auto &chunk) {
+bool world::is_chunk_exist(std::list<std::unique_ptr<chunk>> &_chunks, const int32_t x, const int32_t y, const int32_t z) const noexcept {
+  auto it = std::find_if(_chunks.begin(), _chunks.end(), [&](const auto &chunk) {
     auto chunk_pos = chunk->get_position();
     return chunk_pos.x == x && chunk_pos.y == y && chunk_pos.z == z;
   });
 
-  return it != chunks.end();
+  return it != _chunks.end();
 }
 
 void world::clear() {
   // Clear the chunks
   logger->debug("Clearing {} chunks...", chunks.size());
   chunks.clear();
+  tmpChunks.clear();
   logger->debug("All chunks have been cleared");
 }
 
@@ -83,7 +85,7 @@ void world::updateGameInput() {
 void world::updateGameLogic() {}
 
 void world::updateOpenglLogic() {
-  std::lock_guard<std::mutex> lock(world_generator_mutex);
+  std::lock_guard<std::mutex> lock(_mutex);
   if (free_world) {
     clear();
     free_world = false;
@@ -112,7 +114,7 @@ void world::updateOpenglLogic() {
 }
 
 void world::updateDraw3d() {
-  std::lock_guard<std::mutex> lock(world_generator_mutex);
+  std::lock_guard<std::mutex> lock(_mutex);
   /*
   // TODO: optimize to check only the blocks around the player
   for (size_t ci = 0; ci < world_new->chunks.size(); ci++) {
@@ -224,6 +226,11 @@ void world::updateDrawInterface() {}
 
 void world::generate_world_thread_func() {
   while (generate_world_thread_running) {
+    if (free_world) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(20));
+      continue;
+    }
+
     for (int32_t x = -render_distance; x <= render_distance; x++) {
       for (int32_t y = -render_distance; y <= render_distance; y++) {
         for (int32_t z = -render_distance; z <= render_distance; z++) {
@@ -231,14 +238,17 @@ void world::generate_world_thread_func() {
           int32_t chunk_y = _game_context_ref.player_chunk_pos.y + y;
           int32_t chunk_z = _game_context_ref.player_chunk_pos.z + z;
 
-          if (is_chunk_exist(chunk_x, chunk_y, chunk_z)) {
+          if (is_chunk_exist(chunks, chunk_x, chunk_y, chunk_z) || is_chunk_exist(tmpChunks, chunk_x, chunk_y, chunk_z)) {
             continue;
           }
-
-          std::lock_guard<std::mutex> lock(world_generator_mutex);
-          generate_chunk(chunk_x, chunk_y, chunk_z, false);
+          tmpChunks.push_back(generate_chunk(chunk_x, chunk_y, chunk_z, false));
         }
       }
+    }
+
+    if (!tmpChunks.empty()) {
+      std::lock_guard<std::mutex> lock(_mutex);
+      chunks.splice(chunks.end(), tmpChunks);
     }
 
     // Check if each chunk are outsite the unload distance, it yes, free it
@@ -272,4 +282,3 @@ void world::generate_world_thread_func() {
 
   logger->info("World generation thread stopped");
 }
-

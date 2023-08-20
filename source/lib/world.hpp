@@ -48,9 +48,9 @@ public:
   void generate_world();
   void generate_world_models();
 
-  void generate_chunk(const int32_t, const int32_t, const int32_t, bool);
+  std::unique_ptr<chunk> generate_chunk(const int32_t, const int32_t, const int32_t, bool);
   void generate_chunk_models(chunk &);
-  bool is_chunk_exist(const int32_t, const int32_t, const int32_t) const noexcept;
+  bool is_chunk_exist(std::list<std::unique_ptr<chunk>>& _chunks, const int32_t, const int32_t, const int32_t) const noexcept;
 
   void generate_world_thread_func();
 
@@ -71,12 +71,12 @@ public:
   world_model world_md = world_model();
 
   std::list<std::unique_ptr<chunk>> chunks;
+  std::list<std::unique_ptr<chunk>> tmpChunks;
 
   int32_t render_distance = 4;
   int32_t view_distance = 6;
   int32_t unload_distance = 8;
 
-  std::mutex world_generator_mutex;
   std::thread generate_world_thread;
   bool generate_world_thread_running = true;
 
