@@ -43,6 +43,7 @@ set(SOURCES
     debug_menu.cpp
     game_context.cpp
     GameBase.cpp
+    Generator.cpp
 )
 
 set(HEADERS
@@ -54,15 +55,14 @@ set(HEADERS
     debug_menu.hpp
     game_context.hpp
     Chunk.hpp
-    generator.hpp
-    generator.hpp
+    Generator.hpp
     raygui_cpp.hpp
     GameBase.hpp
 )
 
 #add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME} ${SOURCES})
-#target_precompile_headers(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/generator.hpp>)
+#target_precompile_headers(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/Generator.hpp>)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC raylib)
 target_link_libraries(${PROJECT_NAME} PUBLIC FastNoise2 nlohmann_json::nlohmann_json)

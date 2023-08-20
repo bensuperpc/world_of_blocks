@@ -34,7 +34,7 @@
 #include "Chunk.hpp"
 #include "gameElementHandler.hpp"
 #include "game_context.hpp"
-#include "generator.hpp"
+#include "Generator.hpp"
 #include "world_model.hpp"
 
 #include "logger/logger_base.hpp"
@@ -66,7 +66,7 @@ public:
 
   int32_t seed = 251058607;
 
-  generator genv2 = generator(seed);
+  Generator genv2 = Generator(seed);
 
   world_model world_md = world_model();
 

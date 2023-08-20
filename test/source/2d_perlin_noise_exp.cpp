@@ -8,7 +8,7 @@
 #include <cmath>    // std::abs
 #include <cstdint>  // std::uint32_t
 
-#include "generator.hpp"
+#include "Generator.hpp"
 
 #include "logger/logger_facade.hpp"
 
@@ -50,7 +50,7 @@ auto main() -> int {
   float weighted_strength = 0.0f;
   uint32_t multiplier = 128;
 
-  generator generator_2(2510586073);
+  Generator generator_2(2510586073);
   generator_2.set_lacunarity(lacunarity);
   generator_2.set_octaves(octaves);
   generator_2.set_gain(gain);
