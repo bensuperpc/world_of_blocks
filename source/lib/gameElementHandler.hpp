@@ -25,7 +25,7 @@ public:
   // Update opengl logic (Like Models, Textures, etc)
   virtual void updateOpenglLogic() = 0;
   std::chrono::steady_clock::time_point _lastUpdateOpenglLogic;
-  std::chrono::milliseconds _UpdateOpenglLogicCooldown = std::chrono::milliseconds(4);
+  std::chrono::milliseconds _UpdateOpenglLogicCooldown = std::chrono::milliseconds(8);
 
   // Won't need to be scheduled, always called
   // Update draw 3d (Like Models, Textures, etc)

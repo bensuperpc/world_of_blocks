@@ -277,7 +277,7 @@ void world::generate_world_thread_func() {
       current_chunk->set_visible_chunk(true);
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 
   logger->info("World generation thread stopped");
