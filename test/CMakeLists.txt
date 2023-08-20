@@ -6,23 +6,34 @@ include(../cmake/project-is-top-level.cmake)
 include(../cmake/folders.cmake)
 include(../cmake/windows-set-path.cmake)
 
-function(add_test_fn TEST_NAME)
-  add_executable("${TEST_NAME}" "source/${TEST_NAME}.cpp")
-
-  target_link_libraries("${TEST_NAME}" PRIVATE world_of_blocks_lib benlib_intro gtest_main)
-  target_link_libraries("${TEST_NAME}" PRIVATE raylib)
-  target_link_libraries("${TEST_NAME}" PRIVATE FastNoise2 OpenMP::OpenMP_CXX)
-  target_link_libraries("${TEST_NAME}" PRIVATE spdlog::spdlog nlohmann_json::nlohmann_json)
-
-  if (OpenMP_FOUND OR OpenMP_CXX_FOUND)
-    target_link_libraries("${TEST_NAME}" PRIVATE OpenMP::OpenMP_CXX)
+function(test_bench_generator TEST_BENCH_NAME IS_TEST)
+  if (IS_TEST)
+    add_executable("${TEST_BENCH_NAME}" "source/test/${TEST_BENCH_NAME}.cpp")
+  else()
+    add_executable("${TEST_BENCH_NAME}" "source/benchmark/${TEST_BENCH_NAME}.cpp")
   endif()
+
+  if (IS_TEST)
+    target_link_libraries("${TEST_BENCH_NAME}" PRIVATE gtest)
+  else()
+    target_link_libraries("${TEST_BENCH_NAME}" PRIVATE benchmark::benchmark)
+  endif()
+
+  target_link_libraries("${TEST_BENCH_NAME}" PRIVATE world_of_blocks_lib benlib_intro)
+  target_link_libraries("${TEST_BENCH_NAME}" PRIVATE raylib)
+  target_link_libraries("${TEST_BENCH_NAME}" PRIVATE FastNoise2 OpenMP::OpenMP_CXX)
+  target_link_libraries("${TEST_BENCH_NAME}" PRIVATE spdlog::spdlog nlohmann_json::nlohmann_json)
 
   if (CUDAToolkit_FOUND)
-    target_include_directories("${TEST_NAME}" PRIVATE ${CUDAToolkit_INCLUDE_DIRS})
-    target_link_libraries("${TEST_NAME}" PRIVATE CUDA::cudart)
+    target_include_directories("${TEST_BENCH_NAME}" PRIVATE ${CUDAToolkit_INCLUDE_DIRS})
+    target_link_libraries("${TEST_BENCH_NAME}" PRIVATE CUDA::cudart)
   endif()
-  set_target_properties("${TEST_NAME}"
+
+  if (OpenMP_FOUND OR OpenMP_CXX_FOUND)
+    target_link_libraries("${TEST_BENCH_NAME}" PRIVATE OpenMP::OpenMP_CXX)
+  endif()
+
+  set_target_properties("${TEST_BENCH_NAME}"
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
@@ -30,41 +41,14 @@ function(add_test_fn TEST_NAME)
     PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
   )
 
-  add_test(NAME "${TEST_NAME}" COMMAND $<TARGET_FILE:${TEST_NAME}>)
-  #target_compile_features("${TEST_NAME}" PRIVATE cxx_std_20)
-endfunction()
+  #if(NOT CMAKE_BUILD_TYPE MATCHES Debug AND NOT CMAKE_BUILD_TYPE MATCHES Coverage)
+  #  add_test(NAME "${TEST_BENCH_NAME}" COMMAND $<TARGET_FILE:${TEST_BENCH_NAME}>)
+  #elseif()
+  #  message(STATUS "Disable ${BENCH_NAME}, Performance benchmark test only run on Release/RelWithDebInfo/MinSizeRel")
+  #endif()
 
-function(add_bench_fn BENCH_NAME)
-  add_executable("${BENCH_NAME}" "source/${BENCH_NAME}.cpp")
-
-  target_link_libraries("${BENCH_NAME}" PRIVATE world_of_blocks_lib benlib_intro benchmark::benchmark_main)
-  target_link_libraries("${BENCH_NAME}" PRIVATE raylib)
-  target_link_libraries("${BENCH_NAME}" PRIVATE FastNoise2 OpenMP::OpenMP_CXX)
-  target_link_libraries("${BENCH_NAME}" PRIVATE spdlog::spdlog nlohmann_json::nlohmann_json)
-
-  if (OpenMP_FOUND OR OpenMP_CXX_FOUND)
-    target_link_libraries("${BENCH_NAME}" PRIVATE OpenMP::OpenMP_CXX)
-  endif()
-
-  if (CUDAToolkit_FOUND)
-    target_include_directories("${BENCH_NAME}" PRIVATE ${CUDAToolkit_INCLUDE_DIRS})
-    target_link_libraries("${BENCH_NAME}" PRIVATE CUDA::cudart)
-  endif()
-
-  set_target_properties("${BENCH_NAME}"
-    PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-  )
-
-  if(NOT CMAKE_BUILD_TYPE MATCHES Debug AND NOT CMAKE_BUILD_TYPE MATCHES Coverage)
-    add_test(NAME "${BENCH_NAME}" COMMAND $<TARGET_FILE:${BENCH_NAME}>)
-  elseif()
-    message(STATUS "Disable ${BENCH_NAME}, Performance benchmark test only run on Release/RelWithDebInfo/MinSizeRel")
-  endif()
-  #target_compile_features("${TEST_NAME}" PRIVATE cxx_std_20)
+  add_test(NAME "${TEST_BENCH_NAME}" COMMAND $<TARGET_FILE:${TEST_BENCH_NAME}>)
+  target_compile_features("${TEST_BENCH_NAME}" PRIVATE cxx_std_17)
 endfunction()
 
 function(add_exp_fn EXP_NAME)
@@ -105,7 +89,7 @@ if(NOT WIN32)
   include(../cmake/utile/ccache.cmake)
 
   # Add tests
-  add_test_fn(generator_test)
+  test_bench_generator(generator_test true)
   # Add bench
   #  add_bench_fn(generator_bench)
   #add_bench_fn(noise_bench)

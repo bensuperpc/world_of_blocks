@@ -4,6 +4,14 @@ include(FetchContent)
 
 #find_package(json QUIET)
 
+set(CMAKE_MODULE_PATH
+    ""
+    CACHE STRING "" FORCE)
+
+set(NLOHMANN_JSON_SYSTEM_INCLUDE
+    ""
+    CACHE STRING "" FORCE)
+
 if (NOT json_FOUND)
     FetchContent_Declare(json
         GIT_REPOSITORY https://github.com/nlohmann/json.git

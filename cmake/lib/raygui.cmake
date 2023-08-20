@@ -19,3 +19,11 @@ FetchContent_Declare(raygui
 )
 FetchContent_MakeAvailable(raygui)
 include_directories(${raygui_SOURCE_DIR})
+
+#set_target_properties(raygui
+#    PROPERTIES
+#    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+#    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+#    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+#    PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+#)

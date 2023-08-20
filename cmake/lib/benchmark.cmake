@@ -31,6 +31,26 @@ set(BENCHMARK_DOWNLOAD_DEPENDENCIES
     ON
     CACHE BOOL "" FORCE)
 
+set(BENCHMARK_CXX_LINKER_FLAGS
+    ""
+    CACHE STRING "" FORCE)
+
+set(BENCHMARK_CXX_LIBRARIES
+    ""
+    CACHE STRING "" FORCE)
+
+set(BENCHMARK_CXX_FLAGS
+    ""
+    CACHE STRING "" FORCE)
+
+set(CMAKE_CXX_FLAGS_COVERAGE
+    ""
+    CACHE STRING "" FORCE)
+
+set(CMAKE_REQUIRED_FLAGS
+    ""
+    CACHE STRING "" FORCE)
+
 FetchContent_MakeAvailable(googlebenchmark)
 # Lib: benchmark::benchmark benchmark::benchmark_main
 

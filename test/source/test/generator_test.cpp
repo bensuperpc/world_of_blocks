@@ -39,3 +39,8 @@ TEST(world_of_blocks, basic_generation_2) {
     UnloadMesh(mesh);
   }
 }
+
+auto main(int argc, char **argv) -> int {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
