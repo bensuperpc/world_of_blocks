@@ -4,7 +4,7 @@ A voxel-based game engine written in C++20/C99 and [Raylib](https://www.raylib.c
 
 ## About
 
-This game is in very early development and many features are not yet implemented. (Like saves, multiplayer, etc.)
+This game is in **very early development** and many features are not yet implemented. (Like saves, multiplayer, etc.)
 
 ## Table of Contents
 
