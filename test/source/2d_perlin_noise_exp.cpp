@@ -23,7 +23,7 @@ auto main() -> int {
   // Set log level for Raylib
   SetTraceLogLevel(LOG_WARNING);
 
-  auto logger = logger_decorator("2d_perlin_noise_exp", "2d_perlin_noise_exp.log");
+  auto logger = LoggerDecorator("2d_perlin_noise_exp", "2d_perlin_noise_exp.log");
 
   const int screenWidth = 1920;
   const int screenHeight = 1080;

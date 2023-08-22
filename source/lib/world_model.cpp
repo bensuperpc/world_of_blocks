@@ -2,7 +2,7 @@
 
 #include "world_model.hpp"
 
-world_model::world_model() { world_model_logger = std::make_unique<logger_decorator>("world_model_logger", "world_model_logger.log"); }
+world_model::world_model() { world_model_logger = std::make_unique<LoggerDecorator>("world_model_logger", "world_model_logger.log"); }
 
 world_model::~world_model() {}
 

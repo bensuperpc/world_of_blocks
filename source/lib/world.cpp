@@ -1,7 +1,7 @@
 #include "world.hpp"
 
 world::world(game_context &game_context_ref, nlohmann::json &_config_json) : _game_context_ref(game_context_ref), config_json(_config_json) {
-  logger = std::make_unique<logger_decorator>("world", "world.log");
+  logger = std::make_unique<LoggerDecorator>("world", "world.log");
 
   render_distance = config_json["world"].value("render_distance", 4);
   view_distance = config_json["world"].value("view_distance", 8);
@@ -277,7 +277,7 @@ void world::generate_world_thread_func() {
       current_chunk->set_visible_chunk(true);
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
   }
 
   logger->info("World generation thread stopped");

@@ -17,7 +17,7 @@ auto main(int [[maybe_unused]] argc, [[maybe_unused]] char *argv[]) -> int {
 
   std::ios_base::sync_with_stdio(false);
 
-  auto loggerer = logger_decorator("main", "main.log");
+  auto loggerer = LoggerDecorator("main", "main.log");
 
   loggerer.info("Welcome to world of blocks!");
 
@@ -32,10 +32,10 @@ auto main(int [[maybe_unused]] argc, [[maybe_unused]] char *argv[]) -> int {
     loggerer.info("Config file not found, creating one...");
     config_json["display"]["screen_width"] = 1920;
     config_json["display"]["screen_height"] = 1080;
-    config_json["display"]["target_fps"] = 120;
-    config_json["world"]["render_distance"] = 3;
-    config_json["world"]["view_distance"] = 4;
-    config_json["world"]["unload_distance"] = 5;
+    config_json["display"]["target_fps"] = 240;
+    config_json["world"]["render_distance"] = 4;
+    config_json["world"]["view_distance"] = 5;
+    config_json["world"]["unload_distance"] = 6;
 
     std::ofstream config_file("config.json");
     config_file << config_json;

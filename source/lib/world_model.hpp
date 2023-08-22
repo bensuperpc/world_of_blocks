@@ -46,7 +46,7 @@ public:
   Mesh generate_chunk_mesh(Chunk &Chunk) noexcept;
 
   // logger
-  std::unique_ptr<logger_decorator> world_model_logger;
+  std::unique_ptr<LoggerDecorator> world_model_logger;
 };
 
 #endif // WORLD_OF_CUBE_WORLD_HPP

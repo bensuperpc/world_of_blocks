@@ -29,9 +29,9 @@
 #pragma clang diagnostic pop
 #endif
 
-class logger_decorator final {
+class LoggerDecorator final {
 public:
-  explicit logger_decorator(const std::string &name, std::filesystem::path path) {
+  explicit LoggerDecorator(const std::string &name, std::filesystem::path path) {
     {
       std::lock_guard<std::mutex> lock(_mutex);
       if (_thread_pool == nullptr) {
@@ -82,7 +82,7 @@ public:
 
   spdlog::level::level_enum get_flush_level() { return _logger->flush_level(); }
 
-  ~logger_decorator() {
+  ~LoggerDecorator() {
     debug("Logger {} stopped", _logger->name());
     flush();
   }

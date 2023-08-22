@@ -86,7 +86,7 @@ public:
   nlohmann::json &config_json;
 
   // logger
-  std::unique_ptr<logger_decorator> logger;
+  std::unique_ptr<LoggerDecorator> logger;
 };
 
 #endif // WORLD_OF_CUBE_WORLD_HPP

@@ -46,7 +46,7 @@ private:
   game_context &_game_context_ref;
 
   // logger
-  std::unique_ptr<logger_decorator> player_logger;
+  std::unique_ptr<LoggerDecorator> player_logger;
 };
 
 #endif // WORLD_OF_CUBE_WORLD_HPP
