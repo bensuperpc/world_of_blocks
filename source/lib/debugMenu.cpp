@@ -1,15 +1,15 @@
-#include "debug_menu.hpp"
+#include "debugMenu.hpp"
 
 //#include "raygui_cpp.hpp"
 
-debug_menu::debug_menu(game_context &game_context_ref) : _game_context_ref(game_context_ref) { game_context_ref.display_debug_menu = &this->is_visible; }
+debugMenu::debugMenu(gameContext &game_context_ref) : _game_context_ref(game_context_ref) { game_context_ref.display_debug_menu = &this->isVisible; }
 
-debug_menu::~debug_menu() {}
+debugMenu::~debugMenu() {}
 
-void debug_menu::updateGameInput() {
+void debugMenu::updateGameInput() {
   if (IsKeyPressed(KEY_F3)) {
     _lastUpdateInput = std::chrono::steady_clock::now();
-    is_visible = !is_visible;
+    isVisible = !isVisible;
   }
   if (IsKeyPressed(KEY_G)) {
     _lastUpdateInput = std::chrono::steady_clock::now();
@@ -17,18 +17,18 @@ void debug_menu::updateGameInput() {
   }
 }
 
-void debug_menu::updateGameLogic() {}
+void debugMenu::updateGameLogic() {}
 
-void debug_menu::updateOpenglLogic() {}
+void debugMenu::updateOpenglLogic() {}
 
-void debug_menu::updateDraw3d() {
+void debugMenu::updateDraw3d() {
   if (block_grid) {
     DrawGrid(256, 1.0f);
   }
 }
 
-void debug_menu::updateDraw2d() {
-  if (!this->is_visible) {
+void debugMenu::updateDraw2d() {
+  if (!this->isVisible) {
     return;
   }
 
@@ -78,4 +78,4 @@ void debug_menu::updateDraw2d() {
   _game_context_ref.vectices_on_screen_count = 0;
 }
 
-void debug_menu::updateDrawInterface() {}
+void debugMenu::updateDrawInterface() {}

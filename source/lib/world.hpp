@@ -33,7 +33,7 @@
 #include "Block.hpp"
 #include "Chunk.hpp"
 #include "gameElementHandler.hpp"
-#include "game_context.hpp"
+#include "gameContext.hpp"
 #include "Generator.hpp"
 #include "world_model.hpp"
 
@@ -41,14 +41,14 @@
 
 class world : public gameElementHandler {
 public:
-  world(game_context &game_context_ref, nlohmann::json &_config_json);
+  world(gameContext &game_context_ref, nlohmann::json &_config_json);
 
   ~world();
 
   void generate_world();
   void generate_world_models();
 
-  std::unique_ptr<Chunk> generate_chunk(const int32_t, const int32_t, const int32_t, bool);
+  std::unique_ptr<Chunk> generateChunk(const int32_t, const int32_t, const int32_t, bool);
   void generate_chunk_models(Chunk &);
   bool is_chunk_exist(std::list<std::unique_ptr<Chunk>>& _chunks, const int32_t, const int32_t, const int32_t) const noexcept;
 
@@ -82,7 +82,7 @@ public:
 
   bool free_world = false;
 
-  game_context &_game_context_ref;
+  gameContext &_game_context_ref;
   nlohmann::json &config_json;
 
   // logger

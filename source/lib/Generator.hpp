@@ -39,13 +39,13 @@ public:
 
   void reseed(int32_t _seed);
 
-  int32_t randomize_seed();
+  int32_t randomizeSeed();
 
   uint32_t get_seed() const;
 
-  void set_octaves(uint32_t _octaves);
+  void setOctaves(uint32_t _octaves);
 
-  uint32_t get_octaves() const;
+  uint32_t getOctaves() const;
 
   void set_lacunarity(float _lacunarity);
 
@@ -55,33 +55,33 @@ public:
 
   float get_gain() const;
 
-  void set_frequency(float _frequency);
-  float get_frequency() const;
+  void setFrequency(float _frequency);
+  float getFrequency() const;
 
   void set_weighted_strength(float _weighted_strength);
-  float get_weighted_strength() const;
+  float getWeightedStrength() const;
 
 
-  void set_multiplier(uint32_t _multiplier);
+  void setMultiplier(uint32_t _multiplier);
 
   uint32_t get_multiplier() const;
 
-  std::vector<uint32_t> generate_2d_heightmap(const int32_t begin_x, [[maybe_unused]] const int32_t begin_y, const int32_t begin_z, const uint32_t size_x,
+  std::vector<uint32_t> generate2dMeightmap(const int32_t begin_x, [[maybe_unused]] const int32_t begin_y, const int32_t begin_z, const uint32_t size_x,
                                               [[maybe_unused]] const uint32_t size_y, const uint32_t size_z);
 
-  std::vector<uint32_t> generate_3d_heightmap(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
+  std::vector<uint32_t> generate3dHeightmap(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
                                               const uint32_t size_z);
 
-  std::unique_ptr<Chunk> generate_chunk(const int32_t chunk_x, const int32_t chunk_y, const int32_t chunk_z, const bool generate_3d_terrain);
+  std::unique_ptr<Chunk> generateChunk(const int32_t chunk_x, const int32_t chunk_y, const int32_t chunk_z, const bool generate_3d_terrain);
 
-  [[nodiscard]] std::vector<std::unique_ptr<Chunk>> generate_chunks(const int32_t begin_chunk_x, const int32_t begin_chunk_y, const int32_t begin_chunk_z,
+  [[nodiscard]] std::vector<std::unique_ptr<Chunk>> generateChunks(const int32_t begin_chunk_x, const int32_t begin_chunk_y, const int32_t begin_chunk_z,
                                                                     const uint32_t size_x, const uint32_t size_y, const uint32_t size_z,
                                                                     const bool generate_3d_terrain);
 
-  std::vector<Block> generate_2d(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
+  std::vector<Block> generate2d(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
                                  const uint32_t size_z);
 
-  std::vector<Block> generate_3d(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
+  std::vector<Block> generate3d(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
                                  const uint32_t size_z);
 
 private:

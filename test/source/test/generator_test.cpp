@@ -16,7 +16,7 @@ TEST(world_of_blocks, basic_generation_2) {
   uint32_t chunk_z = 2;
 
   uint32_t chunk_size = chunk_x * chunk_y * chunk_z;
-  std::vector<std::unique_ptr<Chunk>> chunks = new_generator.generate_chunks(-4, 0, -4, chunk_x, chunk_y, chunk_z, true);
+  std::vector<std::unique_ptr<Chunk>> chunks = new_generator.generateChunks(-4, 0, -4, chunk_x, chunk_y, chunk_z, true);
 
   for (size_t i = 0; i < chunks.size(); i++) {
     std::vector<Block> &blocks = chunks[i]->get_blocks();

@@ -6,8 +6,8 @@ public:
   virtual ~GameBase();
   explicit GameBase();
 
-  bool is_active = true;
-  bool is_visible = true;
+  bool isActive = true;
+  bool isVisible = true;
 };
 
 #endif // BRAWL_MASTERS_GAME_BASE_HPP

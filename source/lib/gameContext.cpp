@@ -1,6 +1,6 @@
-#include "game_context.hpp"
+#include "gameContext.hpp"
 
-game_context::game_context(std::vector<std::shared_ptr<gameElementHandler>> &_game_classes, nlohmann::json &_config_json)
+gameContext::gameContext(std::vector<std::shared_ptr<gameElementHandler>> &_game_classes, nlohmann::json &_config_json)
     : game_classes(_game_classes), config_json(_config_json) {
   screen_width = _config_json["display"].value("screen_width", 1920);
   screen_height = _config_json["display"].value("screen_height", 1080);
@@ -11,27 +11,27 @@ game_context::game_context(std::vector<std::shared_ptr<gameElementHandler>> &_ga
   display_debug_menu = &useless;
 }
 
-game_context::~game_context() {}
+gameContext::~gameContext() {}
 
-void game_context::updateGameInput() {
+void gameContext::updateGameInput() {
 
   mouse_position = GetMousePosition();
   screen_middle = Vector2({static_cast<float>(screen_height / 2), static_cast<float>(screen_width / 2)});
 }
 
-void game_context::updateGameLogic() {}
+void gameContext::updateGameLogic() {}
 
-void game_context::updateOpenglLogic() {}
+void gameContext::updateOpenglLogic() {}
 
-void game_context::updateDraw2d() { return; }
+void gameContext::updateDraw2d() { }
 
-void game_context::updateDraw3d() { return; }
+void gameContext::updateDraw3d() {}
 
-void game_context::updateDrawInterface() { return; }
+void gameContext::updateDrawInterface() {}
 
-void game_context::unload_texture() { UnloadTexture(_texture); }
+void gameContext::unload_texture() { UnloadTexture(_texture); }
 
-void game_context::load_texture() {
+void gameContext::load_texture() {
   _texture = LoadTexture("grass.png");
   // Image img = GenImageChecked(256, 256, 32, 32, GREEN, RED);
   // Image img = GenImageColor(16, 16, WHITE);

@@ -35,9 +35,9 @@ extern "C" {
 #include "world.hpp"
 #include "world_model.hpp"
 
-#include "debug_menu.hpp"
+#include "debugMenu.hpp"
 #include "gameElementHandler.hpp"
-#include "game_context.hpp"
+#include "gameContext.hpp"
 #include "nlohmann/json.hpp"
 
 class game {
@@ -51,10 +51,10 @@ public:
   void auxillary_thread_game_logic();
 
 private:
-  std::shared_ptr<debug_menu> debug_menu1;
+  std::shared_ptr<debugMenu> debug_menu1;
   std::shared_ptr<player> player1;
   std::shared_ptr<world> world_new;
-  std::shared_ptr<game_context> game_context1;
+  std::shared_ptr<gameContext> game_context1;
   std::mutex _mutex;
 
   std::vector<std::shared_ptr<gameElementHandler>> game_classes;

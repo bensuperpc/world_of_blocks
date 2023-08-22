@@ -43,7 +43,7 @@ Generator::~Generator() {}
 
 void Generator::reseed(int32_t _seed) { this->seed = _seed; }
 
-int32_t Generator::randomize_seed() {
+int32_t Generator::randomizeSeed() {
   std::random_device rd;
   std::mt19937_64 gen(rd());
   std::uniform_int_distribution<uint32_t> dis(std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max());
@@ -54,12 +54,12 @@ int32_t Generator::randomize_seed() {
 
 uint32_t Generator::get_seed() const { return seed; }
 
-void Generator::set_octaves(uint32_t _octaves) {
+void Generator::setOctaves(uint32_t _octaves) {
   this->octaves = _octaves;
   fnFractal->SetOctaveCount(octaves);
 }
 
-uint32_t Generator::get_octaves() const { return octaves; }
+uint32_t Generator::getOctaves() const { return octaves; }
 
 void Generator::set_lacunarity(float _lacunarity) {
   this->lacunarity = _lacunarity;
@@ -75,22 +75,22 @@ void Generator::set_gain(float _gain) {
 
 float Generator::get_gain() const { return gain; }
 
-void Generator::set_frequency(float _frequency) { this->frequency = _frequency; }
+void Generator::setFrequency(float _frequency) { this->frequency = _frequency; }
 
-float Generator::get_frequency() const { return frequency; }
+float Generator::getFrequency() const { return frequency; }
 
 void Generator::set_weighted_strength(float _weighted_strength) {
   this->weighted_strength = _weighted_strength;
   fnFractal->SetWeightedStrength(weighted_strength);
 }
 
-float Generator::get_weighted_strength() const { return weighted_strength; }
+float Generator::getWeightedStrength() const { return weighted_strength; }
 
-void Generator::set_multiplier(uint32_t _multiplier) { this->multiplier = _multiplier; }
+void Generator::setMultiplier(uint32_t _multiplier) { this->multiplier = _multiplier; }
 
 uint32_t Generator::get_multiplier() const { return multiplier; }
 
-std::vector<uint32_t> Generator::generate_2d_heightmap(const int32_t begin_x, [[maybe_unused]] const int32_t begin_y, const int32_t begin_z,
+std::vector<uint32_t> Generator::generate2dMeightmap(const int32_t begin_x, [[maybe_unused]] const int32_t begin_y, const int32_t begin_z,
                                                        const uint32_t size_x, [[maybe_unused]] const uint32_t size_y, const uint32_t size_z) {
   constexpr bool debug = false;
 
@@ -122,7 +122,7 @@ std::vector<uint32_t> Generator::generate_2d_heightmap(const int32_t begin_x, [[
   return heightmap;
 }
 
-std::vector<uint32_t> Generator::generate_3d_heightmap(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x,
+std::vector<uint32_t> Generator::generate3dHeightmap(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x,
                                                        const uint32_t size_y, const uint32_t size_z) {
   constexpr bool debug = false;
 
@@ -155,7 +155,7 @@ std::vector<uint32_t> Generator::generate_3d_heightmap(const int32_t begin_x, co
   return heightmap;
 }
 
-std::unique_ptr<Chunk> Generator::generate_chunk(const int32_t chunk_x, const int32_t chunk_y, const int32_t chunk_z, const bool generate_3d_terrain) {
+std::unique_ptr<Chunk> Generator::generateChunk(const int32_t chunk_x, const int32_t chunk_y, const int32_t chunk_z, const bool generate_3d_terrain) {
   const int32_t real_x = chunk_x * Chunk::chunk_size_x;
   const int32_t real_y = chunk_y * Chunk::chunk_size_y;
   const int32_t real_z = chunk_z * Chunk::chunk_size_z;
@@ -165,9 +165,9 @@ std::unique_ptr<Chunk> Generator::generate_chunk(const int32_t chunk_x, const in
   std::unique_ptr<Chunk> _chunk = std::make_unique<Chunk>();
 
   if (generate_3d_terrain) {
-    blocks = std::move(generate_3d(real_x, real_y, real_z, Chunk::chunk_size_x, Chunk::chunk_size_y, Chunk::chunk_size_z));
+    blocks = std::move(generate3d(real_x, real_y, real_z, Chunk::chunk_size_x, Chunk::chunk_size_y, Chunk::chunk_size_z));
   } else {
-    blocks = std::move(generate_2d(real_x, real_y, real_z, Chunk::chunk_size_x, Chunk::chunk_size_y, Chunk::chunk_size_z));
+    blocks = std::move(generate2d(real_x, real_y, real_z, Chunk::chunk_size_x, Chunk::chunk_size_y, Chunk::chunk_size_z));
   }
 
   _chunk->set_blocks(blocks);
@@ -176,7 +176,7 @@ std::unique_ptr<Chunk> Generator::generate_chunk(const int32_t chunk_x, const in
   return _chunk;
 }
 
-[[nodiscard]] std::vector<std::unique_ptr<Chunk>> Generator::generate_chunks(const int32_t begin_chunk_x, const int32_t begin_chunk_y,
+[[nodiscard]] std::vector<std::unique_ptr<Chunk>> Generator::generateChunks(const int32_t begin_chunk_x, const int32_t begin_chunk_y,
                                                                              const int32_t begin_chunk_z, const uint32_t size_x, const uint32_t size_y,
                                                                              const uint32_t size_z, const bool generate_3d_terrain) {
   constexpr bool debug = false;
@@ -194,7 +194,7 @@ std::unique_ptr<Chunk> Generator::generate_chunk(const int32_t chunk_x, const in
   for (int32_t x = begin_chunk_x; x < begin_chunk_x + size_x; x++) {
     for (int32_t z = begin_chunk_y; z < begin_chunk_y + size_z; z++) {
       for (int32_t y = begin_chunk_z; y < begin_chunk_z + size_y; y++) {
-        auto gen_chunk = generate_chunk(x, y, z, generate_3d_terrain);
+        auto gen_chunk = generateChunk(x, y, z, generate_3d_terrain);
 #pragma omp critical
         chunks.emplace_back(std::move(gen_chunk));
       }
@@ -204,14 +204,14 @@ std::unique_ptr<Chunk> Generator::generate_chunk(const int32_t chunk_x, const in
   return chunks;
 }
 
-std::vector<Block> Generator::generate_2d(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
+std::vector<Block> Generator::generate2d(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
                                           const uint32_t size_z) {
   constexpr bool debug = false;
 
   std::vector<uint32_t> heightmap;
   std::vector<Block> blocks = std::vector<Block>(size_x * size_y * size_z, Block());
 
-  heightmap = std::move(generate_2d_heightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z));
+  heightmap = std::move(generate2dMeightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z));
 
   // Generate blocks
   for (uint32_t x = 0; x < size_x; x++) {
@@ -242,13 +242,13 @@ std::vector<Block> Generator::generate_2d(const int32_t begin_x, const int32_t b
   return blocks;
 }
 
-std::vector<Block> Generator::generate_3d(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
+std::vector<Block> Generator::generate3d(const int32_t begin_x, const int32_t begin_y, const int32_t begin_z, const uint32_t size_x, const uint32_t size_y,
                                           const uint32_t size_z) {
   constexpr bool debug = false;
 
   std::vector<Block> blocks = std::vector<Block>(size_x * size_y * size_z, Block());
 
-  std::vector<uint32_t> heightmap = generate_3d_heightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z);
+  std::vector<uint32_t> heightmap = generate3dHeightmap(begin_x, begin_y, begin_z, size_x, size_y, size_z);
 
   // Generate blocks
   for (uint32_t x = 0; x < size_x; x++) {

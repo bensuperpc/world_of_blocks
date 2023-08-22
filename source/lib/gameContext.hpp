@@ -15,15 +15,15 @@
 #include "vector.hpp"
 
 #include "gameElementHandler.hpp"
-#include "game_context.hpp"
+#include "gameContext.hpp"
 
 #include "nlohmann/json.hpp"
 
-class game_context : public gameElementHandler {
+class gameContext : public gameElementHandler {
 public:
-  game_context(std::vector<std::shared_ptr<gameElementHandler>> &game_classes, nlohmann::json &_config_json);
+  gameContext(std::vector<std::shared_ptr<gameElementHandler>> &game_classes, nlohmann::json &_config_json);
 
-  ~game_context();
+  ~gameContext();
 
   void updateGameInput() override;
   void updateGameLogic() override;

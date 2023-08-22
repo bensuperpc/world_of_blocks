@@ -1,6 +1,6 @@
 #include "world.hpp"
 
-world::world(game_context &game_context_ref, nlohmann::json &_config_json) : _game_context_ref(game_context_ref), config_json(_config_json) {
+world::world(gameContext &game_context_ref, nlohmann::json &_config_json) : _game_context_ref(game_context_ref), config_json(_config_json) {
   logger = std::make_unique<LoggerDecorator>("world", "world.log");
 
   render_distance = config_json["world"].value("render_distance", 4);
@@ -21,10 +21,10 @@ world::~world() {
   clear();
 }
 
-std::unique_ptr<Chunk> world::generate_chunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model) {
+std::unique_ptr<Chunk> world::generateChunk(const int32_t x, const int32_t y, const int32_t z, bool generate_model) {
   // Generate the Chunk
   auto start = std::chrono::high_resolution_clock::now();
-  std::unique_ptr<Chunk> chunk_new = genv2.generate_chunk(x, y, z, true);
+  std::unique_ptr<Chunk> chunk_new = genv2.generateChunk(x, y, z, true);
   auto end = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
@@ -241,7 +241,7 @@ void world::generate_world_thread_func() {
           if (is_chunk_exist(chunks, chunk_x, chunk_y, chunk_z) || is_chunk_exist(tmpChunks, chunk_x, chunk_y, chunk_z)) {
             continue;
           }
-          tmpChunks.push_back(generate_chunk(chunk_x, chunk_y, chunk_z, false));
+          tmpChunks.push_back(generateChunk(chunk_x, chunk_y, chunk_z, false));
         }
       }
     }

@@ -99,11 +99,11 @@ public:
     return is_in_chunk(x - chunk_x * chunk_size_x, y - chunk_y * chunk_size_y, z - chunk_z * chunk_size_z);
   }
 
-  inline bool is_active_chunk() const noexcept { return is_active; }
-  inline void set_active_chunk(const bool active) noexcept { is_active = active; }
+  inline bool is_active_chunk() const noexcept { return isActive; }
+  inline void set_active_chunk(const bool active) noexcept { isActive = active; }
 
-  inline bool is_visible_chunk() const noexcept { return is_visible; }
-  inline void set_visible_chunk(const bool visible) noexcept { is_visible = visible; }
+  inline bool is_visible_chunk() const noexcept { return isVisible; }
+  inline void set_visible_chunk(const bool visible) noexcept { isVisible = visible; }
 
   static constexpr int chunk_size_x = 32;
   static constexpr int chunk_size_y = 32;
@@ -118,8 +118,8 @@ protected:
   int chunk_coor_y = 0;
   int chunk_coor_z = 0;
 
-  bool is_active = true;
-  bool is_visible = true;
+  bool isActive = true;
+  bool isVisible = true;
 };
 
 #endif // WORLD_OF_CUBE_CHUNK_HPP

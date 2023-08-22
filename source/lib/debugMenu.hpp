@@ -12,14 +12,14 @@
 #include "raylib.h"
 
 #include "gameElementHandler.hpp"
-#include "game_context.hpp"
+#include "gameContext.hpp"
 #include "vector.hpp"
 
-class debug_menu : public gameElementHandler {
+class debugMenu : public gameElementHandler {
 public:
-  debug_menu(game_context &game_context_ref);
+  debugMenu(gameContext &game_context_ref);
 
-  ~debug_menu();
+  ~debugMenu();
 
   void updateGameInput() override;
   void updateGameLogic() override;
@@ -29,7 +29,7 @@ public:
   void updateDraw3d() override;
   void updateDrawInterface() override;
 
-  game_context &_game_context_ref;
+  gameContext &_game_context_ref;
 
   // Debug
   bool block_grid = true;

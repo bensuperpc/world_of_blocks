@@ -52,17 +52,17 @@ auto main() -> int {
 
   Generator generator_2(2510586073);
   generator_2.set_lacunarity(lacunarity);
-  generator_2.set_octaves(octaves);
+  generator_2.setOctaves(octaves);
   generator_2.set_gain(gain);
-  generator_2.set_frequency(frequency);
+  generator_2.setFrequency(frequency);
   generator_2.set_weighted_strength(0.0f);
-  generator_2.set_multiplier(multiplier);
+  generator_2.setMultiplier(multiplier);
 
   bool forceSquaredChecked = false;
 
   std::vector<uint32_t> blocks;
 
-  blocks = generator_2.generate_2d_heightmap(0, 0, 0, screenWidth, 0, screenHeight);
+  blocks = generator_2.generate2dMeightmap(0, 0, 0, screenWidth, 0, screenHeight);
 
   uint64_t framesCounter = 0;
 
@@ -78,18 +78,18 @@ auto main() -> int {
       logger.info("Screenshot saved: {}", filename);
     }
     if (IsKeyPressed(KEY_R)) {
-      logger.info("New seed: {}", generator_2.randomize_seed());
+      logger.info("New seed: {}", generator_2.randomizeSeed());
     }
 
     if (framesCounter % (targetFPS / ImageUpdatePerSecond) == 0) {
       generator_2.set_lacunarity(lacunarity);
-      generator_2.set_octaves(octaves);
+      generator_2.setOctaves(octaves);
       generator_2.set_gain(gain);
-      generator_2.set_frequency(frequency);
+      generator_2.setFrequency(frequency);
       generator_2.set_weighted_strength(weighted_strength);
-      generator_2.set_multiplier(multiplier);
+      generator_2.setMultiplier(multiplier);
 
-      blocks = generator_2.generate_2d_heightmap(0, 0, 0, screenWidth, 0, screenHeight);
+      blocks = generator_2.generate2dMeightmap(0, 0, 0, screenWidth, 0, screenHeight);
       for (uint64_t x = 0; x < screenWidth; x++) {
         for (uint64_t y = 0; y < screenHeight; y++) {
           uint64_t index = x + y * screenWidth;

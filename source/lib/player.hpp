@@ -13,14 +13,14 @@
 // World of blocks
 #include "Chunk.hpp"
 #include "gameElementHandler.hpp"
-#include "game_context.hpp"
+#include "gameContext.hpp"
 
 // spdlog
 #include "logger/logger_facade.hpp"
 
 class player : public gameElementHandler {
 public:
-  player(game_context &game_context_ref);
+  player(gameContext &game_context_ref);
 
   ~player();
 
@@ -43,7 +43,7 @@ public:
   Block *closest_block = nullptr;
 
 private:
-  game_context &_game_context_ref;
+  gameContext &_game_context_ref;
 
   // logger
   std::unique_ptr<LoggerDecorator> player_logger;

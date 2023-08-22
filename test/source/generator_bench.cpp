@@ -19,7 +19,7 @@ static void generate_3d_word(benchmark::State &state) {
   generatorv1 gen = generatorv1(seed);
 
   for (auto _ : state) {
-    std::vector<std::unique_ptr<Chunk>> chunks = std::move(gen.generate_chunks(0, 0, 0, size, 1, size, true));
+    std::vector<std::unique_ptr<Chunk>> chunks = std::move(gen.generateChunks(0, 0, 0, size, 1, size, true));
     benchmark::DoNotOptimize(chunks);
     benchmark::ClobberMemory();
   }
@@ -35,7 +35,7 @@ static void generate_3d_chunk(benchmark::State &state) {
   generatorv1 gen = generatorv1(seed);
 
   for (auto _ : state) {
-    std::unique_ptr<Chunk> _chunk = std::move(gen.generate_chunk(0, 0, 0, true));
+    std::unique_ptr<Chunk> _chunk = std::move(gen.generateChunk(0, 0, 0, true));
     benchmark::DoNotOptimize(_chunk);
     benchmark::ClobberMemory();
   }
@@ -51,7 +51,7 @@ static void generate_2d_word(benchmark::State &state) {
   generatorv1 gen = generatorv1(seed);
 
   for (auto _ : state) {
-    std::vector<std::unique_ptr<Chunk>> chunks = std::move(gen.generate_chunks(0, 0, 0, size, 1, size, false));
+    std::vector<std::unique_ptr<Chunk>> chunks = std::move(gen.generateChunks(0, 0, 0, size, 1, size, false));
     benchmark::DoNotOptimize(chunks);
     benchmark::ClobberMemory();
   }
@@ -67,7 +67,7 @@ static void generate_2d_chunk(benchmark::State &state) {
   generatorv1 gen = generatorv1(seed);
 
   for (auto _ : state) {
-    std::unique_ptr<Chunk> _chunk = std::move(gen.generate_chunk(0, 0, 0, false));
+    std::unique_ptr<Chunk> _chunk = std::move(gen.generateChunk(0, 0, 0, false));
     benchmark::DoNotOptimize(_chunk);
     benchmark::ClobberMemory();
   }

@@ -12,13 +12,13 @@ void game::init() {
 void game::run() {
   SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
 
-  game_context1 = std::make_shared<game_context>(game_classes, config_json);
+  game_context1 = std::make_shared<gameContext>(game_classes, config_json);
   game_classes.push_back(game_context1);
 
   world_new = std::make_shared<world>(*game_context1.get(), config_json);
   game_classes.push_back(world_new);
 
-  debug_menu1 = std::make_shared<debug_menu>(*game_context1.get());
+  debug_menu1 = std::make_shared<debugMenu>(*game_context1.get());
   game_classes.push_back(debug_menu1);
 
   auxillary_thread = std::async(std::launch::async, &game::auxillary_thread_game_logic, this);
@@ -105,7 +105,7 @@ void game::auxillary_thread_game_logic() {
     auto start_time = std::chrono::high_resolution_clock::now();
     for (auto &item : game_classes) {
       // Skip inactive items
-      if (!item->is_active) {
+      if (!item->isActive) {
         continue;
       }
 
@@ -121,7 +121,7 @@ void game::auxillary_thread_game_logic() {
 
     for (auto &item : game_classes) {
       // Skip inactive items
-      if (!item->is_active) {
+      if (!item->isActive) {
         continue;
       }
 

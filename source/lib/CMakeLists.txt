@@ -40,8 +40,8 @@ set(SOURCES
     world.cpp
     world_model.cpp
     player.cpp
-    debug_menu.cpp
-    game_context.cpp
+    debugMenu.cpp
+    gameContext.cpp
     GameBase.cpp
     Generator.cpp
 )
@@ -52,8 +52,8 @@ set(HEADERS
     world.hpp
     world_model.hpp
     player.hpp
-    debug_menu.hpp
-    game_context.hpp
+    debugMenu.hpp
+    gameContext.hpp
     Chunk.hpp
     Generator.hpp
     raygui_cpp.hpp
