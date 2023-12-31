@@ -9,7 +9,7 @@
 #//                                                          //
 #//  sandbox, 2023                               //
 #//  Created: 04, June, 2021                                 //
-#//  Modified: 06, August, 2023                              //
+#//  Modified: 18, November, 2023                            //
 #//  file: -                                                 //
 #//  -                                                       //
 #//  Source:                                                 //
@@ -47,7 +47,7 @@ base:
 
 .PHONY: base-clang
 base-clang:
-	cmake --preset=$@ -S $(PROJECT_ROOT) -G $(GENERATOR)
+	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=$@
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
 
@@ -82,7 +82,7 @@ coverage:
 	cmake -B build/$@ -S $(PROJECT_ROOT) -G $(GENERATOR) --preset=dev-coverage -DCMAKE_BUILD_TYPE=Coverage
 	cmake --build build/$@
 	ctest $(CTEST_OPTIONS) --test-dir build/$@
-	cmake --build build/$@ --target coverage
+	cmake --build build/$@ --target $@
 
 .PHONY: sanitize
 sanitize:
@@ -116,9 +116,9 @@ gprof:
 
 .PHONY: perf
 perf:
-	cmake --preset=$@ -G Debug
-	cmake --build build/$@
-	perf record --all-user -e branch-misses ./build/$@/bin/$(PROJECT_NAME)
+	cmake --preset=base -G $(GENERATOR)
+	cmake --build build/base
+	perf record --all-user -e branch-misses ./build/base/bin/$(PROJECT_NAME)
 
 .PHONY: graph
 graph:
@@ -157,6 +157,6 @@ update:
 	git submodule update --init --recursive
 	git pull --recurse-submodules --all --progress
 
-.PHONY: clean
-clean:
+.PHONY: clear
+clear:
 	rm -rf build/*

@@ -64,7 +64,7 @@ public:
   size_t vectices_on_screen_count = 0;
   size_t triangles_on_screen_count = 0;
 
-  nlohmann::json &config_json;
+  nlohmann::json &_configJson;
 
   std::vector<std::shared_ptr<gameElementHandler>> &game_classes;
 

@@ -8,4 +8,4 @@ prefix/
 CMakeLists.txt.user
 CMakeUserPresets.json
 config.json
-main.log
+*.log

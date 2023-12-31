@@ -59,12 +59,10 @@ private:
 
   std::vector<std::shared_ptr<gameElementHandler>> game_classes;
 
-  nlohmann::json &config_json;
+  nlohmann::json &_configJson;
   std::future<void> auxillary_thread;
 
   bool game_running = true;
-
-  //std::unique_ptr<raylib::Window> window;
 };
 
 #endif // GAME_HPP

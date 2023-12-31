@@ -1,4 +1,5 @@
 # Based on work: https://int-i.github.io/python/2021-11-07/matplotlib-google-benchmark-visualization/
+# Modified by: Bensuperpc
 
 from argparse import ArgumentParser
 from itertools import groupby
@@ -24,6 +25,7 @@ def extract_size_from_benchmark(benchmark):
     return bench_name.split('/')[1]  # Remove all before /
 
 if __name__ == "__main__":
+    # ./prog_name --benchmark_format=json --benchmark_out=result.json
     parser = ArgumentParser()
     parser.add_argument('path', help='benchmark result json file')
     args = parser.parse_args()
@@ -52,18 +54,26 @@ if __name__ == "__main__":
             else:
                 data2[key] = y2
 
-        df1 = pd.melt(data1, id_vars=['size'], var_name='algorithm', value_name='bytes_per_second')
-        df2 = pd.melt(data2, id_vars=['size'], var_name='algorithm', value_name='items_per_second')
+        df1 = pd.melt(data1, id_vars=['size'], var_name='Benchmark', value_name='bytes_per_second')
+        df1_max_indices = df1.groupby(['size', 'Benchmark'])['bytes_per_second'].transform(max) == df1['bytes_per_second']
+        df1 = df1.loc[df1_max_indices]
+        df1.reset_index(drop=True, inplace=True)
+
+
+        df2 = pd.melt(data2, id_vars=['size'], var_name='Benchmark', value_name='items_per_second')
+        df2_max_indices = df2.groupby(['size', 'Benchmark'])['items_per_second'].transform(max) == df2['items_per_second']
+        df2 = df2.loc[df2_max_indices]
+        df2.reset_index(drop=True, inplace=True)
         
         sns.set_theme()
 
         fig, ax = plt.subplots(2, 1)
 
         fig.set_size_inches(16, 9)
-        fig.set_dpi(160)
+        fig.set_dpi(96)
 
-        sns.lineplot(data=df1, x='size', y='bytes_per_second', hue='algorithm', ax=ax[0])
-        sns.lineplot(data=df2, x='size', y='items_per_second', hue='algorithm', ax=ax[1])
+        sns.lineplot(data=df1, x='size', y='bytes_per_second', hue='Benchmark', ax=ax[0])
+        sns.lineplot(data=df2, x='size', y='items_per_second', hue='Benchmark', ax=ax[1])
 
         ax[0].set_title('Bytes per second')
         ax[1].set_title('Items per second')

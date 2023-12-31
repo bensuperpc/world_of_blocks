@@ -54,30 +54,30 @@
         "CMAKE_CXX_STANDARD": "20",
         "CMAKE_CXX_STANDARD_REQUIRED": "ON",
         "CMAKE_C_EXTENSIONS": "ON",
-        "CMAKE_C_STANDARD": "11",
+        "CMAKE_C_STANDARD": "17",
         "CMAKE_C_STANDARD_REQUIRED": "ON"
       }
     },
     {
-      "name": "flags-linux",
+      "name": "flags-gcc-clang",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -pipe -fstack-protector-strong -fcf-protection=full -fstack-clash-protection -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wcast-qual -Wformat=2 -Wundef -Wshadow -Wcast-align -Wunused -Wnull-dereference -Wdouble-promotion -Wimplicit-fallthrough -Wextra-semi -Woverloaded-virtual -Wnon-virtual-dtor -Wold-style-cast",
-        "CMAKE_C_FLAGS": "-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -pipe -fstack-protector-strong -fcf-protection=full -fstack-clash-protection -Wall -Wextra -Wpedantic",
+        "CMAKE_CXX_FLAGS": "-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -pipe -fstack-protector-strong -fstack-clash-protection -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wcast-qual -Wformat=2 -Wundef -Wshadow -Wcast-align -Wunused -Wnull-dereference -Wdouble-promotion -Wimplicit-fallthrough -Wextra-semi -Woverloaded-virtual -Wnon-virtual-dtor -Wold-style-cast -Wformat-security",
+        "CMAKE_C_FLAGS": "-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -pipe -fstack-protector-strong -fstack-clash-protection -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wcast-qual -Wformat=2 -Wundef -Wshadow -Wcast-align -Wunused -Wnull-dereference -Wdouble-promotion -Wformat-security",
         "CMAKE_EXE_LINKER_FLAGS": "-Wl,--allow-shlib-undefined,--as-needed,-z,noexecstack,-z,relro,-z,now",
         "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--allow-shlib-undefined,--as-needed,-z,noexecstack,-z,relro,-z,now"
       }
     },
     {
-      "name": "flags-darwin",
+      "name": "flags-appleclang",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "-pipe -fstack-protector-strong -fcf-protection=full -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wcast-qual -Wformat=2 -Wundef -Werror=float-equal -Wshadow -Wcast-align -Wunused -Wnull-dereference -Wdouble-promotion -Wimplicit-fallthrough -Wextra-semi -Woverloaded-virtual -Wnon-virtual-dtor -Wold-style-cast",
-        "CMAKE_C_FLAGS": "-pipe -fstack-protector-strong -fcf-protection=full -Wall -Wextra -Wpedantic"
+        "CMAKE_CXX_FLAGS": "-pipe -fstack-protector-strong -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wcast-qual -Wformat=2 -Wundef -Wshadow -Wcast-align -Wunused -Wnull-dereference -Wdouble-promotion -Wimplicit-fallthrough -Wextra-semi -Woverloaded-virtual -Wnon-virtual-dtor -Wold-style-cast",
+        "CMAKE_C_FLAGS": "-pipe -fstack-protector-strong -Wall -Wextra -Wpedantic"
       }
     },
     {
-      "name": "flags-windows",
+      "name": "flags-msvc",
       "description": "Note that all the flags after /W4 are required for MSVC to conform to the language standard",
       "hidden": true,
       "cacheVariables": {
@@ -89,10 +89,10 @@
       "name": "flags-cuda",
       "hidden": true,
       "cacheVariables": {
-        "CUDA_NVCC_FLAGS": "--default-stream per-thread -arch=all-major",
-        "CUDA_ARCHITECTURES": "50;52;53;60;61;62;70;72;75;80;86",
-        "CUDA_PROPAGATE_HOST_FLAGS": "ON",
-        "CUDA_SEPARABLE_COMPILATION": "ON"
+        "CMAKE_CUDA_FLAGS": "--default-stream per-thread -Xfatbin=-compress-all -arch=all-major -Xcompiler=-Wall,-Wextra,-Wconversion,-Wsign-conversion,-Wcast-qual,-Wundef,-Wshadow,-Wunused,-Wnull-dereference,-Wdouble-promotion,-Wimplicit-fallthrough,-Wextra-semi,-Woverloaded-virtual,-Wnon-virtual-dtor,-Wformat-security",
+        "CMAKE_CUDA_ARCHITECTURES": "50;52;53;60;61;62;70;72;75;80;86;87;89;90",
+        "CUDA_PROPAGATE_HOST_FLAGS": "OFF",
+        "CMAKE_CUDA_SEPARABLE_COMPILATION": "ON"
       }
     },
     {
@@ -117,7 +117,7 @@
       "name": "ci-linux",
       "generator": "Unix Makefiles",
       "hidden": true,
-      "inherits": ["flags-linux", "ci-std"],
+      "inherits": ["flags-gcc-clang", "ci-std", "ci-cuda", "flags-cuda"],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
@@ -126,7 +126,7 @@
       "name": "ci-darwin",
       "generator": "Unix Makefiles",
       "hidden": true,
-      "inherits": ["flags-darwin", "ci-std"],
+      "inherits": ["flags-appleclang", "ci-std"],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
@@ -135,11 +135,11 @@
       "name": "ci-base",
       "generator": "Unix Makefiles",
       "hidden": true,
-      "inherits": ["ci-std", "flags-linux", "dev-mode"]
+      "inherits": ["ci-std", "flags-gcc-clang", "dev-mode", "flags-cuda", "ci-cuda"]
     },
     {
       "name": "ci-win64",
-      "inherits": ["flags-windows", "ci-std"],
+      "inherits": ["flags-msvc", "ci-std"],
       "generator": "Visual Studio 17 2022",
       "architecture": "x64",
       "hidden": true
@@ -170,8 +170,8 @@
       "inherits": ["ci-linux", "dev-mode"],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Sanitize",
-        "CMAKE_CXX_FLAGS_SANITIZE": "-O0 -g3 -fsanitize=address,undefined,leak -fno-omit-frame-pointer -fno-common",
-        "CMAKE_C_FLAGS_SANITIZE": "-O0 -g3"
+        "CMAKE_CXX_FLAGS_SANITIZE": "-Og -U_FORTIFY_SOURCE -g3 -fsanitize=address,undefined,leak -fno-omit-frame-pointer -fno-common",
+        "CMAKE_C_FLAGS_SANITIZE": "-Og -U_FORTIFY_SOURCE -g3"
       },
       "environment": {
         "ASAN_OPTIONS": "strict_string_checks=1 detect_stack_use_after_return=1 check_initialization_order=1 strict_init_order=1 detect_leaks=1",
@@ -224,12 +224,20 @@
       }
     },
     {
+      "name": "dev-common",
+      "hidden": true,
+      "inherits": ["dev-mode", "clang-tidy", "cppcheck"],
+      "cacheVariables": {
+        "BUILD_MCSS_DOCS": "ON"
+      }
+    },
+    {
       "name": "ci-macos",
       "inherits": ["ci-build", "ci-darwin", "dev-mode"]
     },
     {
       "name": "ci-ubuntu",
-      "inherits": ["ci-build", "ci-linux", "clang-tidy", "cppcheck", "dev-mode"]
+      "inherits": ["ci-build", "ci-linux", "dev-common"]
     },
     {
       "name": "ci-windows",

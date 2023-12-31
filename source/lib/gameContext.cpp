@@ -1,7 +1,7 @@
 #include "gameContext.hpp"
 
 gameContext::gameContext(std::vector<std::shared_ptr<gameElementHandler>> &_game_classes, nlohmann::json &_config_json)
-    : game_classes(_game_classes), config_json(_config_json) {
+    : game_classes(_game_classes), _configJson(_config_json) {
   screen_width = _config_json["display"].value("screen_width", 1920);
   screen_height = _config_json["display"].value("screen_height", 1080);
   target_fps = _config_json["display"].value("target_fps", 240);

@@ -83,7 +83,7 @@ public:
   bool free_world = false;
 
   gameContext &_game_context_ref;
-  nlohmann::json &config_json;
+  nlohmann::json &_configJson;
 
   // logger
   std::unique_ptr<LoggerDecorator> logger;

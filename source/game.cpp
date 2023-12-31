@@ -1,7 +1,7 @@
 #include "game.hpp"
 #include "raylib.h"
 
-game::game(nlohmann::json &_config_json) : config_json(_config_json) {}
+game::game(nlohmann::json &_config_json) : _configJson(_config_json) {}
 
 game::~game() {
 }
@@ -10,12 +10,10 @@ void game::init() {
 }
 
 void game::run() {
-  SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
-
-  game_context1 = std::make_shared<gameContext>(game_classes, config_json);
+  game_context1 = std::make_shared<gameContext>(game_classes, _configJson);
   game_classes.push_back(game_context1);
 
-  world_new = std::make_shared<world>(*game_context1.get(), config_json);
+  world_new = std::make_shared<world>(*game_context1.get(), _configJson);
   game_classes.push_back(world_new);
 
   debug_menu1 = std::make_shared<debugMenu>(*game_context1.get());
@@ -23,7 +21,6 @@ void game::run() {
 
   auxillary_thread = std::async(std::launch::async, &game::auxillary_thread_game_logic, this);
 
-  //window = std::make_unique<raylib::Window>(game_context1->screen_width, game_context1->screen_height, "World of blocks");
   InitWindow(game_context1->screen_width, game_context1->screen_height, "World of blocks");
   game_context1->load_texture();
 

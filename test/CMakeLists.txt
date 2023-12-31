@@ -94,7 +94,7 @@ if(NOT WIN32)
   #  add_bench_fn(generator_bench)
   #add_bench_fn(noise_bench)
   # Add exp
-  add_exp_fn(2d_perlin_noise_exp)
+  #add_exp_fn(2d_perlin_noise_exp)
   
 endif()
 

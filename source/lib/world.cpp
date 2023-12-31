@@ -1,10 +1,10 @@
 #include "world.hpp"
 
-world::world(gameContext &game_context_ref, nlohmann::json &_config_json) : _game_context_ref(game_context_ref), config_json(_config_json) {
+world::world(gameContext &game_context_ref, nlohmann::json &_config_json) : _game_context_ref(game_context_ref), _configJson(_config_json) {
   logger = std::make_unique<LoggerDecorator>("world", "world.log");
 
-  render_distance = config_json["world"].value("render_distance", 4);
-  view_distance = config_json["world"].value("view_distance", 8);
+  render_distance = _configJson["world"].value("render_distance", 4);
+  view_distance = _configJson["world"].value("view_distance", 8);
 
   generate_world_thread = std::thread(&world::generate_world_thread_func, this);
   generate_world_thread_running = true;
